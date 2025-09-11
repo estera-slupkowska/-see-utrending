@@ -57,6 +57,7 @@ function App() {
                     <Route path="/auth/register" element={<AuthPage mode="register" />} />
                     <Route path="/terms" element={<TermsOfService />} />
                     <Route path="/privacy" element={<PrivacyPolicy />} />
+                    <Route path="/oauth/redirect" element={<div className="min-h-screen bg-background flex items-center justify-center"><div className="text-white text-center"><h1 className="text-2xl mb-4">Processing TikTok Authentication...</h1><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div></div></div>} />
                     
                     {/* Protected routes */}
                     <Route 
