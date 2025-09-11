@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Supabase Connection</title>
+</head>
+<body>
+    <h1>Test Supabase Connection</h1>
+    <button onclick="testConnection()">Test Connection</button>
+    <div id="result"></div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+        const supabase = window.supabase.createClient(
+            'https://sxmjwvrjxgylqtbfqykr.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4bWp3dnJqeGd5bHF0YmZxeWtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyNDgxNzEsImV4cCI6MjA3MjgyNDE3MX0.gcJ4xwSb-2pHHqbxkim8GkZt23y005CkC3ZkJ85kAe8'
+        );
+
+        async function testConnection() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+
+            try {
+                // Test 1: Check if we can read from profiles table
+                console.log('Testing profiles table read...');
+                const { data: profiles, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .limit(1);
+
+                if (profileError) {
+                    console.error('Profile read error:', profileError);
+                    resultDiv.innerHTML += '<br>❌ Profiles table error: ' + profileError.message;
+                    return;
+                } else {
+                    resultDiv.innerHTML += '<br>✅ Profiles table accessible';
+                }
+
+                // Test 2: Try to sign up a test user
+                console.log('Testing signup...');
+                const { data, error } = await supabase.auth.signUp({
+                    email: 'test-' + Date.now() + '@example.com',
+                    password: 'Test123!',
+                    options: {
+                        data: {
+                            name: 'Test User',
+                            role: 'creator'
+                        }
+                    }
+                });
+
+                if (error) {
+                    console.error('Signup error:', error);
+                    resultDiv.innerHTML += '<br>❌ Signup error: ' + error.message;
+                    resultDiv.innerHTML += '<br>Error details: ' + JSON.stringify(error, null, 2);
+                } else {
+                    console.log('Signup success:', data);
+                    resultDiv.innerHTML += '<br>✅ Signup successful!';
+                    resultDiv.innerHTML += '<br>User: ' + JSON.stringify(data, null, 2);
+                }
+
+            } catch (err) {
+                console.error('Test error:', err);
+                resultDiv.innerHTML += '<br>❌ Test failed: ' + err.message;
+            }
+        }
+    </script>
+</body>
+</html>

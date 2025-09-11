@@ -1,0 +1,60 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with gradient -->
+  <defs>
+    <radialGradient id="bgGradient" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#A855F7;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#8B5CF6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </radialGradient>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.95" />
+      <stop offset="100%" style="stop-color:#F3E8FF;stop-opacity:0.8" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="512" cy="512" r="480" fill="url(#bgGradient)" stroke="#FFFFFF" stroke-width="16"/>
+  
+  <!-- TikTok-style camera/video icon -->
+  <g transform="translate(512,512)">
+    <!-- Camera body -->
+    <rect x="-120" y="-80" width="240" height="160" rx="24" fill="url(#iconGradient)" stroke="#8B5CF6" stroke-width="4"/>
+    
+    <!-- Lens -->
+    <circle cx="0" cy="0" r="60" fill="#8B5CF6" stroke="#FFFFFF" stroke-width="6"/>
+    <circle cx="0" cy="0" r="36" fill="#A855F7"/>
+    <circle cx="0" cy="0" r="18" fill="#FFFFFF"/>
+    
+    <!-- Record button/trending indicator -->
+    <circle cx="60" cy="-40" r="16" fill="#EF4444"/>
+    <circle cx="60" cy="-40" r="8" fill="#FFFFFF"/>
+    
+    <!-- Trending arrows -->
+    <g transform="translate(0,100)">
+      <!-- Up arrow 1 -->
+      <path d="M-40 20 L-40 -10 L-50 0 L-40 -10 L-30 0 Z" fill="#FFFFFF" opacity="0.9"/>
+      <!-- Up arrow 2 -->
+      <path d="M0 20 L0 -20 L-10 -10 L0 -20 L10 -10 Z" fill="#FFFFFF"/>
+      <!-- Up arrow 3 -->
+      <path d="M40 20 L40 -10 L30 0 L40 -10 L50 0 Z" fill="#FFFFFF" opacity="0.9"/>
+    </g>
+    
+    <!-- "SEE U" text effect -->
+    <g transform="translate(0,-150)" fill="#FFFFFF" font-family="Arial, sans-serif" font-weight="bold" font-size="48" text-anchor="middle">
+      <text y="0">SEE U</text>
+    </g>
+    
+    <!-- "TRENDING" text effect -->
+    <g transform="translate(0,180)" fill="#FFFFFF" font-family="Arial, sans-serif" font-weight="bold" font-size="32" text-anchor="middle">
+      <text y="0">TRENDING</text>
+    </g>
+  </g>
+  
+  <!-- Sparkle effects around the icon -->
+  <g fill="#FFFFFF" opacity="0.7">
+    <polygon points="200,200 205,210 215,210 207,218 210,228 200,222 190,228 193,218 185,210 195,210" />
+    <polygon points="800,300 804,308 812,308 806,314 808,322 800,318 792,322 794,314 788,308 796,308" />
+    <polygon points="300,800 304,808 312,808 306,814 308,822 300,818 292,822 294,814 288,808 296,808" />
+    <polygon points="750,750 754,758 762,758 756,764 758,772 750,768 742,772 744,764 738,758 746,758" />
+  </g>
+</svg>
