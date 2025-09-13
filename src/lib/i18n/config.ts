@@ -110,6 +110,9 @@ const resources = {
           terms_and: 'oraz',
           privacy_link: 'Politykę Prywatności'
         },
+        signup: {
+          email_confirmation_sent: 'Konto zostało utworzone! Sprawdź swoją skrzynkę e-mail i kliknij link potwierdzający, aby dokończyć rejestrację.'
+        },
         fields: {
           name: 'Imię i nazwisko',
           email: 'Adres e-mail',
@@ -656,6 +659,9 @@ const resources = {
           terms_link: 'Terms of Service',
           terms_and: 'and',
           privacy_link: 'Privacy Policy'
+        },
+        signup: {
+          email_confirmation_sent: 'Account created successfully! Check your email and click the confirmation link to complete your registration.'
         },
         fields: {
           name: 'Full name',

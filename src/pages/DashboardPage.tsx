@@ -139,6 +139,56 @@ export function DashboardPage() {
           </div>
         )}
 
+        {/* TikTok Integration */}
+        <div className="card-clean mb-6">
+          <h3 className="text-lg font-display font-semibold text-text-primary mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+            </svg>
+            TikTok Integration
+          </h3>
+          <p className="text-text-secondary mb-4">
+            Połącz swoje konto TikTok, aby brać udział w konkursach i śledzić swoje postępy
+          </p>
+          <div className="flex gap-4">
+            <Button 
+              variant="primary"
+              onClick={() => {
+                const clientKey = import.meta.env.VITE_TIKTOK_CLIENT_KEY;
+                const redirectUri = import.meta.env.VITE_TIKTOK_REDIRECT_URI;
+                
+                console.log('TikTok OAuth Debug:');
+                console.log('Client Key:', clientKey);
+                console.log('Redirect URI:', redirectUri);
+                
+                if (clientKey && redirectUri) {
+                  // Generate a random state parameter for CSRF protection
+                  const state = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+                  
+                  // Store state in sessionStorage for validation on redirect
+                  sessionStorage.setItem('tiktok_oauth_state', state);
+                  
+                  // Use the correct TikTok v2 OAuth endpoint
+                  const tiktokAuthUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${clientKey}&scope=user.info.basic,user.info.profile,video.list&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
+                  
+                  console.log('Generated OAuth URL:', tiktokAuthUrl);
+                  console.log('State:', state);
+                  
+                  window.location.href = tiktokAuthUrl;
+                } else {
+                  console.error('Missing TikTok configuration:', { clientKey: !!clientKey, redirectUri: !!redirectUri });
+                  alert('TikTok API keys not configured');
+                }
+              }}
+            >
+              Połącz TikTok
+            </Button>
+            <Button variant="secondary">
+              Test OAuth Callback
+            </Button>
+          </div>
+        </div>
+
         {/* Quick Actions */}
         <div className="card-clean">
           <h3 className="text-lg font-display font-semibold text-text-primary mb-4">

@@ -57,7 +57,31 @@ function App() {
                     <Route path="/auth/register" element={<AuthPage mode="register" />} />
                     <Route path="/terms" element={<TermsOfService />} />
                     <Route path="/privacy" element={<PrivacyPolicy />} />
-                    <Route path="/oauth/redirect" element={<div className="min-h-screen bg-background flex items-center justify-center"><div className="text-white text-center"><h1 className="text-2xl mb-4">Processing TikTok Authentication...</h1><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div></div></div>} />
+                    <Route path="/oauth/redirect" element={
+                      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-purple-900 flex items-center justify-center">
+                        <div className="max-w-md w-full mx-4">
+                          <div className="bg-surface border border-border rounded-lg p-8 text-center">
+                            <h1 className="text-2xl font-display font-bold text-white mb-4">
+                              TikTok OAuth Callback
+                            </h1>
+                            <p className="text-gray-300 mb-4">
+                              Processing your TikTok authentication...
+                            </p>
+                            <p className="text-sm text-gray-400">
+                              URL: {window.location.href}
+                            </p>
+                            <div className="mt-6">
+                              <button 
+                                onClick={() => window.location.href = '/dashboard'} 
+                                className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg"
+                              >
+                                Return to Dashboard
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    } />
                     
                     {/* Protected routes */}
                     <Route 

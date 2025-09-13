@@ -48,7 +48,7 @@ export function useAuthForm(): UseAuthFormResult {
     setError(null)
 
     try {
-      const { error: authError } = await auth.signUp(email, password, metadata)
+      const { data, error: authError } = await auth.signUp(email, password, metadata)
       
       if (authError) {
         setError(getErrorMessage(authError.message))
@@ -56,9 +56,17 @@ export function useAuthForm(): UseAuthFormResult {
         return false
       }
 
+      // If signup successful but user needs to confirm email
+      if (data && data.user && !data.session) {
+        setError('auth.signup.email_confirmation_sent')
+        setLoading(false)
+        return true // Return true because signup was successful, just needs confirmation
+      }
+
       setLoading(false)
       return true
     } catch (err) {
+      console.error('Signup error:', err)
       setError(t('auth.errors.unexpected'))
       setLoading(false)
       return false

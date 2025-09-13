@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
-  signUp: (email: string, password: string, metadata?: Record<string, any>) => Promise<{ error: AuthError | null }>
+  signUp: (email: string, password: string, metadata?: Record<string, any>) => Promise<{ data: any, error: AuthError | null }>
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>
   signOut: () => Promise<{ error: AuthError | null }>
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>
@@ -80,7 +80,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [])
 
   const signUp = async (email: string, password: string, metadata?: Record<string, any>) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -88,7 +88,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       },
     })
     
-    return { error }
+    return { data, error }
   }
 
   const signIn = async (email: string, password: string) => {

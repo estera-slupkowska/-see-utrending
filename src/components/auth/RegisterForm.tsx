@@ -80,7 +80,11 @@ export function RegisterForm({ onSuccess, onSwitchToLogin, onClose }: RegisterFo
     const success = await signUp(data.email, data.password, metadata)
     
     if (success) {
-      onSuccess?.()
+      // If there's an error message, it means email confirmation is needed
+      // In this case, we still consider it a success but don't trigger onSuccess
+      if (!error) {
+        onSuccess?.()
+      }
     }
   }
 
@@ -316,10 +320,18 @@ export function RegisterForm({ onSuccess, onSwitchToLogin, onClose }: RegisterFo
             <p className="text-error-red text-sm">{t(errors.acceptTerms.message!)}</p>
           )}
 
-          {/* Auth Error */}
+          {/* Auth Error/Info */}
           {error && (
-            <div className="bg-error-red/10 border border-error-red/20 rounded-lg p-4">
-              <p className="text-error-red text-sm text-center">{t(error)}</p>
+            <div className={error === 'auth.signup.email_confirmation_sent' 
+              ? "bg-primary/10 border border-primary/20 rounded-lg p-4"
+              : "bg-error-red/10 border border-error-red/20 rounded-lg p-4"
+            }>
+              <p className={error === 'auth.signup.email_confirmation_sent'
+                ? "text-primary text-sm text-center"
+                : "text-error-red text-sm text-center"
+              }>
+                {t(error)}
+              </p>
             </div>
           )}
 
