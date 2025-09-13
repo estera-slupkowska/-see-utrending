@@ -73,7 +73,10 @@
       "Bash(git push:*)",
       "Bash(git remote set-url:*)",
       "Bash(echo $VITE_TIKTOK_CLIENT_KEY)",
-      "WebFetch(domain:developers.tiktok.com)"
+      "WebFetch(domain:developers.tiktok.com)",
+      "WebFetch(domain:see-utrending-eta.vercel.app)",
+      "Bash(sed:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []
