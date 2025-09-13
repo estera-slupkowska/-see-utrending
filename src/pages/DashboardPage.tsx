@@ -154,8 +154,8 @@ export function DashboardPage() {
             <Button 
               variant="primary"
               onClick={() => {
-                const clientKey = import.meta.env.VITE_TIKTOK_CLIENT_KEY;
-                const redirectUri = import.meta.env.VITE_TIKTOK_REDIRECT_URI;
+                const clientKey = import.meta.env.VITE_TIKTOK_CLIENT_KEY || 'sbawnbpy8ri5x8kz7d';
+                const redirectUri = import.meta.env.VITE_TIKTOK_REDIRECT_URI || 'https://see-utrending-eta.vercel.app/oauth/redirect';
                 
                 console.log('TikTok OAuth Debug:');
                 console.log('Client Key:', clientKey);

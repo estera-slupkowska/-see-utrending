@@ -76,7 +76,8 @@
       "WebFetch(domain:developers.tiktok.com)",
       "WebFetch(domain:see-utrending-eta.vercel.app)",
       "Bash(sed:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(echo:*)"
     ],
     "deny": [],
     "ask": []
