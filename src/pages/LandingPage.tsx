@@ -56,7 +56,7 @@ export function LandingPage() {
   ]
 
   if (user) {
-    // Logged-in user view - Panel główny
+    // Logged-in user view - Panel główny with hero section
     return (
       <div className="cosmic-background min-h-screen relative overflow-hidden">
         {/* Cosmic Background with Stars and Planets */}
@@ -65,94 +65,86 @@ export function LandingPage() {
         {/* Enhanced background gradient overlay */}
         <div className="absolute inset-0 gradient-overlay-rising opacity-25 z-10"></div>
         
-        <div className="relative z-20 py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            {/* Header */}
-            <div className="text-center mb-16">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold gradient-text animate-pulse-glow mb-6">
+        <div className="relative z-20">
+          {/* Keep the beautiful hero section but replace CTA buttons */}
+          <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+            {/* Enhanced Background with Dynamic Elements */}
+            <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
+            
+            {/* Floating Interactive Elements */}
+            <div className="absolute inset-0 pointer-events-none">
+              {/* Dynamic floating icons */}
+              <div className="absolute top-20 left-10 transform rotate-6 scale-105 transition-all duration-1500 ease-in-out">
+                <Trophy className="w-8 h-8 text-yellow-400 animate-bounce opacity-60" />
+              </div>
+              
+              <div className="absolute top-32 right-16 transform rotate-12 scale-108 transition-all duration-1800 ease-in-out">
+                <Star className="w-6 h-6 text-pink-400 animate-pulse opacity-70" />
+              </div>
+              
+              <div className="absolute bottom-32 left-20 transform rotate-15 scale-110 transition-all duration-2000 ease-in-out">
+                <Zap className="w-7 h-7 text-cyan-400 animate-twinkle opacity-50" />
+              </div>
+              
+              <div className="absolute bottom-20 right-12 transform rotate-20 scale-112 transition-all duration-1800 ease-in-out">
+                <Gift className="w-6 h-6 text-purple-400 animate-bounce opacity-65" />
+              </div>
+            </div>
+            
+            <div className="relative max-w-4xl mx-auto text-center z-10">
+              {/* Enhanced Main Title with Dynamic Effects */}
+              <div className="relative mb-6">
+                <h1 className="text-6xl sm:text-7xl lg:text-8xl font-display font-bold animate-pulse-glow">
+                  <span className="gradient-text relative">
+                    SeeUTrending
+                  </span>
+                </h1>
+              </div>
+              
+              {/* Subtitle */}
+              <p className="text-2xl sm:text-3xl text-text-secondary mb-4">
                 Panel główny
-              </h1>
-              <p className="text-xl sm:text-2xl text-text-secondary mb-4">
-                Twój centralny hub dla wszystkich funkcji SeeUTrending
               </p>
-              <div className="w-32 h-1 bg-gradient-to-r from-primary to-accent mx-auto rounded-full"></div>
-            </div>
-
-            {/* Navigation Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-              {navigationCards.map((card, index) => {
-                const IconComponent = card.icon
-                return (
-                  <div
-                    key={card.title}
-                    onClick={() => navigate(card.path)}
-                    className={`group cursor-pointer card-clean hover:scale-105 transition-all duration-500 hover:shadow-2xl animate-slide-in-up ${card.delay}`}
-                  >
-                    <div className="relative overflow-hidden">
-                      {/* Icon with gradient background */}
-                      <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${card.color} flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform duration-300`}>
-                        <IconComponent className="w-10 h-10 text-white drop-shadow-lg" />
-                      </div>
-
-                      {/* Title */}
-                      <h3 className="text-2xl font-display font-bold text-text-primary mb-4 group-hover:text-primary transition-colors">
-                        {card.title}
-                      </h3>
-
-                      {/* Description */}
-                      <p className="text-text-secondary mb-6 leading-relaxed">
-                        {card.description}
-                      </p>
-
-                      {/* Action indicator */}
-                      <div className="flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="flex items-center gap-2 text-primary font-semibold">
-                          <span>Przejdź</span>
-                          <Target className="w-4 h-4 group-hover:animate-bounce" />
+              
+              {/* Decorative line */}
+              <div className="w-24 h-1 bg-gradient-to-r from-primary to-accent mx-auto mb-8 rounded-full"></div>
+              
+              {/* Description */}
+              <p className="text-lg sm:text-xl text-text-secondary mb-12 max-w-2xl mx-auto leading-relaxed">
+                Twój centralny hub dla wszystkich funkcji platformy
+              </p>
+              
+              {/* Enhanced CTA Buttons - Small with descriptions */}
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 justify-center items-center mb-16 max-w-4xl mx-auto">
+                {navigationCards.map((card, index) => {
+                  const IconComponent = card.icon
+                  return (
+                    <div key={card.title} className="relative group">
+                      <button
+                        onClick={() => navigate(card.path)}
+                        className={`w-full p-4 bg-gradient-to-br ${card.color} rounded-xl shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-2xl group`}
+                      >
+                        <IconComponent className="w-6 h-6 text-white mx-auto mb-2" />
+                        <div className="text-white text-sm font-semibold">{card.title}</div>
+                        <div className="text-white/80 text-xs mt-1">
+                          {card.title === 'Konkursy' && 'Weź udział'}
+                          {card.title === 'Education Hub' && 'Naucz się'}
+                          {card.title === 'Użytkownicy' && 'Ranking'}
+                          {card.title === 'Nagrody' && 'XP i odznaki'}
+                          {card.title === 'Panel użytkownika' && 'Twój profil'}
                         </div>
-                      </div>
-
-                      {/* Hover glow effect */}
-                      <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-2xl`}></div>
+                      </button>
                     </div>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">
-              <div className="text-center p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary/30 transition-colors">
-                <div className="flex items-center justify-center mb-4">
-                  <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                    <Zap className="w-6 h-6 text-primary" />
-                  </div>
-                </div>
-                <h4 className="text-xl font-bold text-text-primary mb-2">Twój poziom</h4>
-                <p className="text-text-secondary">Sprawdź swój postęp w panelu użytkownika</p>
-              </div>
-
-              <div className="text-center p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-success-green/30 transition-colors">
-                <div className="flex items-center justify-center mb-4">
-                  <div className="w-12 h-12 bg-success-green/20 rounded-full flex items-center justify-center">
-                    <Trophy className="w-6 h-6 text-success-green" />
-                  </div>
-                </div>
-                <h4 className="text-xl font-bold text-text-primary mb-2">Aktywne konkursy</h4>
-                <p className="text-text-secondary">Znajdź nowe wyzwania do podjęcia</p>
-              </div>
-
-              <div className="text-center p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-accent/30 transition-colors">
-                <div className="flex items-center justify-center mb-4">
-                  <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center">
-                    <Star className="w-6 h-6 text-accent" />
-                  </div>
-                </div>
-                <h4 className="text-xl font-bold text-text-primary mb-2">Społeczność</h4>
-                <p className="text-text-secondary">Poznaj innych twórców i ranking</p>
+                  )
+                })}
               </div>
             </div>
-          </div>
+            
+            {/* Floating elements */}
+            <div className="absolute top-20 left-10 w-4 h-4 bg-primary rounded-full opacity-60 animate-pulse"></div>
+            <div className="absolute top-40 right-20 w-3 h-3 bg-accent rounded-full opacity-60 animate-pulse delay-75"></div>
+            <div className="absolute bottom-20 left-20 w-2 h-2 bg-primary rounded-full opacity-60 animate-pulse delay-150"></div>
+          </section>
         </div>
       </div>
     )

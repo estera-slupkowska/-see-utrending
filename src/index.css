@@ -713,10 +713,23 @@
   /* Content visibility fallbacks to prevent black screen */
   .main-content-area {
     min-height: 100vh;
-    background-color: #0A0A0A;
-    color: #FFFFFF;
+    background-color: #0A0A0A !important;
+    color: #FFFFFF !important;
     position: relative;
     z-index: 20;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  /* Ensure all dashboard elements are visible */
+  .main-content-area * {
+    visibility: visible !important;
+  }
+  
+  .main-content-area .card-clean {
+    background-color: #1A1A1A !important;
+    border: 1px solid #404040 !important;
+    opacity: 1 !important;
   }
   
   /* Ensure text is always visible */
