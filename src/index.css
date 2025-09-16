@@ -286,6 +286,11 @@
   
   .card-clean {
     @apply bg-surface border border-border rounded-xl p-6 transition-all duration-300;
+    /* Fallback visibility for animations */
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+    z-index: 10;
   }
   
   .purple-accent {
@@ -614,6 +619,39 @@
   .animate-pulse-glow {
     animation: pulse-glow 4s ease-in-out infinite;
   }
+  
+  /* Missing animation utility classes for cosmic background */
+  .animate-twinkle {
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  
+  .animate-twinkle-slow {
+    animation: twinkle-slow 4s ease-in-out infinite;
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse-slow 5s ease-in-out infinite;
+  }
+  
+  .animate-pulse-ultra-slow {
+    animation: pulse-ultra-slow 8s ease-in-out infinite;
+  }
+  
+  .animate-float-slow {
+    animation: float-slow 6s ease-in-out infinite;
+  }
+  
+  .animate-orbit-slow {
+    animation: orbit-slow 20s linear infinite;
+  }
+  
+  .animate-orbit-reverse {
+    animation: orbit-reverse 25s linear infinite;
+  }
+  
+  .animate-shooting-star {
+    animation: shooting-star 2s ease-out infinite;
+  }
 
   /* Cosmic Background Enhancements */
   .cosmic-background {
@@ -621,6 +659,9 @@
                 radial-gradient(ellipse at 80% 90%, rgba(168, 85, 247, 0.08) 0%, transparent 55%), 
                 radial-gradient(ellipse at 50% 50%, rgba(139, 92, 246, 0.04) 0%, transparent 65%), 
                 #0A0A0A;
+    /* Ensure background doesn't interfere with content */
+    min-height: 100vh;
+    position: relative;
   }
   
   .cosmic-rewards {
@@ -666,6 +707,32 @@
     /* Ensure cosmic backgrounds don't interfere with touch targets */
     .cosmic-background, .cosmic-rewards {
       pointer-events: none;
+    }
+  }
+  
+  /* Content visibility fallbacks to prevent black screen */
+  .main-content-area {
+    min-height: 100vh;
+    background-color: #0A0A0A;
+    color: #FFFFFF;
+    position: relative;
+    z-index: 20;
+  }
+  
+  /* Ensure text is always visible */
+  .gradient-text {
+    color: #FFFFFF !important;
+    background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+  
+  /* Fallback for when gradients fail */
+  @supports not (background-clip: text) {
+    .gradient-text {
+      color: #8B5CF6 !important;
+      -webkit-text-fill-color: #8B5CF6 !important;
     }
   }
 
