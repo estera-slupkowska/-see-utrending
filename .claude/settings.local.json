@@ -77,7 +77,10 @@
       "WebFetch(domain:see-utrending-eta.vercel.app)",
       "Bash(sed:*)",
       "Bash(npx tsc:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(start chrome \"https://seeutrending-ks231yb15-seeutrendings-projects.vercel.app\")",
+      "Bash(start chrome \"http://localhost:5179/dashboard\")",
+      "Bash(start chrome \"http://localhost:5180\")"
     ],
     "deny": [],
     "ask": []

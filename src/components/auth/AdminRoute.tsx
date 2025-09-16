@@ -22,6 +22,7 @@ export function AdminRoute({ children }: AdminRouteProps) {
     )
   }
 
+  // Proper admin check - only admin users can access admin panel
   if (!user || !isAdmin()) {
     return <Navigate to="/" replace />
   }

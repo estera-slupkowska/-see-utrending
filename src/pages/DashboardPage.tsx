@@ -1,13 +1,20 @@
+import { useState } from 'react'
 import { useAuth } from '../lib/auth/context'
 import { usePermissions } from '../lib/auth/hooks'
 import { useTranslation } from 'react-i18next'
 import { Button, Badge } from '../components/ui'
-import { User, Trophy, Star, Target } from 'lucide-react'
+import { TikTokConnectionStatus } from '../components/dashboard/TikTokConnectionStatus'
+import { XPProgressBar } from '../components/gamification/XPProgressBar'
+import { BadgeCollection } from '../components/gamification/BadgeCollection'
+import { UserProfileEdit } from '../components/profile/UserProfileEdit'
+import { User, Trophy, Star, Target, Edit3, Settings, BarChart3, Zap, Award } from 'lucide-react'
 
 export function DashboardPage() {
   const { t } = useTranslation()
   const { user } = useAuth()
-  const { isCreator, isBrand, isSpectator } = usePermissions()
+  const { isCreator, isBrand, isSpectator, isAdmin } = usePermissions()
+  const [showProfileEdit, setShowProfileEdit] = useState(false)
+
 
   const getUserRole = () => {
     if (isCreator()) return 'creator'
@@ -17,28 +24,67 @@ export function DashboardPage() {
   }
 
   const userRole = getUserRole()
-  const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'Użytkownik'
+  const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'Testowy Użytkownik'
+  
+  // Mock user stats for sandbox - including earned XP from unlocked badges
+  const userStats = {
+    xp: 570, // Base XP (400) + early-adopter (100) + hot-start (20) + streak-7 (50) = 570
+    level: 4, // Increased level due to higher XP
+    contestsParticipated: 2,
+    totalViews: 25340,
+    totalLikes: 1890,
+    engagementRate: 7.5,
+    ranking: 127,
+    earnedXPFromBadges: 170 // XP from unlocked badges: early-adopter (100) + hot-start (20) + streak-7 (50)
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        {/* Profile Edit Modal */}
+        {showProfileEdit && (
+          <UserProfileEdit 
+            onClose={() => setShowProfileEdit(false)}
+            onSave={(profileData) => {
+              console.log('Profile saved:', profileData)
+              setShowProfileEdit(false)
+            }}
+          />
+        )}
+        {/* Welcome Section with Animation */}
+        <div className="mb-8 animate-fade-in">
           <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-4xl font-display font-bold gradient-text">
-                Witaj, {userName}!
+            <div className="space-y-2">
+              <h1 className="text-4xl font-display font-bold gradient-text animate-pulse-glow">
+                Witaj, {userName}! 
+                <span className="inline-block animate-bounce ml-2">👋</span>
               </h1>
-              <p className="text-text-secondary mt-2">
+              <p className="text-text-secondary">
                 {t(`auth.roles.${userRole}.description`)}
               </p>
+              <div className="flex items-center gap-2 text-sm text-text-muted">
+                <Zap className="w-4 h-4 text-xp-gold animate-pulse" />
+                <span>Poziom {userStats.level} • {userStats.xp.toLocaleString('pl-PL')} XP</span>
+                <span className="w-1 h-1 bg-text-muted rounded-full"></span>
+                <span>#{userStats.ranking} w rankingu</span>
+              </div>
             </div>
-            <Badge 
-              variant={userRole === 'creator' ? 'primary' : userRole === 'brand' ? 'success' : 'default'}
-              className="capitalize"
-            >
-              {t(`auth.roles.${userRole}.title`)}
-            </Badge>
+            <div className="flex items-center gap-3">
+              <Badge 
+                variant={userRole === 'creator' ? 'primary' : userRole === 'brand' ? 'success' : 'default'}
+                className="capitalize animate-pulse"
+              >
+                {t(`auth.roles.${userRole}.title`)}
+              </Badge>
+              <button
+                onClick={() => setShowProfileEdit(true)}
+                className="p-2 hover:bg-surface-light rounded-lg transition-all duration-300 hover:scale-110 group"
+                title="Edytuj profil"
+              >
+                <Edit3 className="w-5 h-5 text-text-secondary group-hover:text-primary transition-colors" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -47,8 +93,8 @@ export function DashboardPage() {
           <div className="card-clean">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-muted text-sm font-medium">Aktywne konkursy</p>
-                <p className="text-2xl font-bold text-text-primary">0</p>
+                <p className="text-text-muted text-sm font-medium">Konkursy</p>
+                <p className="text-2xl font-bold text-text-primary">{userStats.contestsParticipated}</p>
               </div>
               <div className="p-3 bg-primary/10 rounded-lg">
                 <Target className="h-6 w-6 text-primary" />
@@ -59,11 +105,14 @@ export function DashboardPage() {
           <div className="card-clean">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-muted text-sm font-medium">Punkty XP</p>
-                <p className="text-2xl font-bold text-text-primary">0</p>
+                <p className="text-text-muted text-sm font-medium">Łączne wyświetlenia</p>
+                <p className="text-2xl font-bold text-text-primary">{userStats.totalViews.toLocaleString('pl-PL')}</p>
               </div>
-              <div className="p-3 bg-xp-gold/10 rounded-lg">
-                <Star className="h-6 w-6 text-xp-gold" />
+              <div className="p-3 bg-success-green/10 rounded-lg">
+                <svg className="h-6 w-6 text-success-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
               </div>
             </div>
           </div>
@@ -72,10 +121,10 @@ export function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-text-muted text-sm font-medium">Pozycja w rankingu</p>
-                <p className="text-2xl font-bold text-text-primary">-</p>
+                <p className="text-2xl font-bold text-text-primary">#{userStats.ranking}</p>
               </div>
-              <div className="p-3 bg-success-green/10 rounded-lg">
-                <Trophy className="h-6 w-6 text-success-green" />
+              <div className="p-3 bg-xp-gold/10 rounded-lg">
+                <Trophy className="h-6 w-6 text-xp-gold" />
               </div>
             </div>
           </div>
@@ -91,11 +140,39 @@ export function DashboardPage() {
               Rozpocznij swoją podróż jako twórca treści. Bierz udział w konkursach, zdobywaj punkty i buduj swoją pozycję w rankingu.
             </p>
             <div className="flex gap-4">
-              <Button variant="primary">
+              <Button variant="primary" onClick={() => window.location.href = '/contests'}>
                 Przeglądaj konkursy
               </Button>
-              <Button variant="secondary">
+              <Button variant="secondary" onClick={() => setShowProfileEdit(true)}>
                 Zarządzaj profilem
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Admin Access - Only for Admin Users */}
+        {user && isAdmin() && (
+          <div className="card-clean mb-6 border-2 border-yellow-400/30 bg-yellow-400/5">
+            <h2 className="text-2xl font-display font-bold text-yellow-400 mb-4">
+              🚀 Panel Administracyjny
+            </h2>
+            <p className="text-text-secondary mb-6">
+              Dostęp do panelu administracyjnego z nową strukturą zespołu.
+            </p>
+            <div className="flex gap-4">
+              <Button 
+                variant="gaming" 
+                onClick={() => window.location.href = '/admin'}
+                className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold"
+              >
+                Otwórz Panel Admin
+              </Button>
+              <Button 
+                variant="secondary" 
+                onClick={() => window.location.href = '/admin/team'}
+                className="border-yellow-400 text-yellow-400 hover:bg-yellow-400/10"
+              >
+                Struktura Zespołu
               </Button>
             </div>
           </div>
@@ -139,84 +216,108 @@ export function DashboardPage() {
           </div>
         )}
 
-        {/* TikTok Integration */}
-        <div className="card-clean mb-6">
-          <h3 className="text-lg font-display font-semibold text-text-primary mb-4 flex items-center gap-2">
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-            </svg>
-            TikTok Integration
-          </h3>
-          <p className="text-text-secondary mb-4">
-            Połącz swoje konto TikTok, aby brać udział w konkursach i śledzić swoje postępy
-          </p>
-          <div className="flex gap-4">
-            <Button 
-              variant="primary"
-              onClick={() => {
-                const clientKey = import.meta.env.VITE_TIKTOK_CLIENT_KEY || 'sbawnbpy8ri5x8kz7d';
-                const redirectUri = import.meta.env.VITE_TIKTOK_REDIRECT_URI || 'https://see-utrending-eta.vercel.app/oauth/redirect';
-                
-                console.log('TikTok OAuth Debug:');
-                console.log('Client Key:', clientKey);
-                console.log('Redirect URI:', redirectUri);
-                
-                if (clientKey && redirectUri) {
-                  // Generate a random state parameter for CSRF protection
-                  const state = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-                  
-                  // Store state in sessionStorage for validation on redirect
-                  sessionStorage.setItem('tiktok_oauth_state', state);
-                  
-                  // Use the correct TikTok v2 OAuth endpoint
-                  const tiktokAuthUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${clientKey}&scope=user.info.basic,user.info.profile,video.list&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
-                  
-                  console.log('Generated OAuth URL:', tiktokAuthUrl);
-                  console.log('State:', state);
-                  
-                  window.location.href = tiktokAuthUrl;
-                } else {
-                  console.error('Missing TikTok configuration:', { clientKey: !!clientKey, redirectUri: !!redirectUri });
-                  alert('TikTok API keys not configured');
-                }
-              }}
-            >
-              Połącz TikTok
-            </Button>
-            <Button variant="secondary">
-              Test OAuth Callback
-            </Button>
+        {/* Fallback for users without specific roles or not logged in */}
+        {!isCreator() && !isBrand() && !isSpectator() && (
+          <div className="card-clean mb-6">
+            <h2 className="text-2xl font-display font-bold text-text-primary mb-4">
+              Panel Użytkownika
+            </h2>
+            <p className="text-text-secondary mb-6">
+              Witaj w SeeUTrending! Zaloguj się, aby uzyskać pełen dostęp do wszystkich funkcji platformy.
+            </p>
+            <div className="flex gap-4">
+              <Button variant="primary" onClick={() => window.location.href = '/auth/login'}>
+                Zaloguj się
+              </Button>
+              <Button variant="secondary" onClick={() => window.location.href = '/auth/register'}>
+                Zarejestruj się
+              </Button>
+            </div>
           </div>
+        )}
+
+        {/* TikTok Integration */}
+        <TikTokConnectionStatus />
+
+        {/* XP Progress */}
+        <XPProgressBar 
+          currentXP={userStats.xp} 
+          currentLevel={userStats.level}
+        />
+
+        {/* Badge Collection */}
+        <div data-section="badges">
+          <BadgeCollection />
         </div>
 
-        {/* Quick Actions */}
-        <div className="card-clean">
-          <h3 className="text-lg font-display font-semibold text-text-primary mb-4">
-            Szybkie działania
-          </h3>
+        {/* Quick Actions with Functionality */}
+        <div className="card-clean animate-slide-in-up">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-display font-semibold text-text-primary">
+              Szybkie działania
+            </h3>
+            <div className="flex items-center gap-1 text-xs text-text-muted">
+              <div className="w-2 h-2 bg-success-green rounded-full animate-pulse"></div>
+              <span>Wszystkie funkcje aktywne</span>
+            </div>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <button className="p-4 text-left hover:bg-surface-light rounded-lg transition-colors">
-              <User className="h-6 w-6 text-primary mb-2" />
-              <p className="font-medium text-text-primary">Edytuj profil</p>
+            <button 
+              onClick={() => setShowProfileEdit(true)}
+              className="group p-4 text-left hover:bg-surface-light rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-transparent hover:border-primary/20 active:scale-95"
+            >
+              <User className="h-6 w-6 text-primary mb-2 group-hover:animate-pulse" />
+              <p className="font-medium text-text-primary group-hover:text-primary transition-colors">Edytuj profil</p>
               <p className="text-sm text-text-muted">Zaktualizuj swoje informacje</p>
+              <div className="mt-2 flex items-center text-xs text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">
+                <Edit3 className="w-3 h-3 mr-1" />
+                <span>Kliknij aby edytować</span>
+              </div>
             </button>
             
-            <button className="p-4 text-left hover:bg-surface-light rounded-lg transition-colors">
-              <Trophy className="h-6 w-6 text-xp-gold mb-2" />
-              <p className="font-medium text-text-primary">Ranking</p>
+            <button 
+              onClick={() => window.location.href = '/demo-contest#leaderboard'}
+              className="group p-4 text-left hover:bg-surface-light rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-transparent hover:border-xp-gold/20 active:scale-95"
+            >
+              <Trophy className="h-6 w-6 text-xp-gold mb-2 group-hover:animate-bounce" />
+              <p className="font-medium text-text-primary group-hover:text-xp-gold transition-colors">Ranking</p>
               <p className="text-sm text-text-muted">Zobacz swoją pozycję</p>
+              <div className="mt-2 flex items-center text-xs text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">
+                <BarChart3 className="w-3 h-3 mr-1" />
+                <span>Pozycja #{userStats.ranking}</span>
+              </div>
             </button>
             
-            <button className="p-4 text-left hover:bg-surface-light rounded-lg transition-colors">
-              <Star className="h-6 w-6 text-success-green mb-2" />
-              <p className="font-medium text-text-primary">Osiągnięcia</p>
+            <button 
+              onClick={() => {
+                // Scroll to badge collection section
+                const badgeSection = document.querySelector('[data-section="badges"]')
+                if (badgeSection) {
+                  badgeSection.scrollIntoView({ behavior: 'smooth' })
+                }
+              }}
+              className="group p-4 text-left hover:bg-surface-light rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-transparent hover:border-success-green/20 active:scale-95"
+            >
+              <Star className="h-6 w-6 text-success-green mb-2 group-hover:animate-spin" />
+              <p className="font-medium text-text-primary group-hover:text-success-green transition-colors">Osiągnięcia</p>
               <p className="text-sm text-text-muted">Twoje odznaki i nagrody</p>
+              <div className="mt-2 flex items-center text-xs text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">
+                <Award className="w-3 h-3 mr-1" />
+                <span>3 odblokowane</span>
+              </div>
             </button>
             
-            <button className="p-4 text-left hover:bg-surface-light rounded-lg transition-colors">
-              <Target className="h-6 w-6 text-primary mb-2" />
-              <p className="font-medium text-text-primary">Konkursy</p>
-              <p className="text-sm text-text-muted">Aktywne wyzwania</p>
+            <button 
+              onClick={() => window.location.href = '/contests'}
+              className="group p-4 text-left hover:bg-surface-light rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-transparent hover:border-purple-400/20 active:scale-95"
+            >
+              <Target className="h-6 w-6 text-primary mb-2 group-hover:animate-pulse" />
+              <p className="font-medium text-text-primary group-hover:text-purple-400 transition-colors">Konkursy</p>
+              <p className="text-sm text-text-muted">Zobacz dostępne konkursy</p>
+              <div className="mt-2 flex items-center text-xs text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">
+                <Zap className="w-3 h-3 mr-1" />
+                <span>Przeglądaj wszystkie</span>
+              </div>
             </button>
           </div>
         </div>

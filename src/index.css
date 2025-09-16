@@ -326,6 +326,52 @@
   .floating-animation {
     @apply animate-float;
   }
+
+  /* Missing Animation Classes */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .animate-slide-in-up {
+    animation: slideInUp 0.3s ease-out;
+  }
+
+  .animate-pulse-glow {
+    animation: pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% {
+      opacity: 1;
+      text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+    }
+    50% {
+      opacity: 0.8;
+      text-shadow: 0 0 30px rgba(139, 92, 246, 0.8);
+    }
+  }
   
   .feature-card {
     @apply bg-surface/90 border border-border rounded-xl p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 backdrop-blur-md;
@@ -883,6 +929,20 @@
     }
   }
   
+  /* Additional Animation Classes */
+  .animate-float-reverse {
+    animation: float-reverse 6s ease-in-out infinite;
+  }
+  
+  @keyframes float-reverse {
+    0%, 100% { 
+      transform: translateY(0) rotate(0deg); 
+    }
+    50% { 
+      transform: translateY(-15px) rotate(180deg); 
+    }
+  }
+
   /* Touch Device Optimizations */
   @media (hover: none) and (pointer: coarse) {
     .micro-hover:hover, .dopamine-hit:hover,

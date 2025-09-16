@@ -73,6 +73,14 @@ export function Navbar() {
               >
                 {t('nav.rewards')}
               </Link>
+              {user && (
+                <Link
+                  to="/users"
+                  className="text-text-secondary hover:text-primary transition-colors duration-200 px-3 py-2 text-sm font-medium whitespace-nowrap"
+                >
+                  Użytkownicy
+                </Link>
+              )}
               <Link
                 to="/brands"
                 className="text-text-secondary hover:text-primary transition-colors duration-200 px-3 py-2 text-sm font-medium whitespace-nowrap"

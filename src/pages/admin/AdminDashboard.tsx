@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { 
   Users, 
   Trophy, 
@@ -10,13 +11,15 @@ import {
   TrendingUp,
   Calendar,
   Award,
-  MessageSquare
+  MessageSquare,
+  Building2
 } from 'lucide-react'
 import { AnalyticsService, DashboardStats, ActivityItem } from '../../services/admin/analytics.service'
 import { useContestUpdates, useUserUpdates, useSubmissionUpdates } from '../../hooks/useRealtimeUpdates'
 
 export function AdminDashboard() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null)
   const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -172,7 +175,7 @@ export function AdminDashboard() {
       {/* Quick Actions */}
       <div className="bg-surface/50 backdrop-blur-sm border border-border rounded-2xl p-6">
         <h2 className="text-xl font-semibold text-white mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <button className="flex items-center space-x-3 p-4 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 rounded-lg transition-colors">
             <Trophy className="w-5 h-5 text-purple-400" />
             <span className="text-white font-medium">Create Contest</span>
@@ -184,6 +187,13 @@ export function AdminDashboard() {
           <button className="flex items-center space-x-3 p-4 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 rounded-lg transition-colors">
             <Users className="w-5 h-5 text-green-400" />
             <span className="text-white font-medium">Manage Users</span>
+          </button>
+          <button 
+            onClick={() => navigate('/admin/team')}
+            className="flex items-center space-x-3 p-4 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/20 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg group"
+          >
+            <Building2 className="w-5 h-5 text-yellow-400 group-hover:animate-pulse" />
+            <span className="text-white font-medium">Team Structure</span>
           </button>
         </div>
       </div>

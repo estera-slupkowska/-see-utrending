@@ -124,7 +124,7 @@ export function RewardsPage() {
       color: 'from-purple-600 to-pink-600',
       requirement: 'First 1000 users',
       rarity: 'legendary',
-      xp: 30
+      xp: 100
     }
   ]
 
@@ -189,6 +189,34 @@ export function RewardsPage() {
               </p>
             </div>
             
+            {/* XP System Information */}
+            <div className="relative p-6 rounded-2xl bg-gradient-to-r from-xp-gold/20 to-primary/20 border border-xp-gold/30 mb-8">
+              <div className="flex items-center justify-center space-x-3 mb-4">
+                <Zap className="h-8 w-8 text-xp-gold animate-pulse" />
+                <span className="text-2xl font-bold text-xp-gold">System XP</span>
+                <Eye className="h-6 w-6 text-primary animate-bounce" />
+              </div>
+              <div className="text-center space-y-3">
+                <p className="text-lg text-white font-semibold">
+                  🎯 Zdobywaj <span className="text-xp-gold font-bold">10 XP</span> za każde <span className="text-primary font-bold">100 wyświetleń</span>!
+                </p>
+                <div className="flex items-center justify-center space-x-6 text-sm text-white/80">
+                  <div className="flex items-center space-x-2">
+                    <Eye className="w-4 h-4" />
+                    <span>100 wyświetleń</span>
+                  </div>
+                  <span className="text-xp-gold">=</span>
+                  <div className="flex items-center space-x-2">
+                    <Zap className="w-4 h-4 text-xp-gold" />
+                    <span className="text-xp-gold font-bold">10 XP</span>
+                  </div>
+                </div>
+                <p className="text-xs text-white/70 mt-2">
+                  Im więcej wyświetleń, tym więcej XP i wyższy poziom! 🚀
+                </p>
+              </div>
+            </div>
+
             <div className="relative p-8 rounded-2xl bg-surface/50 border border-border/50">
               <div className="flex items-center justify-center space-x-4 mb-4">
                 <Camera className="h-8 w-8 text-primary" />
