@@ -21,10 +21,10 @@ export function ProtectedRoute({
   // Show loading state while checking authentication
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen main-content-area flex items-center justify-center" style={{backgroundColor: '#0A0A0A', color: '#FFFFFF'}}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-text-secondary">Ładowanie...</p>
+          <p className="text-white">Ładowanie...</p>
         </div>
       </div>
     )
@@ -38,13 +38,13 @@ export function ProtectedRoute({
   // Check role permissions if required
   if (requireRole && !hasRole(requireRole)) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen main-content-area flex items-center justify-center" style={{backgroundColor: '#0A0A0A', color: '#FFFFFF'}}>
         <div className="text-center max-w-md mx-auto">
           <div className="card-clean">
-            <h2 className="text-2xl font-display font-bold text-text-primary mb-4">
+            <h2 className="text-2xl font-display font-bold text-white mb-4">
               Brak uprawnień
             </h2>
-            <p className="text-text-secondary mb-6">
+            <p className="text-gray-300 mb-6">
               Nie masz wystarczających uprawnień, aby uzyskać dostęp do tej strony.
             </p>
             <button

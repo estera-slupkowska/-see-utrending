@@ -18,7 +18,7 @@ export function PrivacyPolicy() {
             className="inline-flex items-center space-x-2 text-primary hover:text-primary/80 mb-6 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Back to Home</span>
+            <span>Powrót do strony głównej</span>
           </Link>
           
           <div className="flex items-center space-x-3 mb-4">
@@ -26,8 +26,8 @@ export function PrivacyPolicy() {
               <Shield className="w-8 h-8 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">Privacy Policy</h1>
-              <p className="text-gray-400">Last updated: {new Date().toLocaleDateString()}</p>
+              <h1 className="text-3xl font-bold text-white">Polityka Prywatności</h1>
+              <p className="text-gray-400">Ostatnia aktualizacja: {new Date().toLocaleDateString('pl-PL')}</p>
             </div>
           </div>
         </motion.div>
@@ -43,11 +43,11 @@ export function PrivacyPolicy() {
           <section>
             <div className="flex items-center space-x-2 mb-4">
               <Eye className="w-5 h-5 text-primary" />
-              <h2 className="text-xl font-bold text-white">Introduction</h2>
+              <h2 className="text-xl font-bold text-white">Wprowadzenie</h2>
             </div>
             <p className="text-gray-300 leading-relaxed">
-              SeeUTrending ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, 
-              use, disclose, and safeguard your information when you use our platform for TikTok creator contests and gamification.
+              SeeUTrending ("my", "nasz" lub "nas") jest zobowiązany do ochrony Twojej prywatności. Niniejsza Polityka Prywatności wyjaśnia, w jaki sposób gromadzimy,
+              używamy, ujawniamy i chronimy Twoje informacje podczas korzystania z naszej platformy do konkursów twórców TikToka i grywalizacji.
             </p>
           </section>
 
@@ -55,46 +55,46 @@ export function PrivacyPolicy() {
           <section>
             <div className="flex items-center space-x-2 mb-4">
               <Database className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold text-white">1. Information We Collect</h3>
+              <h3 className="text-lg font-semibold text-white">1. Informacje Które Gromadzimy</h3>
             </div>
 
             <div className="space-y-4">
               <div>
-                <h4 className="text-white font-medium mb-2">Account Information</h4>
+                <h4 className="text-white font-medium mb-2">Informacje o Koncie</h4>
                 <ul className="text-gray-300 space-y-1 leading-relaxed ml-4">
-                  <li>• Email address and name for account creation</li>
-                  <li>• Profile information you provide (bio, avatar, preferences)</li>
-                  <li>• Account preferences and settings</li>
+                  <li>• Adres e-mail i imię do tworzenia konta</li>
+                  <li>• Informacje profilowe które podajesz (biografia, awatar, preferencje)</li>
+                  <li>• Preferencje i ustawienia konta</li>
                 </ul>
               </div>
 
               <div>
-                <h4 className="text-white font-medium mb-2">TikTok Integration Data</h4>
+                <h4 className="text-white font-medium mb-2">Dane Integracji TikTok</h4>
                 <ul className="text-gray-300 space-y-1 leading-relaxed ml-4">
-                  <li>• TikTok username, display name, and profile information</li>
-                  <li>• Follower count and basic account statistics</li>
-                  <li>• Video URLs and metadata for contest submissions</li>
-                  <li>• Video performance metrics (views, likes, comments, shares)</li>
-                  <li>• OAuth tokens (encrypted and securely stored)</li>
+                  <li>• Nazwa użytkownika TikTok, wyświetlana nazwa i informacje profilowe</li>
+                  <li>• Liczba obserwujących i podstawowe statystyki konta</li>
+                  <li>• URL-e video i metadane dla zgłoszeń konkursowych</li>
+                  <li>• Metryki wydajności video (wyświetlenia, polubienia, komentarze, udostępnienia)</li>
+                  <li>• Tokeny OAuth (zaszyfrowane i bezpiecznie przechowywane)</li>
                 </ul>
               </div>
 
               <div>
-                <h4 className="text-white font-medium mb-2">Platform Activity</h4>
+                <h4 className="text-white font-medium mb-2">Aktywność na Platformie</h4>
                 <ul className="text-gray-300 space-y-1 leading-relaxed ml-4">
-                  <li>• Contest submissions and participation history</li>
-                  <li>• XP points, badges, and achievement progress</li>
-                  <li>• Leaderboard rankings and scores</li>
-                  <li>• Platform usage and interaction data</li>
+                  <li>• Zgłoszenia konkursowe i historia udziału</li>
+                  <li>• Punkty XP, odznaki i postęp osiągnięć</li>
+                  <li>• Rankingi i wyniki na tablicach wyników</li>
+                  <li>• Dane o korzystaniu z platformy i interakcjach</li>
                 </ul>
               </div>
 
               <div>
-                <h4 className="text-white font-medium mb-2">Technical Information</h4>
+                <h4 className="text-white font-medium mb-2">Informacje Techniczne</h4>
                 <ul className="text-gray-300 space-y-1 leading-relaxed ml-4">
-                  <li>• IP address and browser information</li>
-                  <li>• Device type and operating system</li>
-                  <li>• Platform usage analytics and performance data</li>
+                  <li>• Adres IP i informacje o przeglądarce</li>
+                  <li>• Typ urządzenia i system operacyjny</li>
+                  <li>• Analityka użytkowania platformy i dane wydajności</li>
                 </ul>
               </div>
             </div>
@@ -102,59 +102,59 @@ export function PrivacyPolicy() {
 
           {/* How We Use Information */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">2. How We Use Your Information</h3>
-            <p className="text-gray-300 leading-relaxed mb-4">We use the collected information to:</p>
+            <h3 className="text-lg font-semibold text-white mb-3">2. Jak Używamy Twoich Informacji</h3>
+            <p className="text-gray-300 leading-relaxed mb-4">Używamy zebranych informacji do:</p>
             <ul className="text-gray-300 space-y-2 leading-relaxed">
-              <li>• Provide and maintain our contest platform services</li>
-              <li>• Authenticate your account and enable TikTok integration</li>
-              <li>• Track contest submissions and calculate rankings</li>
-              <li>• Award XP points, badges, and other gamification rewards</li>
-              <li>• Send notifications about contests, achievements, and platform updates</li>
-              <li>• Generate analytics and insights for creators and brands</li>
-              <li>• Improve our platform functionality and user experience</li>
-              <li>• Prevent fraud and ensure fair contest participation</li>
-              <li>• Comply with legal obligations and enforce our Terms of Service</li>
+              <li>• Świadczenia i utrzymania usług naszej platformy konkursów</li>
+              <li>• Uwierzytelniania Twojego konta i umożliwienia integracji z TikTok</li>
+              <li>• Śledzenia zgłoszeń konkursowych i obliczania rankingów</li>
+              <li>• Przyznawania punktów XP, odznak i innych nagród grywalizacyjnych</li>
+              <li>• Wysyłania powiadomień o konkursach, osiągnięciach i aktualizacjach platformy</li>
+              <li>• Generowania analiz i insights dla twórców i marek</li>
+              <li>• Poprawy funkcjonalności platformy i doświadczenia użytkownika</li>
+              <li>• Zapobiegania oszustwom i zapewnienia uczciwego udziału w konkursach</li>
+              <li>• Przestrzegania zobowiązań prawnych i egzekwowania naszego Regulaminu</li>
             </ul>
           </section>
 
           {/* Information Sharing */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">3. Information Sharing and Disclosure</h3>
-            <p className="text-gray-300 leading-relaxed mb-4">We may share your information in the following circumstances:</p>
+            <h3 className="text-lg font-semibold text-white mb-3">3. Udostępnianie i Ujawnianie Informacji</h3>
+            <p className="text-gray-300 leading-relaxed mb-4">Możemy udostępniać Twoje informacje w następujących okolicznościach:</p>
             
             <div className="space-y-4">
               <div>
-                <h4 className="text-white font-medium mb-2">Public Information</h4>
+                <h4 className="text-white font-medium mb-2">Informacje Publiczne</h4>
                 <ul className="text-gray-300 space-y-1 leading-relaxed ml-4">
-                  <li>• Leaderboard rankings and contest performance (with username/handle)</li>
-                  <li>• Badge achievements and XP levels (if you choose to display them)</li>
-                  <li>• Contest submission metadata (video title, performance stats)</li>
+                  <li>• Rankingi i wyniki konkursów (z nazwą użytkownika/pseudonimem)</li>
+                  <li>• Osiągnięcia odznak i poziomy XP (jeśli zdecydujesz się je wyświetlać)</li>
+                  <li>• Metadane zgłoszeń konkursowych (tytuł video, statystyki wydajności)</li>
                 </ul>
               </div>
 
               <div>
-                <h4 className="text-white font-medium mb-2">Brand Partners</h4>
+                <h4 className="text-white font-medium mb-2">Partnerzy Markowi</h4>
                 <ul className="text-gray-300 space-y-1 leading-relaxed ml-4">
-                  <li>• Aggregated, anonymous contest performance data</li>
-                  <li>• Creator performance metrics for sponsored contests (with consent)</li>
+                  <li>• Zagregowane, anonimowe dane o wynikach konkursów</li>
+                  <li>• Metryki wydajności twórców dla sponsor. konkursów (za zgodą)</li>
                 </ul>
               </div>
 
               <div>
-                <h4 className="text-white font-medium mb-2">Service Providers</h4>
+                <h4 className="text-white font-medium mb-2">Dostawcy Usług</h4>
                 <ul className="text-gray-300 space-y-1 leading-relaxed ml-4">
-                  <li>• Analytics and hosting service providers</li>
-                  <li>• Email and notification service providers</li>
-                  <li>• Authentication and security service providers</li>
+                  <li>• Dostawcy usług analitycznych i hostingu</li>
+                  <li>• Dostawcy usług e-mail i powiadomień</li>
+                  <li>• Dostawcy usług uwierzytelniania i bezpieczeństwa</li>
                 </ul>
               </div>
 
               <div>
-                <h4 className="text-white font-medium mb-2">Legal Requirements</h4>
+                <h4 className="text-white font-medium mb-2">Wymogi Prawne</h4>
                 <ul className="text-gray-300 space-y-1 leading-relaxed ml-4">
-                  <li>• When required by law or legal process</li>
-                  <li>• To protect our rights, property, or safety</li>
-                  <li>• To prevent fraud or abuse of our platform</li>
+                  <li>• Gdy wymagane jest to przez prawo lub proces prawny</li>
+                  <li>• Aby chronić nasze prawa, własność lub bezpieczeństwo</li>
+                  <li>• Aby zapobiec oszustwom lub nadużyciom naszej platformy</li>
                 </ul>
               </div>
             </div>
@@ -164,15 +164,15 @@ export function PrivacyPolicy() {
           <section>
             <div className="flex items-center space-x-2 mb-3">
               <UserCheck className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold text-white">4. TikTok Integration Privacy</h3>
+              <h3 className="text-lg font-semibold text-white">4. Prywatność Integracji TikTok</h3>
             </div>
             <ul className="text-gray-300 space-y-2 leading-relaxed">
-              <li>• We only access TikTok data you explicitly authorize through OAuth</li>
-              <li>• TikTok access tokens are encrypted and securely stored</li>
-              <li>• You can disconnect your TikTok account at any time</li>
-              <li>• We comply with TikTok's privacy policies and data protection requirements</li>
-              <li>• We do not store or access your TikTok password</li>
-              <li>• Video content remains on TikTok - we only store metadata and performance metrics</li>
+              <li>• Mamy dostęp tylko do danych TikTok które wyraźnie autoryzujesz przez OAuth</li>
+              <li>• Tokeny dostępu TikTok są zaszyfrowane i bezpiecznie przechowywane</li>
+              <li>• Możesz odłączyć swoje konto TikTok w każdej chwili</li>
+              <li>• Przestrzegamy polityk prywatności TikTok i wymogów ochrony danych</li>
+              <li>• Nie przechowujemy ani nie mamy dostępu do Twojego hasła TikTok</li>
+              <li>• Treść video pozostaje na TikTok - przechowujemy tylko metadane i metryki wydajności</li>
             </ul>
           </section>
 
@@ -180,42 +180,42 @@ export function PrivacyPolicy() {
           <section>
             <div className="flex items-center space-x-2 mb-3">
               <Lock className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold text-white">5. Data Security</h3>
+              <h3 className="text-lg font-semibold text-white">5. Bezpieczeństwo Danych</h3>
             </div>
-            <p className="text-gray-300 leading-relaxed mb-4">We implement appropriate security measures to protect your information:</p>
+            <p className="text-gray-300 leading-relaxed mb-4">Wdrażamy odpowiednie środki bezpieczeństwa do ochrony Twoich informacji:</p>
             <ul className="text-gray-300 space-y-2 leading-relaxed">
-              <li>• End-to-end encryption for sensitive data transmission</li>
-              <li>• Encrypted storage of TikTok OAuth tokens</li>
-              <li>• Regular security audits and vulnerability assessments</li>
-              <li>• Access controls and authentication for our systems</li>
-              <li>• Secure database hosting with backup and recovery procedures</li>
+              <li>• Szyfrowanie end-to-end dla transmisji wrażliwych danych</li>
+              <li>• Zaszyfrowane przechowywanie tokenów OAuth TikTok</li>
+              <li>• Regularne audyty bezpieczeństwa i oceny podatności</li>
+              <li>• Kontrola dostępu i uwierzytelnianie naszych systemów</li>
+              <li>• Bezpieczny hosting bazy danych z procedurami backup i odzyskiwania</li>
             </ul>
           </section>
 
           {/* Data Retention */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">6. Data Retention</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">6. Przechowywanie Danych</h3>
             <ul className="text-gray-300 space-y-2 leading-relaxed">
-              <li>• Account data is retained while your account is active</li>
-              <li>• Contest and gamification data is retained for historical tracking</li>
-              <li>• TikTok integration data is deleted when you disconnect your account</li>
-              <li>• Analytics data may be retained in aggregated, anonymized form</li>
-              <li>• You can request data deletion by contacting us</li>
+              <li>• Dane konta są przechowywane podczas gdy Twoje konto jest aktywne</li>
+              <li>• Dane konkursów i grywalizacji są przechowywane do śledzenia historycznego</li>
+              <li>• Dane integracji TikTok są usuwane gdy odłączysz swoje konto</li>
+              <li>• Dane analityczne mogą być przechowywane w zagregowanej, zanonimizowanej formie</li>
+              <li>• Możesz poprosić o usunięcie danych kontaktując się z nami</li>
             </ul>
           </section>
 
           {/* Your Rights (GDPR Compliance) */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">7. Your Privacy Rights</h3>
-            <p className="text-gray-300 leading-relaxed mb-4">Under applicable privacy laws, you have the right to:</p>
+            <h3 className="text-lg font-semibold text-white mb-3">7. Twoje Prawa Prywatności (RODO)</h3>
+            <p className="text-gray-300 leading-relaxed mb-4">Zgodnie z obowiązującymi przepisami o ochronie danych, masz prawo do:</p>
             <ul className="text-gray-300 space-y-2 leading-relaxed">
-              <li>• <strong>Access:</strong> Request a copy of your personal data</li>
-              <li>• <strong>Rectification:</strong> Correct inaccurate or incomplete data</li>
-              <li>• <strong>Erasure:</strong> Request deletion of your personal data</li>
-              <li>• <strong>Portability:</strong> Receive your data in a portable format</li>
-              <li>• <strong>Restriction:</strong> Limit how we process your data</li>
-              <li>• <strong>Objection:</strong> Object to certain processing activities</li>
-              <li>• <strong>Withdraw Consent:</strong> Revoke consent for data processing</li>
+              <li>• <strong>Dostępu:</strong> Zażądania kopii Twoich danych osobowych</li>
+              <li>• <strong>Sprostowania:</strong> Poprawienia nieprawidłowych lub niekompletnych danych</li>
+              <li>• <strong>Usunięcia:</strong> Zażądania usunięcia Twoich danych osobowych</li>
+              <li>• <strong>Przenośności:</strong> Otrzymania Twoich danych w przenośnym formacie</li>
+              <li>• <strong>Ograniczenia:</strong> Ograniczenia sposobu przetwarzania Twoich danych</li>
+              <li>• <strong>Sprzeciwu:</strong> Wniesienia sprzeciwu wobec określonych działań przetwarzania</li>
+              <li>• <strong>Cofnięcia Zgody:</strong> Odwołania zgody na przetwarzanie danych</li>
             </ul>
           </section>
 
@@ -223,45 +223,45 @@ export function PrivacyPolicy() {
           <section>
             <div className="flex items-center space-x-2 mb-3">
               <Cookie className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold text-white">8. Cookies and Tracking</h3>
+              <h3 className="text-lg font-semibold text-white">8. Pliki Cookie i Śledzenie</h3>
             </div>
-            <p className="text-gray-300 leading-relaxed mb-4">We use cookies and similar technologies to:</p>
+            <p className="text-gray-300 leading-relaxed mb-4">Używamy plików cookie i podobnych technologii do:</p>
             <ul className="text-gray-300 space-y-2 leading-relaxed">
-              <li>• Maintain your login session and preferences</li>
-              <li>• Analyze platform usage and improve functionality</li>
-              <li>• Provide personalized content and recommendations</li>
-              <li>• Enable social media integrations and sharing</li>
+              <li>• Utrzymywania Twojej sesji logowania i preferencji</li>
+              <li>• Analizowania użytkowania platformy i poprawy funkcjonalności</li>
+              <li>• Dostarczania spersonalizowanych treści i rekomendacji</li>
+              <li>• Umożliwiania integracji i udostępniania w mediach społecznościowych</li>
             </ul>
             <p className="text-gray-300 leading-relaxed mt-4">
-              You can control cookie settings through your browser preferences.
+              Możesz kontrolować ustawienia cookie przez preferencje Twojej przeglądarki.
             </p>
           </section>
 
           {/* International Transfers */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">9. International Data Transfers</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">9. Międzynarodowe Transfery Danych</h3>
             <p className="text-gray-300 leading-relaxed">
-              Your information may be processed and stored in countries other than Poland. We ensure appropriate safeguards 
-              are in place to protect your data during international transfers, including using Standard Contractual Clauses 
-              and working with service providers that comply with EU data protection standards.
+              Twoje informacje mogą być przetwarzane i przechowywane w krajach innych niż Polska. Zapewniamy odpowiednie zabezpieczenia
+              do ochrony Twoich danych podczas międzynarodowych transferów, w tym używanie Standardowych Klauzul Umownych
+              i współpracę z dostawcami usług którzy przestrzegają standardy ochrony danych UE.
             </p>
           </section>
 
           {/* Children's Privacy */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">10. Children's Privacy</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">10. Prywatność Dzieci</h3>
             <p className="text-gray-300 leading-relaxed">
-              Our service is intended for users aged 13 and older. We do not knowingly collect personal information from children 
-              under 13. If we become aware that we have collected data from a child under 13, we will take steps to delete such information.
+              Nasza usługa jest przeznaczona dla użytkowników w wieku 13 lat i starszych. Nie gromadzimy świadomie danych osobowych od dzieci
+              poniżej 13 roku życia. Jeśli dowiemy się, że zebraliśmy dane od dziecka poniżej 13 lat, podejmiemy kroki w celu usunięcia takich informacji.
             </p>
           </section>
 
           {/* Changes to Privacy Policy */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">11. Changes to This Privacy Policy</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">11. Zmiany w tej Polityce Prywatności</h3>
             <p className="text-gray-300 leading-relaxed">
-              We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy 
-              on this page and updating the "Last updated" date. We encourage you to review this Privacy Policy periodically for any changes.
+              Możemy od czasu do czasu aktualizować tę Politykę Prywatności. Powiadomimy Cię o wszelkich zmianach poprzez opublikowanie nowej Polityki Prywatności
+              na tej stronie i aktualizację daty "Ostatnia aktualizacja". Zachecamy do okresowego przeglądania tej Polityki Prywatności pod kątem wszelkich zmian.
             </p>
           </section>
 
@@ -269,17 +269,17 @@ export function PrivacyPolicy() {
           <section className="border-t border-gray-600 pt-6">
             <div className="flex items-center space-x-2 mb-3">
               <Mail className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold text-white">Contact Information</h3>
+              <h3 className="text-lg font-semibold text-white">Informacje Kontaktowe</h3>
             </div>
             <p className="text-gray-300 leading-relaxed mb-4">
-              If you have any questions about this Privacy Policy or your personal data, please contact us:
+              Jeśli masz pytania dotyczące tej Polityki Prywatności lub Twoich danych osobowych, skontaktuj się z nami:
             </p>
             <div className="p-4 bg-gray-800/50 rounded-lg">
-              <p className="text-white font-medium">SeeUTrending Data Protection Officer</p>
-              <p className="text-gray-300">Email: privacy@seeutrending.com</p>
-              <p className="text-gray-300">Website: seeutrending.com</p>
+              <p className="text-white font-medium">Inspektor Ochrony Danych SeeUTrending</p>
+              <p className="text-gray-300">E-mail: privacy@seeutrending.com</p>
+              <p className="text-gray-300">Strona internetowa: seeutrending.com</p>
               <p className="text-gray-300 mt-2 text-sm">
-                For EU residents: You also have the right to lodge a complaint with your local data protection authority.
+                Dla mieszkańców UE: Masz również prawo złożyć skargę do lokalnego organu ochrony danych.
               </p>
             </div>
           </section>

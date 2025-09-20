@@ -121,7 +121,10 @@ export function LandingPage() {
                   return (
                     <div key={card.title} className="relative group">
                       <button
-                        onClick={() => navigate(card.path)}
+                        onClick={() => {
+                          // Small delay to ensure component mounting
+                          setTimeout(() => navigate(card.path), 50)
+                        }}
                         className={`w-full p-4 bg-gradient-to-br ${card.color} rounded-xl shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-2xl group`}
                       >
                         <IconComponent className="w-6 h-6 text-white mx-auto mb-2" />

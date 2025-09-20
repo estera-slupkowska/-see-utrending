@@ -18,7 +18,7 @@ export function TermsOfService() {
             className="inline-flex items-center space-x-2 text-primary hover:text-primary/80 mb-6 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Back to Home</span>
+            <span>Powrót do strony głównej</span>
           </Link>
           
           <div className="flex items-center space-x-3 mb-4">
@@ -26,8 +26,8 @@ export function TermsOfService() {
               <Gavel className="w-8 h-8 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">Terms of Service</h1>
-              <p className="text-gray-400">Last updated: {new Date().toLocaleDateString()}</p>
+              <h1 className="text-3xl font-bold text-white">Regulamin</h1>
+              <p className="text-gray-400">Ostatnia aktualizacja: {new Date().toLocaleDateString('pl-PL')}</p>
             </div>
           </div>
         </motion.div>
@@ -43,20 +43,20 @@ export function TermsOfService() {
           <section>
             <div className="flex items-center space-x-2 mb-4">
               <Shield className="w-5 h-5 text-primary" />
-              <h2 className="text-xl font-bold text-white">Introduction</h2>
+              <h2 className="text-xl font-bold text-white">Wprowadzenie</h2>
             </div>
             <p className="text-gray-300 leading-relaxed">
-              Welcome to SeeUTrending, a gamified platform that connects Polish TikTok creators with branded content contests. 
-              By using our service, you agree to these Terms of Service ("Terms"). Please read them carefully.
+              Witamy w SeeUTrending - zgrywalizowanej platformie łączącej polskich twórców TikToka z konkursami na treści markowe.
+              Korzystając z naszej usługi, zgadzasz się na niniejszy Regulamin ("Regulamin"). Prosimy o dokładne zapoznanie się z nim.
             </p>
           </section>
 
           {/* Acceptance of Terms */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">1. Acceptance of Terms</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">1. Akceptacja Regulaminu</h3>
             <p className="text-gray-300 leading-relaxed mb-4">
-              By accessing and using SeeUTrending, you accept and agree to be bound by the terms and provision of this agreement. 
-              If you do not agree to abide by these terms, you are not authorized to use or access this service.
+              Uzyskując dostęp i korzystając z SeeUTrending, akceptujesz i zgadzasz się przestrzegać warunków niniejszej umowy.
+              Jeśli nie zgadzasz się na przestrzeganie tych warunków, nie jesteś uprawniony do korzystania z tej usługi.
             </p>
           </section>
 
@@ -64,51 +64,51 @@ export function TermsOfService() {
           <section>
             <div className="flex items-center space-x-2 mb-3">
               <Users className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold text-white">2. User Accounts and Registration</h3>
+              <h3 className="text-lg font-semibold text-white">2. Konta Użytkowników i Rejestracja</h3>
             </div>
             <ul className="text-gray-300 space-y-2 leading-relaxed">
-              <li>• You must be at least 13 years old to use SeeUTrending</li>
-              <li>• You are responsible for maintaining the confidentiality of your account</li>
-              <li>• You must provide accurate and complete registration information</li>
-              <li>• You are responsible for all activities that occur under your account</li>
-              <li>• You must notify us immediately of any unauthorized use of your account</li>
+              <li>• Aby korzystać z SeeUTrending, musisz mieć ukończone 13 lat</li>
+              <li>• Jesteś odpowiedzialny za zachowanie poufności swojego konta</li>
+              <li>• Musisz podać dokładne i kompletne informacje rejestracyjne</li>
+              <li>• Jesteś odpowiedzialny za wszystkie działania wykonywane na Twoim koncie</li>
+              <li>• Musisz natychmiast powiadomić nas o każdym nieautoryzowanym użyciu swojego konta</li>
             </ul>
           </section>
 
           {/* TikTok Integration */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">3. TikTok Integration</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">3. Integracja z TikTok</h3>
             <p className="text-gray-300 leading-relaxed mb-4">
-              SeeUTrending integrates with TikTok to provide contest and analytics features:
+              SeeUTrending integruje się z TikTok, aby zapewnić funkcje konkursów i analiz:
             </p>
             <ul className="text-gray-300 space-y-2 leading-relaxed">
-              <li>• You may connect your TikTok account to participate in contests</li>
-              <li>• We access only the data you explicitly authorize through TikTok's OAuth process</li>
-              <li>• You can disconnect your TikTok account at any time</li>
-              <li>• We comply with TikTok's Terms of Service and API policies</li>
+              <li>• Możesz połączyć swoje konto TikTok, aby uczestniczyć w konkursach</li>
+              <li>• Mamy dostęp tylko do danych, które wyraźnie autoryzujesz przez proces OAuth TikToka</li>
+              <li>• Możesz w każdej chwili odłączyć swoje konto TikTok</li>
+              <li>• Przestrzegamy Regulaminu TikToka i zasad API</li>
             </ul>
           </section>
 
           {/* Contest Participation */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">4. Contest Participation</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">4. Udział w Konkursach</h3>
             <ul className="text-gray-300 space-y-2 leading-relaxed">
-              <li>• Contest entries must comply with contest rules and guidelines</li>
-              <li>• Content must be original and not infringe on third-party rights</li>
-              <li>• We reserve the right to disqualify entries that violate terms</li>
-              <li>• Winners are determined based on transparent scoring algorithms</li>
-              <li>• Prizes and rewards are distributed as specified in contest terms</li>
+              <li>• Zgłoszenia konkursowe muszą być zgodne z zasadami i wytycznymi konkursu</li>
+              <li>• Treść musi być oryginalna i nie naruszać praw osób trzecich</li>
+              <li>• Zastrzegamy sobie prawo do dyskwalifikacji zgłoszeń naruszających regulamin</li>
+              <li>• Zwycięzcy są określani na podstawie przejrzystych algorytmów punktacji</li>
+              <li>• Nagrody są rozdawane zgodnie z warunkami określonymi w regulaminie konkursu</li>
             </ul>
           </section>
 
           {/* Gamification System */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">5. Gamification and Rewards</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">5. Grywalizacja i Nagrody</h3>
             <ul className="text-gray-300 space-y-2 leading-relaxed">
-              <li>• XP points and badges are earned through platform participation</li>
-              <li>• Rewards have no monetary value unless explicitly stated</li>
-              <li>• We reserve the right to adjust the gamification system</li>
-              <li>• Fraudulent activity may result in loss of rewards and account suspension</li>
+              <li>• Punkty XP i odznaki są zdobywane poprzez udział w platformie</li>
+              <li>• Nagrody nie mają wartości pieniężnej, chyba że wyraźnie zaznaczono</li>
+              <li>• Zastrzegamy sobie prawo do dostosowania systemu grywalizacji</li>
+              <li>• Oszukańcza działalność może skutkować utratą nagród i zawieszeniem konta</li>
             </ul>
           </section>
 
@@ -116,69 +116,69 @@ export function TermsOfService() {
           <section>
             <div className="flex items-center space-x-2 mb-3">
               <AlertTriangle className="w-5 h-5 text-red-400" />
-              <h3 className="text-lg font-semibold text-white">6. Prohibited Conduct</h3>
+              <h3 className="text-lg font-semibold text-white">6. Zakazane Zachowania</h3>
             </div>
-            <p className="text-gray-300 leading-relaxed mb-4">You agree not to:</p>
+            <p className="text-gray-300 leading-relaxed mb-4">Zobowiązujesz się nie:</p>
             <ul className="text-gray-300 space-y-2 leading-relaxed">
-              <li>• Use the service for any unlawful purpose</li>
-              <li>• Submit content that is offensive, defamatory, or inappropriate</li>
-              <li>• Attempt to manipulate contest results or gaming systems</li>
-              <li>• Interfere with the proper working of the service</li>
-              <li>• Create fake accounts or use automated tools</li>
-              <li>• Violate any applicable laws or regulations</li>
+              <li>• Korzystać z usługi w celu niezgodnym z prawem</li>
+              <li>• Przesyłać treści obrażliwych, zniesławiających lub niestosownych</li>
+              <li>• Próbować manipulować wynikami konkursów lub systemami gier</li>
+              <li>• Przeszkadzać w prawidłowym działaniu usługi</li>
+              <li>• Tworzyć fałszywych kont lub używać narzędzi automatycznych</li>
+              <li>• Naruszać żadnych obowiązujących przepisów prawa</li>
             </ul>
           </section>
 
           {/* Intellectual Property */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">7. Intellectual Property</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">7. Własność Intelektualna</h3>
             <p className="text-gray-300 leading-relaxed mb-4">
-              The SeeUTrending platform, including its design, functionality, and content, is owned by us and protected by intellectual property laws. 
-              You retain ownership of content you submit, but grant us necessary rights to operate the service.
+              Platforma SeeUTrending, w tym jej projekt, funkcjonalność i treść, jest naszą własnością i chroniona prawami własności intelektualnej.
+              Zachowujesz własność przesyłanych treści, ale przyznajesz nam niezbędne prawa do prowadzenia usługi.
             </p>
           </section>
 
           {/* Privacy */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">8. Privacy</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">8. Prywatność</h3>
             <p className="text-gray-300 leading-relaxed">
-              Your privacy is important to us. Please review our Privacy Policy, which also governs your use of the service, 
-              to understand our practices.
+              Twoja prywatność jest dla nas ważna. Zapoznaj się z naszą Polityką Prywatności, która również reguluje korzystanie z usługi,
+              aby zrozumieć nasze praktyki.
             </p>
           </section>
 
           {/* Limitation of Liability */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">9. Limitation of Liability</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">9. Ograniczenie Odpowiedzialności</h3>
             <p className="text-gray-300 leading-relaxed">
-              SeeUTrending is provided "as is" without warranties of any kind. We shall not be liable for any indirect, 
-              incidental, special, consequential, or punitive damages resulting from your use of the service.
+              SeeUTrending jest świadczone "tak jak jest" bez żadnych gwarancji. Nie ponosimy odpowiedzialności za żadne pośrednie,
+              przypadkowe, specjalne, wynikowe lub represyjne szkody wynikające z korzystania z usługi.
             </p>
           </section>
 
           {/* Termination */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">10. Termination</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">10. Rozwiązanie Umowy</h3>
             <p className="text-gray-300 leading-relaxed">
-              We reserve the right to terminate or suspend your account and access to the service at our sole discretion, 
-              without notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties.
+              Zastrzegamy sobie prawo do zakończenia lub zawieszenia Twojego konta i dostępu do usługi według naszego wyłącznego uznania,
+              bez uprzedzenia, za zachowanie które naszym zdaniem narusza niniejszy Regulamin lub jest szkodliwe dla innych użytkowników, nas lub osób trzecich.
             </p>
           </section>
 
           {/* Changes to Terms */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">11. Changes to Terms</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">11. Zmiany w Regulaminie</h3>
             <p className="text-gray-300 leading-relaxed">
-              We reserve the right to modify these Terms at any time. We will notify users of significant changes 
-              via email or platform notifications. Continued use of the service after changes constitutes acceptance.
+              Zastrzegamy sobie prawo do modyfikacji niniejszego Regulaminu w dowolnym czasie. Powiadomimy użytkowników o istotnych zmianach
+              poprzez e-mail lub powiadomienia na platformie. Dalsze korzystanie z usługi po zmianach oznacza akceptację.
             </p>
           </section>
 
           {/* Governing Law */}
           <section>
-            <h3 className="text-lg font-semibold text-white mb-3">12. Governing Law</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">12. Prawo Obowiązujące</h3>
             <p className="text-gray-300 leading-relaxed">
-              These Terms shall be governed by and construed in accordance with the laws of Poland, without regard to its conflict of law provisions.
+              Niniejszy Regulamin podlega i jest interpretowany zgodnie z prawem polskim, bez względu na przepisy dotyczące kolizji praw.
             </p>
           </section>
 
@@ -186,15 +186,15 @@ export function TermsOfService() {
           <section className="border-t border-gray-600 pt-6">
             <div className="flex items-center space-x-2 mb-3">
               <Mail className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold text-white">Contact Information</h3>
+              <h3 className="text-lg font-semibold text-white">Informacje Kontaktowe</h3>
             </div>
             <p className="text-gray-300 leading-relaxed">
-              If you have any questions about these Terms of Service, please contact us at:
+              Jeśli masz pytania dotyczące niniejszego Regulaminu, skontaktuj się z nami:
             </p>
             <div className="mt-4 p-4 bg-gray-800/50 rounded-lg">
-              <p className="text-white font-medium">SeeUTrending Support</p>
-              <p className="text-gray-300">Email: legal@seeutrending.com</p>
-              <p className="text-gray-300">Website: seeutrending.com</p>
+              <p className="text-white font-medium">Wsparcie SeeUTrending</p>
+              <p className="text-gray-300">E-mail: legal@seeutrending.com</p>
+              <p className="text-gray-300">Strona internetowa: seeutrending.com</p>
             </div>
           </section>
         </motion.div>

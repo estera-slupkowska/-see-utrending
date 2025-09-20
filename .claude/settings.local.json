@@ -80,7 +80,13 @@
       "Bash(echo:*)",
       "Bash(start chrome \"https://seeutrending-ks231yb15-seeutrendings-projects.vercel.app\")",
       "Bash(start chrome \"http://localhost:5179/dashboard\")",
-      "Bash(start chrome \"http://localhost:5180\")"
+      "Bash(start chrome \"http://localhost:5180\")",
+      "Bash(start chrome \"https://seeutrending-9039w8ij1-seeutrendings-projects.vercel.app\")",
+      "Bash(npx sharp-cli:*)",
+      "Bash(where magick)",
+      "Bash(findstr:*)",
+      "Bash(node:*)",
+      "mcp__playwright__browser_fill_form"
     ],
     "deny": [],
     "ask": []

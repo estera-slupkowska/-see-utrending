@@ -1,0 +1,26 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Main gradient from purple to light purple -->
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B5CF6;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#A855F7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C084FC;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Accent gradient for depth -->
+    <radialGradient id="accentGradient" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#A855F7;stop-opacity:0.8" />
+      <stop offset="70%" style="stop-color:#8B5CF6;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:0.1" />
+    </radialGradient>
+  </defs>
+
+  <!-- Main circle with gradient -->
+  <circle cx="256" cy="256" r="240" fill="url(#mainGradient)" />
+
+  <!-- Overlay circle for depth and glow effect -->
+  <circle cx="256" cy="256" r="240" fill="url(#accentGradient)" />
+
+  <!-- Inner highlight circle -->
+  <circle cx="200" cy="200" r="60" fill="#FFFFFF" opacity="0.15" />
+</svg>

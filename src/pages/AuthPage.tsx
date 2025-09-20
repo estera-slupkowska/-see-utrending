@@ -16,9 +16,9 @@ export function AuthPage({ mode: initialMode = 'login' }: AuthPageProps) {
   const { user, loading } = useAuth()
   const navigate = useNavigate()
 
-  // Redirect to dashboard if already authenticated
+  // Redirect to Panel główny if already authenticated
   if (user && !loading) {
-    return <Navigate to="/dashboard" replace />
+    return <Navigate to="/" replace />
   }
 
   // Show loading state while checking authentication
@@ -34,7 +34,10 @@ export function AuthPage({ mode: initialMode = 'login' }: AuthPageProps) {
   }
 
   const handleAuthSuccess = () => {
-    // Redirect will happen automatically through the useAuth context
+    // Add a small delay to ensure auth state updates, then navigate to Panel główny
+    setTimeout(() => {
+      navigate('/', { replace: true })
+    }, 100)
   }
 
   return (

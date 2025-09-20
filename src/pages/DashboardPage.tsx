@@ -20,7 +20,7 @@ export function DashboardPage() {
     if (isCreator()) return 'creator'
     if (isBrand()) return 'brand'
     if (isSpectator()) return 'spectator'
-    return 'user'
+    return 'spectator'
   }
 
   const userRole = getUserRole()
@@ -39,7 +39,7 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background main-content-area">
+    <div className="min-h-screen bg-background main-content-area" style={{backgroundColor: '#0A0A0A', color: '#FFFFFF', minHeight: '100vh'}}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
         {/* Profile Edit Modal */}

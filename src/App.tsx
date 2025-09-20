@@ -1,6 +1,7 @@
 import './lib/i18n/config'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './lib/auth/context'
+import { ErrorBoundary } from './components/ui'
 import { Navbar } from './components/layout/Navbar'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { AdminRoute } from './components/auth/AdminRoute'
@@ -22,9 +23,10 @@ import { DemoContestPage } from './pages/DemoContestPage'
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <Routes>
           {/* Admin routes */}
           <Route 
             path="/admin/*" 
@@ -83,9 +85,10 @@ function App() {
               </div>
             }
           />
-        </Routes>
-      </Router>
-    </AuthProvider>
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   )
 }
 

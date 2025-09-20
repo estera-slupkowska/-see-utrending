@@ -46,11 +46,14 @@ export function LoginForm({ onSuccess, onSwitchToRegister, onForgotPassword, onC
   const onSubmit = async (data: LoginFormData) => {
     clearError()
     clearErrors()
-    
+
     const success = await signIn(data.email, data.password)
-    
+
     if (success) {
-      onSuccess?.()
+      // Small delay to ensure auth state is fully updated
+      setTimeout(() => {
+        onSuccess?.()
+      }, 50)
     }
   }
 

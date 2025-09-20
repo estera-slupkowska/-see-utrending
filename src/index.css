@@ -13,8 +13,8 @@
     @apply font-primary antialiased;
     margin: 0;
     min-height: 100vh;
-    background-color: #0A0A0A;
-    color: #F9FAFB;
+    background-color: #0A0A0A !important;
+    color: #F9FAFB !important;
   }
   
   /* Bright Background Page Classes */
@@ -653,6 +653,15 @@
     animation: shooting-star 2s ease-out infinite;
   }
 
+  /* Missing gradient background classes */
+  .bg-gradient-mesh {
+    background: radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%), 
+                radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.12) 0%, transparent 50%), 
+                radial-gradient(ellipse at 40% 40%, rgba(99, 102, 241, 0.08) 0%, transparent 50%), 
+                linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, transparent 50%), 
+                #0A0A0A;
+  }
+
   /* Cosmic Background Enhancements */
   .cosmic-background {
     background: radial-gradient(ellipse at 20% 10%, rgba(99, 102, 241, 0.12) 0%, transparent 45%), 
@@ -719,6 +728,7 @@
     z-index: 20;
     opacity: 1 !important;
     visibility: visible !important;
+    display: block !important;
   }
   
   /* Ensure all dashboard elements are visible */
@@ -730,6 +740,24 @@
     background-color: #1A1A1A !important;
     border: 1px solid #404040 !important;
     opacity: 1 !important;
+  }
+  
+  /* Comprehensive fallback styles for all containers */
+  div[class*="min-h-screen"] {
+    background-color: #0A0A0A;
+    color: #FFFFFF;
+  }
+  
+  /* Force visibility of critical elements */
+  h1, h2, h3, h4, h5, h6, p, div, span, button {
+    opacity: 1 !important;
+  }
+  
+  /* Ensure React root is visible */
+  #root {
+    min-height: 100vh;
+    background-color: #0A0A0A;
+    color: #FFFFFF;
   }
   
   /* Ensure text is always visible */
