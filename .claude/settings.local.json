@@ -86,7 +86,13 @@
       "Bash(where magick)",
       "Bash(findstr:*)",
       "Bash(node:*)",
-      "mcp__playwright__browser_fill_form"
+      "mcp__playwright__browser_fill_form",
+      "mcp__playwright__browser_wait_for",
+      "Bash(start chrome \"https://seeutrending-c35h4rggq-seeutrendings-projects.vercel.app\")",
+      "Bash(start chrome \"https://seeutrending-c35h4rggq-seeutrendings-projects.vercel.app/dashboard\")",
+      "Bash(start chrome \"https://seeutrending-c35h4rggq-seeutrendings-projects.vercel.app/rewards\")",
+      "Bash(timeout 10 npm run dev)",
+      "Bash(start chrome \"http://localhost:5174\")"
     ],
     "deny": [],
     "ask": []

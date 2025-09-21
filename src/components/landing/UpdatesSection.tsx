@@ -2,7 +2,11 @@ import { useTranslation } from 'react-i18next'
 import { CalendarDays, Users, Trophy, Sparkles, Zap, Star, Flame } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
-export function UpdatesSection() {
+interface UpdatesSectionProps {
+  isLoggedIn?: boolean
+}
+
+export function UpdatesSection({ isLoggedIn = false }: UpdatesSectionProps) {
   const { t } = useTranslation()
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const [animationTrigger, setAnimationTrigger] = useState(0)
@@ -41,19 +45,23 @@ export function UpdatesSection() {
   ]
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-surface/95 to-background/90 backdrop-blur-md">
+    <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isLoggedIn ? 'relative' : 'bg-gradient-to-br from-surface/95 to-background/90 backdrop-blur-md'}`}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-primary/20 to-accent/15 px-4 py-2 rounded-full border-2 border-primary/30 mb-6 shadow-lg shadow-primary/10">
             <Sparkles className="w-4 h-4 text-primary animate-pulse" />
             <span className="text-primary font-bold text-sm">{t('updates.badge')}</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mb-4 text-white drop-shadow-lg">
-            {t('updates.title')}
-          </h2>
-          <p className="text-lg text-gray-200 max-w-2xl mx-auto">
-            {t('updates.subtitle')}
-          </p>
+
+          {/* Title Card for Visibility with Cosmic Background */}
+          <div className={`${isLoggedIn ? 'bg-gradient-to-br from-purple-600/20 via-blue-600/20 to-cyan-600/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6 mb-6 shadow-xl shadow-purple-500/20' : ''}`}>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4 text-white drop-shadow-lg">
+              {isLoggedIn ? 'Najnowsze Informacje' : t('updates.title')}
+            </h2>
+            <p className="text-lg text-gray-200 max-w-2xl mx-auto">
+              {isLoggedIn ? 'Bądź na bieżąco z najważniejszymi aktualizacjami od zespołu SeeUTrending' : t('updates.subtitle')}
+            </p>
+          </div>
         </div>
 
         <div className="space-y-8">
@@ -210,71 +218,73 @@ export function UpdatesSection() {
           ))}
         </div>
 
-        {/* Enhanced Call to Action */}
-        <div className="mt-16 text-center">
-          <div className="group relative overflow-hidden bg-gradient-to-br from-primary/20 to-accent/15 border-2 border-primary/30 rounded-3xl p-10 backdrop-blur-md shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all duration-700">
-            
-            {/* Floating Elements */}
-            <div className="absolute top-6 left-6 w-2 h-2 bg-yellow-400 rounded-full animate-twinkle" />
-            <div className="absolute top-8 right-10 w-1.5 h-1.5 bg-pink-400 rounded-full animate-twinkle-slow" />
-            <div className="absolute bottom-8 left-12 w-1 h-1 bg-cyan-400 rounded-full animate-pulse" />
-            <div className="absolute bottom-6 right-6 w-2 h-2 bg-purple-400 rounded-full animate-bounce" />
-            
-            {/* Main Content */}
-            <div className="relative z-10 space-y-6">
-              <h3 className="text-3xl font-bold text-white drop-shadow-lg animate-pulse-glow">
-                {t('updates.cta.title')}
-              </h3>
-              <p className="text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed">
-                {t('updates.cta.description')}
-              </p>
-              
-              {/* Enhanced Button with Particle Effect */}
-              <div className="relative inline-block">
-                <button 
-                  className="group/button relative btn-vibrant-purple px-10 py-4 text-lg font-bold overflow-hidden"
-                  onClick={() => window.location.href = '/auth/register'}
-                  onMouseEnter={(e) => {
-                    // Create particle burst effect
-                    const particles = Array.from({ length: 8 }, (_, i) => {
-                      const particle = document.createElement('div');
-                      particle.className = 'absolute w-1 h-1 bg-white rounded-full animate-ping pointer-events-none';
-                      particle.style.left = `${Math.random() * 100}%`;
-                      particle.style.top = `${Math.random() * 100}%`;
-                      particle.style.animationDelay = `${i * 100}ms`;
-                      e.currentTarget.appendChild(particle);
-                      setTimeout(() => particle.remove(), 1000);
-                    });
-                  }}
-                >
-                  <span className="relative z-10 flex items-center space-x-2">
-                    <Sparkles className="w-5 h-5 animate-spin" />
-                    <span>{t('updates.cta.button')}</span>
-                    <Zap className="w-5 h-5 group-hover/button:animate-bounce" />
-                  </span>
-                  
-                  {/* Button Glow Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover/button:translate-x-full transition-transform duration-1000" />
-                </button>
-                
-                {/* Orbiting Elements */}
-                <div className="absolute inset-0 animate-spin" style={{ animationDuration: '20s' }}>
-                  <div className="absolute top-0 left-1/2 w-1 h-1 bg-yellow-400 rounded-full transform -translate-x-1/2 -translate-y-2" />
-                </div>
-                <div className="absolute inset-0 animate-spin" style={{ animationDuration: '15s', animationDirection: 'reverse' }}>
-                  <div className="absolute bottom-0 left-1/2 w-1 h-1 bg-pink-400 rounded-full transform -translate-x-1/2 translate-y-2" />
+        {/* Enhanced Call to Action - Only for non-logged users */}
+        {!isLoggedIn && (
+          <div className="mt-16 text-center">
+            <div className="group relative overflow-hidden bg-gradient-to-br from-primary/20 to-accent/15 border-2 border-primary/30 rounded-3xl p-10 backdrop-blur-md shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all duration-700">
+
+              {/* Floating Elements */}
+              <div className="absolute top-6 left-6 w-2 h-2 bg-yellow-400 rounded-full animate-twinkle" />
+              <div className="absolute top-8 right-10 w-1.5 h-1.5 bg-pink-400 rounded-full animate-twinkle-slow" />
+              <div className="absolute bottom-8 left-12 w-1 h-1 bg-cyan-400 rounded-full animate-pulse" />
+              <div className="absolute bottom-6 right-6 w-2 h-2 bg-purple-400 rounded-full animate-bounce" />
+
+              {/* Main Content */}
+              <div className="relative z-10 space-y-6">
+                <h3 className="text-3xl font-bold text-white drop-shadow-lg animate-pulse-glow">
+                  {t('updates.cta.title')}
+                </h3>
+                <p className="text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed">
+                  {t('updates.cta.description')}
+                </p>
+
+                {/* Enhanced Button with Particle Effect */}
+                <div className="relative inline-block">
+                  <button
+                    className="group/button relative btn-vibrant-purple px-10 py-4 text-lg font-bold overflow-hidden"
+                    onClick={() => window.location.href = '/auth/register'}
+                    onMouseEnter={(e) => {
+                      // Create particle burst effect
+                      const particles = Array.from({ length: 8 }, (_, i) => {
+                        const particle = document.createElement('div');
+                        particle.className = 'absolute w-1 h-1 bg-white rounded-full animate-ping pointer-events-none';
+                        particle.style.left = `${Math.random() * 100}%`;
+                        particle.style.top = `${Math.random() * 100}%`;
+                        particle.style.animationDelay = `${i * 100}ms`;
+                        e.currentTarget.appendChild(particle);
+                        setTimeout(() => particle.remove(), 1000);
+                      });
+                    }}
+                  >
+                    <span className="relative z-10 flex items-center space-x-2">
+                      <Sparkles className="w-5 h-5 animate-spin" />
+                      <span>{t('updates.cta.button')}</span>
+                      <Zap className="w-5 h-5 group-hover/button:animate-bounce" />
+                    </span>
+
+                    {/* Button Glow Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover/button:translate-x-full transition-transform duration-1000" />
+                  </button>
+
+                  {/* Orbiting Elements */}
+                  <div className="absolute inset-0 animate-spin" style={{ animationDuration: '20s' }}>
+                    <div className="absolute top-0 left-1/2 w-1 h-1 bg-yellow-400 rounded-full transform -translate-x-1/2 -translate-y-2" />
+                  </div>
+                  <div className="absolute inset-0 animate-spin" style={{ animationDuration: '15s', animationDirection: 'reverse' }}>
+                    <div className="absolute bottom-0 left-1/2 w-1 h-1 bg-pink-400 rounded-full transform -translate-x-1/2 translate-y-2" />
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            {/* Animated Background Mesh */}
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-purple-500 to-transparent rounded-full blur-xl animate-float-slow" />
-              <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-br from-cyan-500 to-transparent rounded-full blur-xl animate-float" style={{ animationDelay: '2s' }} />
-              <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-gradient-to-br from-pink-500 to-transparent rounded-full blur-xl animate-pulse-glow" />
+
+              {/* Animated Background Mesh */}
+              <div className="absolute inset-0 opacity-20">
+                <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-purple-500 to-transparent rounded-full blur-xl animate-float-slow" />
+                <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-br from-cyan-500 to-transparent rounded-full blur-xl animate-float" style={{ animationDelay: '2s' }} />
+                <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-gradient-to-br from-pink-500 to-transparent rounded-full blur-xl animate-pulse-glow" />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   )

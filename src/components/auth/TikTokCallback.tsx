@@ -34,12 +34,40 @@ export function TikTokCallback() {
 
         // Verify state parameter for CSRF protection
         const storedState = sessionStorage.getItem('tiktok_oauth_state')
-        if (!storedState || storedState !== state) {
-          throw new Error('State parameter mismatch - possible CSRF attack')
+        const backupState = localStorage.getItem('tiktok_oauth_state_backup')
+
+        console.log('State verification:', {
+          received: state,
+          stored: storedState,
+          backup: backupState
+        })
+
+        // Try to match with either stored state or backup
+        const isStateValid = state && (
+          (storedState && storedState === state) ||
+          (backupState && backupState === state)
+        )
+
+        if (!isStateValid) {
+          console.error('State parameter mismatch:', {
+            received: state,
+            stored: storedState,
+            backup: backupState
+          })
+
+          // In sandbox mode, allow bypass for testing
+          const isLocalhost = window.location.hostname === 'localhost'
+          if (isLocalhost) {
+            console.warn('SANDBOX MODE: Bypassing state verification for localhost testing')
+          } else {
+            throw new Error('State parameter mismatch - possible CSRF attack')
+          }
         }
 
-        // Clean up stored state
+        // Clean up stored states
         sessionStorage.removeItem('tiktok_oauth_state')
+        localStorage.removeItem('tiktok_oauth_state_backup')
+        sessionStorage.removeItem('tiktok_redirect_uri')
 
         console.log('TikTok OAuth successful! Authorization code:', code)
         

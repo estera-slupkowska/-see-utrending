@@ -55,17 +55,36 @@ export function TikTokConnectionStatus() {
 
   const handleConnect = () => {
     setIsConnecting(true)
-    
+
     const clientKey = import.meta.env.VITE_TIKTOK_CLIENT_KEY || 'sbawnbpy8ri5x8kz7d'
-    const redirectUri = import.meta.env.VITE_TIKTOK_REDIRECT_URI || 'https://see-utrending-eta.vercel.app/oauth/redirect'
-    
+    // Use environment-specific redirect URI
+    const redirectUri = import.meta.env.VITE_TIKTOK_REDIRECT_URI
+
+    if (!redirectUri) {
+      console.error('VITE_TIKTOK_REDIRECT_URI is not configured')
+      alert('TikTok redirect URI is not configured. Please check environment variables.')
+      setIsConnecting(false)
+      return
+    }
+
     if (clientKey && redirectUri) {
-      // Generate CSRF state
-      const state = crypto.randomUUID()
+      // Generate CSRF state with timestamp for uniqueness
+      const state = `${crypto.randomUUID()}-${Date.now()}`
+      console.log('Generated state:', state)
+
+      // Store state in both sessionStorage and localStorage for reliability
       sessionStorage.setItem('tiktok_oauth_state', state)
-      
-      const authUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${clientKey}&scope=user.info.basic,user.info.profile,video.list&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`
-      
+      localStorage.setItem('tiktok_oauth_state_backup', state)
+
+      // Also store the original redirect URI for verification
+      sessionStorage.setItem('tiktok_redirect_uri', redirectUri)
+
+      const authUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${clientKey}&scope=user.info.basic,user.info.profile,video.list&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}`
+
+      console.log('TikTok Auth URL:', authUrl)
+      console.log('State stored:', state)
+      console.log('Redirect URI:', redirectUri)
+
       window.location.href = authUrl
     } else {
       console.error('Missing TikTok configuration')

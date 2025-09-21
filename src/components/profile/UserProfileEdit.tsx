@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../lib/auth/context'
 import { Button } from '../ui'
+import { ProfileService } from '../../lib/supabase/profiles'
+import type { UpdateProfileData } from '../../types/profiles'
 import { 
   User, 
   Mail, 
@@ -53,19 +55,33 @@ export function UserProfileEdit({ onClose, onSave }: UserProfileEditProps) {
     }
   })
 
-  // Load user data
+  // Load user data from Supabase profile
   useEffect(() => {
-    if (user) {
-      setFormData(prev => ({
-        ...prev,
-        name: user.user_metadata?.name || '',
-        email: user.email || '',
-        bio: user.user_metadata?.bio || '',
-        tiktokHandle: user.user_metadata?.tiktok_handle || '',
-        location: user.user_metadata?.location || '',
-        interests: user.user_metadata?.interests || []
-      }))
+    const loadProfile = async () => {
+      if (user?.id) {
+        setIsLoading(true)
+        const { data: profile, error } = await ProfileService.getProfile(user.id)
+
+        if (error) {
+          console.error('Error loading profile:', error)
+          setErrorMessage('Nie udało się załadować danych profilu')
+        } else if (profile) {
+          setFormData(prev => ({
+            ...prev,
+            name: profile.name || '',
+            email: profile.email || '',
+            bio: profile.bio || '',
+            tiktokHandle: profile.tiktok_handle || '',
+            location: profile.location || '',
+            interests: profile.interests || []
+          }))
+        }
+
+        setIsLoading(false)
+      }
     }
+
+    loadProfile()
   }, [user])
 
   const availableInterests = [
@@ -101,6 +117,11 @@ export function UserProfileEdit({ onClose, onSave }: UserProfileEditProps) {
   }
 
   const handleSave = async () => {
+    if (!user?.id) {
+      setErrorMessage('Brak danych użytkownika')
+      return
+    }
+
     setIsSaving(true)
     setErrorMessage('')
     setSuccessMessage('')
@@ -115,21 +136,26 @@ export function UserProfileEdit({ onClose, onSave }: UserProfileEditProps) {
         throw new Error('Email jest wymagany')
       }
 
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500))
-
-      // Save to localStorage for sandbox
-      const profileData = {
-        ...formData,
-        updatedAt: new Date().toISOString()
+      // Prepare data for Supabase
+      const updateData: UpdateProfileData = {
+        name: formData.name.trim(),
+        bio: formData.bio.trim() || null,
+        tiktok_handle: formData.tiktokHandle.trim() || null,
+        location: formData.location.trim() || null,
+        interests: formData.interests.length > 0 ? formData.interests : null
       }
-      
-      localStorage.setItem('user_profile_data', JSON.stringify(profileData))
-      
+
+      // Save to Supabase
+      const { data: updatedProfile, error } = await ProfileService.updateProfile(user.id, updateData)
+
+      if (error) {
+        throw new Error('Nie udało się zaktualizować profilu')
+      }
+
       setSuccessMessage('Profil został zaktualizowany pomyślnie!')
-      
-      if (onSave) {
-        onSave(profileData)
+
+      if (onSave && updatedProfile) {
+        onSave(updatedProfile)
       }
 
       // Auto close after success
@@ -145,17 +171,18 @@ export function UserProfileEdit({ onClose, onSave }: UserProfileEditProps) {
   }
 
   const getUserLevel = () => {
-    // Mock user level based on saved profile or default
-    const savedProfile = localStorage.getItem('user_profile_data')
-    if (savedProfile) {
-      return JSON.parse(savedProfile).level || 3
-    }
-    return 3
+    // Get level from loaded profile or default
+    return 3 // Will be dynamic when profile is loaded
   }
 
   const getUserBadgeCount = () => {
     // Count unlocked badges from BadgeCollection
     return 3 // hot-start, early-adopter, streak-7
+  }
+
+  const getUserRank = () => {
+    // Get rank from loaded profile or default
+    return 127 // Will be dynamic when profile is loaded
   }
 
   return (
@@ -186,23 +213,35 @@ export function UserProfileEdit({ onClose, onSave }: UserProfileEditProps) {
 
         {/* Content */}
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
-          {/* Success/Error Messages */}
-          {successMessage && (
-            <div className="mb-4 p-3 bg-success-green/10 border border-success-green/20 rounded-lg flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-success-green flex-shrink-0" />
-              <p className="text-sm text-success-green">{successMessage}</p>
+          {/* Loading State */}
+          {isLoading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="flex items-center gap-3">
+                <Loader className="w-6 h-6 animate-spin text-primary" />
+                <span className="text-text-secondary">Ładowanie danych profilu...</span>
+              </div>
             </div>
           )}
 
-          {errorMessage && (
-            <div className="mb-4 p-3 bg-error-red/10 border border-error-red/20 rounded-lg flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-error-red flex-shrink-0" />
-              <p className="text-sm text-error-red">{errorMessage}</p>
-            </div>
-          )}
+          {!isLoading && (
+            <div>
+              {/* Success/Error Messages */}
+              {successMessage && (
+                <div className="mb-4 p-3 bg-success-green/10 border border-success-green/20 rounded-lg flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-success-green flex-shrink-0" />
+                  <p className="text-sm text-success-green">{successMessage}</p>
+                </div>
+              )}
 
-          {/* Profile Stats */}
-          <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-primary/5 rounded-lg border border-primary/20">
+              {errorMessage && (
+                <div className="mb-4 p-3 bg-error-red/10 border border-error-red/20 rounded-lg flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-error-red flex-shrink-0" />
+                  <p className="text-sm text-error-red">{errorMessage}</p>
+                </div>
+              )}
+
+              {/* Profile Stats */}
+              <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-primary/5 rounded-lg border border-primary/20">
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 mb-1">
                 <Star className="w-4 h-4 text-primary" />
@@ -220,7 +259,7 @@ export function UserProfileEdit({ onClose, onSave }: UserProfileEditProps) {
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 mb-1">
                 <Crown className="w-4 h-4 text-purple-400" />
-                <span className="text-lg font-bold text-text-primary">127</span>
+                <span className="text-lg font-bold text-text-primary">{getUserRank()}</span>
               </div>
               <p className="text-xs text-text-muted">Ranking</p>
             </div>
@@ -400,7 +439,7 @@ export function UserProfileEdit({ onClose, onSave }: UserProfileEditProps) {
                     <label key={key} className="flex items-center gap-3">
                       <input
                         type="checkbox"
-                        checked={formData.privacy[key as keyof typeof formData.privacy]}
+                        checked={formData.privacy[key as keyof typeof formData.privacy] || false}
                         onChange={(e) => handleNestedChange('privacy', key, e.target.checked)}
                         className="w-4 h-4 text-primary bg-surface border-border rounded focus:ring-primary/50 focus:ring-2"
                       />
@@ -408,6 +447,7 @@ export function UserProfileEdit({ onClose, onSave }: UserProfileEditProps) {
                     </label>
                   ))}
                 </div>
+              </div>
               </div>
             </div>
           )}

@@ -42,7 +42,7 @@ interface BadgeCollectionProps {
   userBadges?: UserBadge[]
 }
 
-export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
+export function BadgeCollection({ userBadges, dashboardMode = false }: BadgeCollectionProps & { dashboardMode?: boolean }) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedBadge, setSelectedBadge] = useState<UserBadge | null>(null)
 
@@ -52,7 +52,7 @@ export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
       id: 'early-adopter',
       name: 'Pionier Platformy',
       description: 'Jeden z pierwszych twórców na SeeUTrending!',
-      icon: <Crown className="w-6 h-6" />,
+      icon: Crown,
       rarity: 'legendary',
       category: 'special',
       unlocked: true,
@@ -65,7 +65,7 @@ export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
       id: 'hot-start',
       name: 'Gorący Start',
       description: 'Osiągnij 1K wyświetleń w swoim pierwszym filmie',
-      icon: <Flame className="w-6 h-6" />,
+      icon: Flame,
       rarity: 'common',
       category: 'achievement',
       unlocked: true,
@@ -78,7 +78,7 @@ export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
       id: 'viral-starter',
       name: 'Viral Starter',
       description: 'Osiągnij 10K wyświetleń w jednym filmie',
-      icon: <Rocket className="w-6 h-6" />,
+      icon: Rocket,
       rarity: 'rare',
       category: 'milestone',
       unlocked: false,
@@ -91,7 +91,7 @@ export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
       id: 'viral-king',
       name: 'Król Virali',
       description: 'Wygraj konkurs - 1. miejsce',
-      icon: <Crown className="w-6 h-6" />,
+      icon: Crown,
       rarity: 'legendary',
       category: 'competition',
       unlocked: false,
@@ -103,7 +103,7 @@ export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
       id: 'silver-warrior',
       name: 'Srebrny Wojownik',
       description: 'Zajmij 2. miejsce w konkursie',
-      icon: <Award className="w-6 h-6" />,
+      icon: Award,
       rarity: 'legendary',
       category: 'competition',
       unlocked: false,
@@ -115,7 +115,7 @@ export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
       id: 'bronze-warrior',
       name: 'Brązowy Wojownik',
       description: 'Zajmij 3. miejsce w konkursie',
-      icon: <Target className="w-6 h-6" />,
+      icon: Target,
       rarity: 'legendary',
       category: 'competition',
       unlocked: false,
@@ -127,7 +127,7 @@ export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
       id: 'community-favorite',
       name: 'Ulubieniec Społeczności',
       description: 'Zdobądź najwięcej polubień w konkursie',
-      icon: <Heart className="w-6 h-6" />,
+      icon: Heart,
       rarity: 'rare',
       category: 'milestone',
       unlocked: false,
@@ -140,7 +140,7 @@ export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
       id: 'fourth-place',
       name: '4. Miejsce',
       description: 'Zajmij 4. miejsce w konkursie',
-      icon: <Star className="w-6 h-6" />,
+      icon: Star,
       rarity: 'epic',
       category: 'competition',
       unlocked: false,
@@ -152,7 +152,7 @@ export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
       id: 'fifth-place',
       name: '5. Miejsce',
       description: 'Zajmij 5. miejsce w konkursie',
-      icon: <TrendingUp className="w-6 h-6" />,
+      icon: TrendingUp,
       rarity: 'epic',
       category: 'competition',
       unlocked: false,
@@ -164,7 +164,7 @@ export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
       id: 'most-comments',
       name: 'Mistrz Komentarzy',
       description: 'Zdobądź najwięcej komentarzy w konkursie',
-      icon: <Sparkles className="w-6 h-6" />,
+      icon: Sparkles,
       rarity: 'rare',
       category: 'milestone',
       unlocked: false,
@@ -176,7 +176,7 @@ export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
       id: 'streak-7',
       name: 'Seria 7 dni',
       description: 'Bądź aktywny przez 7 dni z rzędu',
-      icon: <Calendar className="w-6 h-6" />,
+      icon: Calendar,
       rarity: 'common',
       category: 'achievement',
       unlocked: true,
@@ -189,7 +189,7 @@ export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
       id: 'engagement-master',
       name: 'Mistrz Zaangażowania',
       description: 'Osiągnij 15% engagement rate',
-      icon: <Zap className="w-6 h-6" />,
+      icon: Zap,
       rarity: 'rare',
       category: 'milestone',
       unlocked: false,
@@ -201,6 +201,81 @@ export function BadgeCollection({ userBadges }: BadgeCollectionProps) {
   ]
 
   const badges = userBadges || mockBadges
+
+  // Add count data for earned badges (simulated)
+  const earnedBadgesWithCounts = [
+    { ...badges.find(b => b.id === 'early-adopter')!, count: 1, earnedAt: '2024-09-10' },
+    { ...badges.find(b => b.id === 'hot-start')!, count: 3, earnedAt: '2024-09-14' },
+    { ...badges.find(b => b.id === 'streak-7')!, count: 2, earnedAt: '2024-09-18' }
+  ].filter(Boolean)
+
+  // For dashboard mode, show only earned badges
+  if (dashboardMode) {
+    return (
+      <div className="bg-gradient-to-br from-indigo-600/10 via-purple-600/10 to-pink-600/10 backdrop-blur-sm border border-indigo-500/30 rounded-2xl p-8 shadow-xl shadow-indigo-500/10">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl">
+              <Star className="h-6 w-6 text-white" />
+            </div>
+            <h2 className="text-3xl font-display font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              Twoje Odznaki
+            </h2>
+          </div>
+          <Badge className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-3 py-1">
+            {earnedBadgesWithCounts.length} zdobyte
+          </Badge>
+        </div>
+
+        {/* Earned Badges Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+          {earnedBadgesWithCounts.map((badge) => {
+            const IconComponent = badge.icon as React.ComponentType<any>
+            return (
+              <div
+                key={badge.id}
+                className="group bg-gradient-to-br from-white/5 to-white/10 border border-white/20 rounded-xl p-4 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 cursor-pointer"
+              >
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div className={`relative w-16 h-16 rounded-xl bg-gradient-to-br ${badge.color} p-4 shadow-lg group-hover:rotate-6 transition-all duration-300`}>
+                    <IconComponent className="w-full h-full text-white" />
+                    {badge.count > 1 && (
+                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg animate-pulse">
+                        {badge.count}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold text-sm group-hover:text-purple-200 transition-colors">
+                      {badge.name}
+                    </h3>
+                    <p className="text-gray-400 text-xs mt-1">
+                      +{badge.xp} XP {badge.count > 1 ? `(x${badge.count})` : ''}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Discover More Badges Button */}
+        <div className="text-center">
+          <button
+            onClick={() => window.location.href = '/rewards#badges'}
+            className="group relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+            <div className="relative flex items-center gap-3">
+              <Sparkles className="w-5 h-5 animate-spin" style={{animationDuration: '3s'}} />
+              <span>Odkryj odznaki, które możesz zdobyć</span>
+              <Award className="w-5 h-5 group-hover:animate-bounce" />
+            </div>
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   const getRarityColor = (rarity: string) => {
     switch (rarity) {

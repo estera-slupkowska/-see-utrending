@@ -9,6 +9,7 @@ import { AdminLayout } from './components/admin/AdminLayout'
 import { LandingPage } from './pages/LandingPage'
 import { AuthPage } from './pages/AuthPage'
 import { DashboardPage } from './pages/DashboardPage'
+import { TestDashboard } from './pages/TestDashboard'
 import { BrandPage } from './pages/BrandPage'
 import { EducationHubPage } from './pages/EducationHubPage'
 import { RewardsPage } from './pages/RewardsPage'
@@ -69,13 +70,13 @@ function App() {
                     <Route path="/demo-contest" element={<DemoContestPage />} />
                     
                     {/* Protected routes */}
-                    <Route 
-                      path="/dashboard" 
+                    <Route
+                      path="/dashboard"
                       element={
                         <ProtectedRoute>
                           <DashboardPage />
                         </ProtectedRoute>
-                      } 
+                      }
                     />
                     
                     {/* Catch all - redirect to home */}

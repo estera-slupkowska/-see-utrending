@@ -2,6 +2,7 @@ import { HeroSection } from '../components/landing/HeroSection'
 import { LockedLeaderboard } from '../components/leaderboard/LockedLeaderboard'
 import { UpdatesSection } from '../components/landing/UpdatesSection'
 import { HowItWorksSection } from '../components/landing/HowItWorksSection'
+import { ExplanatoryTrailer } from '../components/trailer/ExplanatoryTrailer'
 import { CosmicBackground } from '../components/ui'
 import { useAuth } from '../lib/auth/context'
 import { useNavigate } from 'react-router-dom'
@@ -121,10 +122,7 @@ export function LandingPage() {
                   return (
                     <div key={card.title} className="relative group">
                       <button
-                        onClick={() => {
-                          // Small delay to ensure component mounting
-                          setTimeout(() => navigate(card.path), 50)
-                        }}
+                        onClick={() => navigate(card.path)}
                         className={`w-full p-4 bg-gradient-to-br ${card.color} rounded-xl shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-2xl group`}
                       >
                         <IconComponent className="w-6 h-6 text-white mx-auto mb-2" />
@@ -148,6 +146,15 @@ export function LandingPage() {
             <div className="absolute top-40 right-20 w-3 h-3 bg-accent rounded-full opacity-60 animate-pulse delay-75"></div>
             <div className="absolute bottom-20 left-20 w-2 h-2 bg-primary rounded-full opacity-60 animate-pulse delay-150"></div>
           </section>
+
+          {/* Explanatory Trailer Section */}
+          <ExplanatoryTrailer className="relative z-20" />
+
+          {/* Live Ranking Section for logged-in users */}
+          <LockedLeaderboard />
+
+          {/* Team Updates Section for logged-in users */}
+          <UpdatesSection isLoggedIn={true} />
         </div>
       </div>
     )
@@ -164,8 +171,9 @@ export function LandingPage() {
       
       <div className="relative z-20">
         <HeroSection />
+        <ExplanatoryTrailer />
         <LockedLeaderboard />
-        <UpdatesSection />
+        <UpdatesSection isLoggedIn={false} />
         <HowItWorksSection />
       </div>
     </div>

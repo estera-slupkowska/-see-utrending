@@ -1,17 +1,20 @@
 import { useTranslation } from 'react-i18next'
-import { 
-  Building2, 
-  Users, 
-  Trophy, 
-  Sparkles, 
-  Zap, 
-  Heart, 
-  Calendar, 
+import {
+  Building2,
+  Users,
+  Trophy,
+  Sparkles,
+  Zap,
+  Heart,
+  Calendar,
   TrendingUp,
   ArrowRight,
   Star,
   Gift,
-  UserCheck
+  UserCheck,
+  PartyPopper,
+  ShoppingBag,
+  Gem
 } from 'lucide-react'
 
 export function HowItWorksSection() {
@@ -44,36 +47,38 @@ export function HowItWorksSection() {
     }
   ]
 
-  const benefits = [
+  const rewardTypes = [
     {
-      icon: Zap,
-      title: t('howItWorks.benefits.points.title'),
-      description: t('howItWorks.benefits.points.description')
+      id: 'money',
+      title: t('rewards.types.money.title'),
+      description: t('rewards.types.money.description'),
+      icon: Trophy,
+      gradient: 'from-yellow-400 to-orange-500',
+      examples: ['500-5000 PLN', 'Nagrody w konkursach', 'Bonusy za wyniki']
     },
     {
-      icon: Star,
-      title: t('howItWorks.benefits.badges.title'),
-      description: t('howItWorks.benefits.badges.description')
+      id: 'experiences',
+      title: t('rewards.types.experiences.title'),
+      description: t('rewards.types.experiences.description'),
+      icon: PartyPopper,
+      gradient: 'from-pink-500 to-purple-500',
+      examples: ['Ekskluzywne imprezy', 'Wydarzenia brandów', 'Spotkania twórców']
     },
     {
-      icon: Gift,
-      title: t('howItWorks.benefits.rewards.title'),
-      description: t('howItWorks.benefits.rewards.description')
+      id: 'products',
+      title: t('rewards.types.products.title'),
+      description: t('rewards.types.products.description'),
+      icon: ShoppingBag,
+      gradient: 'from-blue-500 to-cyan-500',
+      examples: ['Najnowsze gadżety', 'Modne produkty', 'Merchandising brandów']
     },
     {
-      icon: Heart,
-      title: t('howItWorks.benefits.prestige.title'),
-      description: t('howItWorks.benefits.prestige.description')
-    },
-    {
-      icon: Calendar,
-      title: t('howItWorks.benefits.events.title'),
-      description: t('howItWorks.benefits.events.description')
-    },
-    {
-      icon: UserCheck,
-      title: t('howItWorks.benefits.opportunities.title'),
-      description: t('howItWorks.benefits.opportunities.description')
+      id: 'recognition',
+      title: t('rewards.types.recognition.title'),
+      description: t('rewards.types.recognition.description'),
+      icon: Gem,
+      gradient: 'from-purple-500 to-pink-500',
+      examples: ['Odznaki profilu', 'Sława w rankingu', 'Uznanie społeczne']
     }
   ]
 
@@ -130,28 +135,100 @@ export function HowItWorksSection() {
           </div>
         </div>
 
-        {/* Benefits Grid */}
+        {/* Reward Types Section - Engaging tables from rewards page */}
         <div className="mb-16">
-          <h3 className="text-2xl font-bold text-center mb-4">{t('howItWorks.benefitsTitle')}</h3>
+          <h3 className="text-2xl font-bold text-center mb-4">{t('rewards.types.title')}</h3>
           <p className="text-lg text-text-secondary text-center mb-12 max-w-2xl mx-auto">
-            {t('howItWorks.benefitsSubtitle')}
+            {t('rewards.types.description')}
           </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {benefits.map((benefit, index) => (
-              <div 
-                key={index}
-                className="bg-surface/30 rounded-xl p-6 border border-border/30 hover:border-primary/40 transition-all duration-300 hover:bg-surface/50"
-              >
-                <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
-                    <benefit.icon className="w-5 h-5 text-primary" />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {rewardTypes.map((reward, index) => (
+              <div key={reward.id} className="group relative">
+                {/* Enhanced Reward Type Card */}
+                <div className="h-full p-8 bg-surface/50 rounded-3xl border-2 border-border/50 hover:border-primary/50 transition-all duration-500 hover:-translate-y-3 hover:scale-105 hover:shadow-2xl magnetic-hover">
+
+                  {/* Floating Background Effect */}
+                  <div className={`
+                    absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-10 transition-opacity duration-500
+                    bg-gradient-to-br ${reward.gradient}
+                  `} />
+
+                  <div className="relative z-10 space-y-6">
+                    {/* Enhanced Icon with Multiple Effects */}
+                    <div className="relative mx-auto w-20 h-20">
+                      <div className={`
+                        w-full h-full rounded-3xl bg-gradient-to-br ${reward.gradient} p-5 shadow-xl
+                        group-hover:scale-125 group-hover:rotate-12 group-hover:shadow-2xl
+                        transition-all duration-500 viral-shimmer
+                      `}>
+                        <reward.icon className="w-full h-full text-white drop-shadow-lg" />
+                      </div>
+
+                      {/* Pulsing Ring */}
+                      <div className="absolute inset-0 rounded-3xl border-2 border-current opacity-0 group-hover:opacity-30 animate-ping transition-opacity duration-300"
+                           style={{ color: reward.id === 'money' ? '#F59E0B' : reward.id === 'experiences' ? '#EC4899' : reward.id === 'products' ? '#06B6D4' : '#A855F7' }} />
+
+                      {/* Orbiting Elements */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <div className="absolute inset-0 animate-spin" style={{ animationDuration: '8s' }}>
+                          <div className="absolute top-0 left-1/2 w-2 h-2 bg-yellow-400 rounded-full transform -translate-x-1/2 -translate-y-2" />
+                        </div>
+                        <div className="absolute inset-0 animate-spin" style={{ animationDuration: '6s', animationDirection: 'reverse' }}>
+                          <div className="absolute bottom-0 left-1/2 w-1.5 h-1.5 bg-pink-400 rounded-full transform -translate-x-1/2 translate-y-2" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Enhanced Content */}
+                    <div className="text-center space-y-4">
+                      <h4 className="text-xl font-bold text-text-primary group-hover:text-primary transition-colors duration-300">
+                        {reward.title}
+                      </h4>
+                      <p className="text-text-secondary text-sm leading-relaxed group-hover:text-text-primary transition-colors duration-300">
+                        {reward.description}
+                      </p>
+                    </div>
+
+                    {/* Enhanced Examples Section */}
+                    <div className="space-y-3">
+                      <p className="text-xs font-bold text-primary uppercase tracking-wider text-center group-hover:text-accent transition-colors duration-300">
+                        Przykłady
+                      </p>
+                      <ul className="space-y-2">
+                        {reward.examples.map((example, idx) => (
+                          <li
+                            key={idx}
+                            className="flex items-center space-x-3 p-2 rounded-lg bg-background/20 group-hover:bg-background/40 transition-all duration-300 transform group-hover:translate-x-1"
+                            style={{ animationDelay: `${idx * 100}ms` }}
+                          >
+                            <div className={`
+                              w-2 h-2 rounded-full transition-all duration-300
+                              bg-gradient-to-r ${reward.gradient} group-hover:animate-pulse
+                            `} />
+                            <span className="text-xs text-text-muted group-hover:text-text-primary transition-colors duration-300 font-medium">
+                              {example}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-semibold mb-2">{benefit.title}</h4>
-                    <p className="text-sm text-text-secondary leading-relaxed">
-                      {benefit.description}
-                    </p>
+
+                  {/* Bottom Glow Line */}
+                  <div className={`
+                    absolute bottom-0 left-0 right-0 h-1 rounded-b-3xl opacity-0 group-hover:opacity-100
+                    bg-gradient-to-r ${reward.gradient} transition-opacity duration-500
+                  `} />
+                </div>
+
+                {/* Floating Achievement Indicator */}
+                <div className="absolute -top-3 -right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
+                  <div className={`
+                    w-8 h-8 rounded-full bg-gradient-to-r ${reward.gradient}
+                    flex items-center justify-center shadow-lg animate-bounce
+                  `}>
+                    <Star className="w-4 h-4 text-white" />
                   </div>
                 </div>
               </div>

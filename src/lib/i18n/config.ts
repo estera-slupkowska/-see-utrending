@@ -431,6 +431,15 @@ const resources = {
           brands: 'Dla Marek'
         }
       },
+      // Explanatory Trailer
+      trailer: {
+        title: 'Zwiastun Wyjaśniający',
+        description: 'Zobacz jak działa SeeUTrending i poznaj wszystkie możliwości platformy',
+        videoTitle: 'SeeUTrending - Jak To Działa',
+        videoDescription: 'Kompletny przewodnik po platformie',
+        clickToWatch: 'Kliknij aby obejrzeć',
+        cta: 'Obejrzyj film, aby lepiej zrozumieć jak działa platforma'
+      },
       // Common
       common: {
         loading: 'Ładowanie...',
@@ -878,13 +887,22 @@ const resources = {
           brands: 'For Brands'
         }
       },
+      // Explanatory Trailer
+      trailer: {
+        title: 'Explanatory Trailer',
+        description: 'See how SeeUTrending works and discover all platform features',
+        videoTitle: 'SeeUTrending - How It Works',
+        videoDescription: 'Complete platform guide',
+        clickToWatch: 'Click to watch',
+        cta: 'Watch the video to better understand how the platform works'
+      },
       // Common
       common: {
         loading: 'Loading...',
-        error: 'An error occurred', 
+        error: 'An error occurred',
         tryAgain: 'Try again',
         close: 'Close',
-        save: 'Save', 
+        save: 'Save',
         cancel: 'Cancel',
         continue: 'Continue',
         back: 'Back',
