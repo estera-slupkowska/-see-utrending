@@ -4,21 +4,35 @@ import type { Database } from '../../types/supabase'
 // Helper function to clean and validate environment variables
 function sanitizeEnvVar(value: string | undefined, fallback: string, name: string): string {
   if (!value) {
-    console.log(`Using fallback for ${name}`)
+    console.log(`✅ Using fallback for ${name} (no env var)`)
     return fallback
   }
+
+  // Log raw value for debugging
+  console.log(`🔍 Raw ${name} length:`, value.length)
+  console.log(`🔍 Raw ${name} first chars:`, JSON.stringify(value.substring(0, 30)))
 
   // Clean the value: trim whitespace and remove any control characters
-  const cleaned = value.replace(/[\r\n\t]/g, '').trim()
+  const cleaned = value.replace(/[\r\n\t\x00-\x1F\x7F]/g, '').trim()
 
-  // Validate that it doesn't contain invalid header characters
-  const invalidChars = cleaned.match(/[^\x20-\x7E]/g)
-  if (invalidChars) {
-    console.error(`❌ Invalid characters found in ${name}:`, invalidChars)
-    console.log(`Using fallback for ${name} due to invalid characters`)
+  if (cleaned !== value) {
+    console.log(`🧹 Cleaned invalid characters from ${name}`)
+    console.log(`🧹 Original length: ${value.length}, Cleaned length: ${cleaned.length}`)
+  }
+
+  // Validate that the cleaned value is not empty
+  if (!cleaned) {
+    console.error(`❌ ${name} became empty after cleaning, using fallback`)
     return fallback
   }
 
+  // Final validation - ensure it only contains valid JWT characters (base64 + dots)
+  if (name.includes('KEY') && !/^[A-Za-z0-9\-_=.]+$/.test(cleaned)) {
+    console.error(`❌ ${name} contains invalid JWT characters, using fallback`)
+    return fallback
+  }
+
+  console.log(`✅ ${name} validation passed`)
   return cleaned
 }
 
