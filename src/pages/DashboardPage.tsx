@@ -6,7 +6,7 @@ import { Button, Badge } from '../components/ui'
 import { TikTokConnectionStatus } from '../components/dashboard/TikTokConnectionStatus'
 import { XPProgressBar } from '../components/gamification/XPProgressBar'
 import { BadgeCollection } from '../components/gamification/BadgeCollection'
-import { UserProfileEdit } from '../components/profile/UserProfileEdit'
+// import { UserProfileEdit } from '../components/profile/UserProfileEdit'
 import { User, Trophy, Star, Target, Edit3, Settings, BarChart3, Zap, Award, Bell, Clock, Users, Megaphone, Eye } from 'lucide-react'
 
 export function DashboardPage() {
@@ -58,13 +58,18 @@ export function DashboardPage() {
         
         {/* Profile Edit Modal */}
         {showProfileEdit && (
-          <UserProfileEdit 
-            onClose={() => setShowProfileEdit(false)}
-            onSave={(profileData) => {
-              console.log('Profile saved:', profileData)
-              setShowProfileEdit(false)
-            }}
-          />
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-surface border border-border rounded-2xl p-6 max-w-lg w-full mx-4">
+              <h3 className="text-xl font-bold text-text-primary mb-4">Edycja profilu</h3>
+              <p className="text-text-secondary mb-4">Funkcja edycji profilu jest tymczasowo niedostępna.</p>
+              <button
+                onClick={() => setShowProfileEdit(false)}
+                className="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90"
+              >
+                Zamknij
+              </button>
+            </div>
+          </div>
         )}
         {/* Enhanced Welcome Section */}
         <div className="mb-8 animate-fade-in">

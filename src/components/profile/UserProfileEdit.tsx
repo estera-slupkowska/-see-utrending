@@ -448,7 +448,7 @@ export function UserProfileEdit({ onClose, onSave }: UserProfileEditProps) {
                   ))}
                 </div>
               </div>
-              </div>
+            </div>
             </div>
           )}
         </div>

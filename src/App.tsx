@@ -15,6 +15,7 @@ import { EducationHubPage } from './pages/EducationHubPage'
 import { RewardsPage } from './pages/RewardsPage'
 import { ContestsPage } from './pages/ContestsPage'
 import { UsersPage } from './pages/UsersPage'
+import { OAuthRedirect } from './pages/OAuthRedirect'
 import { TermsOfService } from './pages/TermsOfService'
 import { PrivacyPolicy } from './pages/PrivacyPolicy'
 import { AdminDashboard } from './pages/admin/AdminDashboard'
@@ -66,7 +67,7 @@ function App() {
                     <Route path="/auth/register" element={<AuthPage mode="register" />} />
                     <Route path="/terms" element={<TermsOfService />} />
                     <Route path="/privacy" element={<PrivacyPolicy />} />
-                    <Route path="/oauth/redirect" element={<TikTokCallback />} />
+                    <Route path="/oauth/redirect" element={<OAuthRedirect />} />
                     <Route path="/demo-contest" element={<DemoContestPage />} />
                     
                     {/* Protected routes */}
