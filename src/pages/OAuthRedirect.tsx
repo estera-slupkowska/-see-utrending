@@ -33,16 +33,24 @@ export function OAuthRedirect() {
       }
 
       try {
+        console.log('🔄 Processing TikTok OAuth callback with data:', { code: code?.substring(0, 10), state: state?.substring(0, 10), userId: user.id })
+
         const result = await TikTokService.handleTikTokCallback(code, state, user.id)
 
+        console.log('📊 TikTok callback result:', result)
+
         if (result.success) {
-          navigate('/dashboard?success=tiktok_connected')
+          console.log('✅ TikTok connected successfully, redirecting to dashboard')
+          // Add a small delay to ensure the database is updated
+          await new Promise(resolve => setTimeout(resolve, 500))
+          navigate('/dashboard?success=tiktok_connected&refresh=1')
         } else {
-          navigate('/dashboard?error=tiktok_connection_failed')
+          console.error('❌ TikTok connection failed:', result.error)
+          navigate(`/dashboard?error=tiktok_connection_failed&details=${encodeURIComponent(result.error || 'Unknown error')}`)
         }
       } catch (error) {
-        console.error('TikTok callback error:', error)
-        navigate('/dashboard?error=tiktok_callback_error')
+        console.error('💥 TikTok callback error:', error)
+        navigate(`/dashboard?error=tiktok_callback_error&details=${encodeURIComponent(error.message || 'Unknown error')}`)
       }
     }
 

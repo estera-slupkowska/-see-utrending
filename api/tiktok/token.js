@@ -14,9 +14,14 @@ export default async function handler(req, res) {
     }
 
     // TikTok OAuth configuration
-    const clientKey = process.env.VITE_TIKTOK_CLIENT_KEY
-    const clientSecret = process.env.VITE_TIKTOK_CLIENT_SECRET
-    const redirectUri = process.env.VITE_TIKTOK_REDIRECT_URI
+    const clientKey = process.env.TIKTOK_CLIENT_KEY || process.env.VITE_TIKTOK_CLIENT_KEY
+    const clientSecret = process.env.TIKTOK_CLIENT_SECRET || process.env.VITE_TIKTOK_CLIENT_SECRET
+    const redirectUri = process.env.TIKTOK_REDIRECT_URI || process.env.VITE_TIKTOK_REDIRECT_URI
+
+    console.log('🔧 TikTok OAuth Configuration:')
+    console.log('Client Key exists:', !!clientKey)
+    console.log('Client Secret exists:', !!clientSecret)
+    console.log('Redirect URI:', redirectUri)
 
     if (!clientKey || !clientSecret || !redirectUri) {
       console.error('Missing TikTok OAuth configuration')
@@ -113,8 +118,13 @@ export default async function handler(req, res) {
     }
 
     // Step 4: Save to Supabase
-    const supabaseUrl = process.env.VITE_SUPABASE_URL
-    const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
+    const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
+
+    console.log('🔧 Supabase Configuration:')
+    console.log('URL exists:', !!supabaseUrl)
+    console.log('Key exists:', !!supabaseKey)
+    console.log('URL:', supabaseUrl)
 
     if (!supabaseUrl || !supabaseKey) {
       console.error('Missing Supabase configuration')
@@ -151,10 +161,17 @@ export default async function handler(req, res) {
 
     if (dbError) {
       console.error('❌ Database update failed:', dbError)
-      return res.status(500).json({ error: 'Failed to save user data' })
+      console.error('❌ User ID:', userId)
+      console.error('❌ TikTok Data:', {
+        username: tikTokUser.username || tikTokUser.unique_id,
+        user_id: tikTokUser.open_id,
+        metrics: tiktokMetrics
+      })
+      return res.status(500).json({ error: 'Failed to save user data', details: dbError.message })
     }
 
     console.log('✅ Successfully saved TikTok data to database')
+    console.log('✅ Updated profile:', updatedProfile)
 
     // Return success response
     return res.status(200).json({

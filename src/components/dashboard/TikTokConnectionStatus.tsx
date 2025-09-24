@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../lib/auth/context'
+import { supabase } from '../../lib/supabase/client'
 import { Button } from '../ui'
 import { CheckCircle, XCircle, Loader, ExternalLink } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
 
 interface TikTokAccount {
   username: string
@@ -13,45 +15,93 @@ interface TikTokAccount {
   last_sync: string
 }
 
+interface UserProfile {
+  tiktok_username?: string
+  tiktok_user_id?: string
+  tiktok_handle?: string
+  tiktok_metrics?: {
+    followers: number
+    following: number
+    likes: number
+    videos: number
+    verified: boolean
+    last_updated: string
+  }
+  verified?: boolean
+}
+
 export function TikTokConnectionStatus() {
   const { user } = useAuth()
+  const [searchParams] = useSearchParams()
   const [isLoading, setIsLoading] = useState(true)
   const [tikTokAccount, setTikTokAccount] = useState<TikTokAccount | null>(null)
   const [isConnecting, setIsConnecting] = useState(false)
 
-  // Sandbox mode: simulate TikTok connection status
+  // Fetch real TikTok connection status from database
   useEffect(() => {
     const checkConnection = async () => {
-      setIsLoading(true)
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Sandbox: Check if user has completed OAuth (simulate with localStorage)
-      const hasCompletedOAuth = localStorage.getItem('tiktok_oauth_completed') === 'true'
-      
-      if (hasCompletedOAuth) {
-        // Simulate connected account data
-        setTikTokAccount({
-          username: '@demo_creator',
-          display_name: 'Demo Creator',
-          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=tiktok',
-          follower_count: 15420,
-          is_verified: false,
-          is_active: true,
-          last_sync: new Date().toISOString()
-        })
-      } else {
-        setTikTokAccount(null)
+      if (!user?.id) {
+        setIsLoading(false)
+        return
       }
-      
-      setIsLoading(false)
+
+      setIsLoading(true)
+
+      try {
+        console.log('🔍 Checking TikTok connection for user:', user.id)
+
+        // Fetch user profile from database
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('tiktok_username, tiktok_user_id, tiktok_handle, tiktok_metrics, verified')
+          .eq('id', user.id)
+          .single()
+
+        if (error) {
+          console.error('❌ Error fetching profile:', error)
+          setTikTokAccount(null)
+        } else if (profile && profile.tiktok_user_id) {
+          console.log('✅ Found TikTok connection in database:', profile)
+
+          // Convert database profile to TikTokAccount format
+          const metrics = profile.tiktok_metrics || {}
+          setTikTokAccount({
+            username: profile.tiktok_handle || profile.tiktok_username || '@unknown',
+            display_name: profile.tiktok_username || 'Unknown User',
+            avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.tiktok_user_id}`,
+            follower_count: metrics.followers || 0,
+            is_verified: profile.verified || metrics.verified || false,
+            is_active: true, // Assume active if data exists
+            last_sync: metrics.last_updated || new Date().toISOString()
+          })
+        } else {
+          console.log('ℹ️ No TikTok connection found in database')
+          setTikTokAccount(null)
+        }
+      } catch (error) {
+        console.error('💥 Error checking TikTok connection:', error)
+        setTikTokAccount(null)
+      } finally {
+        setIsLoading(false)
+      }
     }
 
-    if (user) {
-      checkConnection()
-    }
+    checkConnection()
   }, [user])
+
+  // Handle refresh from OAuth redirect
+  useEffect(() => {
+    const shouldRefresh = searchParams.get('refresh')
+    const success = searchParams.get('success')
+
+    if (shouldRefresh === '1' || success === 'tiktok_connected') {
+      console.log('🔄 Auto-refreshing TikTok connection status due to OAuth success')
+      // Add a small delay to ensure database is updated
+      setTimeout(() => {
+        refreshConnection()
+      }, 1000)
+    }
+  }, [searchParams])
 
   const handleConnect = () => {
     setIsConnecting(true)
@@ -93,24 +143,73 @@ export function TikTokConnectionStatus() {
     }
   }
 
-  const handleDisconnect = () => {
-    // Sandbox: clear connection status
-    localStorage.removeItem('tiktok_oauth_completed')
-    setTikTokAccount(null)
+  const handleDisconnect = async () => {
+    if (!user?.id) return
+
+    try {
+      console.log('🔄 Disconnecting TikTok account...')
+
+      // Clear TikTok data from database
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          tiktok_username: null,
+          tiktok_user_id: null,
+          tiktok_handle: null,
+          tiktok_metrics: null,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+
+      if (error) {
+        console.error('❌ Error disconnecting TikTok:', error)
+        alert('Failed to disconnect TikTok account')
+      } else {
+        console.log('✅ TikTok account disconnected successfully')
+        setTikTokAccount(null)
+      }
+    } catch (error) {
+      console.error('💥 Error disconnecting TikTok:', error)
+      alert('Failed to disconnect TikTok account')
+    }
   }
 
-  const handleSandboxConnect = () => {
-    // Sandbox: simulate successful connection
-    localStorage.setItem('tiktok_oauth_completed', 'true')
-    setTikTokAccount({
-      username: '@demo_creator',
-      display_name: 'Demo Creator',
-      avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=tiktok',
-      follower_count: 15420,
-      is_verified: false,
-      is_active: true,
-      last_sync: new Date().toISOString()
-    })
+  // Function to refresh connection status
+  const refreshConnection = async () => {
+    if (!user?.id) return
+
+    setIsLoading(true)
+    try {
+      console.log('🔄 Refreshing TikTok connection status...')
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('tiktok_username, tiktok_user_id, tiktok_handle, tiktok_metrics, verified')
+        .eq('id', user.id)
+        .single()
+
+      if (error) {
+        console.error('❌ Error fetching profile:', error)
+        setTikTokAccount(null)
+      } else if (profile && profile.tiktok_user_id) {
+        const metrics = profile.tiktok_metrics || {}
+        setTikTokAccount({
+          username: profile.tiktok_handle || profile.tiktok_username || '@unknown',
+          display_name: profile.tiktok_username || 'Unknown User',
+          avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.tiktok_user_id}`,
+          follower_count: metrics.followers || 0,
+          is_verified: profile.verified || metrics.verified || false,
+          is_active: true,
+          last_sync: metrics.last_updated || new Date().toISOString()
+        })
+      } else {
+        setTikTokAccount(null)
+      }
+    } catch (error) {
+      console.error('💥 Error refreshing TikTok connection:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   if (isLoading) {
@@ -173,6 +272,10 @@ export function TikTokConnectionStatus() {
           <Button variant="secondary" size="sm" onClick={handleDisconnect}>
             Rozłącz
           </Button>
+          <Button variant="outline" size="sm" onClick={refreshConnection}>
+            <Loader className="w-4 h-4 mr-2" />
+            Odśwież
+          </Button>
           <Button variant="primary" size="sm">
             <ExternalLink className="w-4 h-4 mr-2" />
             Zobacz profil TikTok
@@ -206,8 +309,8 @@ export function TikTokConnectionStatus() {
       </p>
 
       <div className="flex gap-3 mb-4">
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           onClick={handleConnect}
           disabled={isConnecting}
         >
@@ -219,13 +322,6 @@ export function TikTokConnectionStatus() {
           ) : (
             'Połącz TikTok'
           )}
-        </Button>
-        <Button 
-          variant="secondary" 
-          onClick={handleSandboxConnect}
-          className="text-xs"
-        >
-          🧪 Demo Connect
         </Button>
       </div>
 
