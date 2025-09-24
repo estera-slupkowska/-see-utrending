@@ -134,16 +134,21 @@ export class TikTokService {
     userId: string
   ): Promise<{ success: boolean, error?: string }> {
     try {
+      console.log('🔄 Processing TikTok OAuth callback...')
+
       // Verify state parameter
       const storedState = sessionStorage.getItem('tiktok_oauth_state')
       if (!storedState || storedState !== state) {
+        console.error('❌ State mismatch:', { stored: storedState, received: state })
         return { success: false, error: 'Invalid state parameter - possible CSRF attack' }
       }
 
       // Clear stored state
       sessionStorage.removeItem('tiktok_oauth_state')
 
-      // Exchange code for access token
+      console.log('✅ State verified, exchanging code for token...')
+
+      // Exchange code for access token using our API endpoint
       const tokenResponse = await fetch('/api/tiktok/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -151,17 +156,17 @@ export class TikTokService {
       })
 
       if (!tokenResponse.ok) {
-        return { success: false, error: 'Failed to exchange code for token' }
+        const errorData = await tokenResponse.json()
+        console.error('❌ Token exchange failed:', errorData)
+        return { success: false, error: errorData.error || 'Failed to exchange code for token' }
       }
 
-      const { user_info } = await tokenResponse.json()
+      const responseData = await tokenResponse.json()
+      console.log('✅ TikTok OAuth completed successfully')
 
-      // Save user data to profile
-      await this.connectTikTokAccount(userId, user_info)
-
-      return { success: true }
+      return { success: true, data: responseData }
     } catch (error) {
-      console.error('TikTok callback error:', error)
+      console.error('💥 TikTok callback error:', error)
       return { success: false, error: 'Failed to process TikTok authentication' }
     }
   }

@@ -26,17 +26,21 @@ export function useAuthForm(): UseAuthFormResult {
     setError(null)
 
     try {
+      console.log('🔐 Attempting sign in for:', email)
       const { error: authError } = await auth.signIn(email, password)
-      
+
       if (authError) {
+        console.error('🚫 Auth error:', authError)
         setError(getErrorMessage(authError.message))
         setLoading(false)
         return false
       }
 
+      console.log('✅ Sign in successful')
       setLoading(false)
       return true
     } catch (err) {
+      console.error('💥 Unexpected sign in error:', err)
       setError(t('auth.errors.unexpected'))
       setLoading(false)
       return false
