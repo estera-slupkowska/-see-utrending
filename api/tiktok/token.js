@@ -159,9 +159,17 @@ export default async function handler(req, res) {
     const accessToken = tokenData.access_token
 
     // Step 2: Get user information from TikTok
-    console.log('👤 Fetching user info...')
+    console.log('👤 Fetching user info with access token...')
+    console.log('Access token exists:', !!accessToken)
+    console.log('Access token preview:', accessToken ? `${accessToken.substring(0, 10)}...` : 'NONE')
 
-    const userInfoResponse = await fetch('https://open.tiktokapis.com/v2/user/info/', {
+    // Required fields parameter for TikTok User Info API
+    const fields = 'open_id,union_id,avatar_url,display_name,username,follower_count,following_count,likes_count,video_count,is_verified'
+    const userInfoUrl = `https://open.tiktokapis.com/v2/user/info/?fields=${encodeURIComponent(fields)}`
+
+    console.log('🌐 User info URL:', userInfoUrl)
+
+    const userInfoResponse = await fetch(userInfoUrl, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -169,48 +177,46 @@ export default async function handler(req, res) {
       }
     })
 
+    console.log('📊 User info response status:', userInfoResponse.status)
+
     if (!userInfoResponse.ok) {
       const errorText = await userInfoResponse.text()
       console.error('❌ User info fetch failed:', errorText)
-      return res.status(400).json({ error: 'Failed to fetch user information' })
+      console.error('❌ Response status:', userInfoResponse.status)
+      console.error('❌ Response headers:', Object.fromEntries(userInfoResponse.headers.entries()))
+      return res.status(400).json({
+        error: 'Failed to fetch user information',
+        details: errorText,
+        status: userInfoResponse.status
+      })
     }
 
     const userInfoData = await userInfoResponse.json()
+    console.log('✅ User info response:', JSON.stringify(userInfoData, null, 2))
 
     if (userInfoData.error) {
       console.error('❌ TikTok user info error:', userInfoData.error)
-      return res.status(400).json({ error: userInfoData.error.message })
+      return res.status(400).json({ error: userInfoData.error.message || userInfoData.error })
+    }
+
+    if (!userInfoData.data || !userInfoData.data.user) {
+      console.error('❌ Invalid user info response structure:', userInfoData)
+      return res.status(400).json({ error: 'Invalid user info response structure' })
     }
 
     const tikTokUser = userInfoData.data.user
-    console.log('✅ User info fetched:', tikTokUser.display_name)
+    console.log('✅ User info fetched successfully')
+    console.log('User ID:', tikTokUser.open_id)
+    console.log('Display Name:', tikTokUser.display_name)
+    console.log('Username:', tikTokUser.username)
+    console.log('Followers:', tikTokUser.follower_count || 0)
 
-    // Step 3: Get user stats (if available in scope)
-    let userStats = {}
-    try {
-      console.log('📊 Fetching user stats...')
-
-      const statsResponse = await fetch('https://open.tiktokapis.com/v2/user/info/', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
-        }
-      })
-
-      if (statsResponse.ok) {
-        const statsData = await statsResponse.json()
-        if (statsData.data && statsData.data.user) {
-          userStats = {
-            follower_count: statsData.data.user.follower_count || 0,
-            following_count: statsData.data.user.following_count || 0,
-            likes_count: statsData.data.user.likes_count || 0,
-            video_count: statsData.data.user.video_count || 0
-          }
-        }
-      }
-    } catch (statsError) {
-      console.log('⚠️ Stats fetch failed (may not be in scope):', statsError.message)
+    // User stats are already included in the user info response
+    const userStats = {
+      follower_count: tikTokUser.follower_count || 0,
+      following_count: tikTokUser.following_count || 0,
+      likes_count: tikTokUser.likes_count || 0,
+      video_count: tikTokUser.video_count || 0
     }
 
     // Step 4: Save to Supabase
@@ -269,16 +275,21 @@ export default async function handler(req, res) {
     console.log('✅ Successfully saved TikTok data to database')
     console.log('✅ Updated profile:', updatedProfile)
 
-    // Return success response
+    // Return success response with comprehensive data
     return res.status(200).json({
       success: true,
+      message: 'TikTok account connected successfully',
       user_info: {
         open_id: tikTokUser.open_id,
+        union_id: tikTokUser.union_id,
         username: tikTokUser.username || tikTokUser.unique_id,
         display_name: tikTokUser.display_name,
         avatar_url: tikTokUser.avatar_url,
-        is_verified: tikTokUser.is_verified,
-        ...userStats
+        is_verified: tikTokUser.is_verified || false,
+        follower_count: userStats.follower_count,
+        following_count: userStats.following_count,
+        likes_count: userStats.likes_count,
+        video_count: userStats.video_count
       },
       profile: updatedProfile
     })
