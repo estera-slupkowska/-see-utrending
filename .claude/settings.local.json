@@ -93,7 +93,9 @@
       "Bash(start chrome \"https://seeutrending-c35h4rggq-seeutrendings-projects.vercel.app/rewards\")",
       "Bash(timeout 10 npm run dev)",
       "Bash(start chrome \"http://localhost:5174\")",
-      "Bash(start chrome:*)"
+      "Bash(start chrome:*)",
+      "Bash(sbawnbpy8ri5x8kz7d)",
+      "Bash(cd:*)"
     ],
     "deny": [],
     "ask": []

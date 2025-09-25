@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../lib/auth/context'
 import { supabase } from '../../lib/supabase/client'
+import { TikTokService } from '../../lib/supabase/tiktok'
 import { Button } from '../ui'
 import { CheckCircle, XCircle, Loader, ExternalLink } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
@@ -106,39 +107,29 @@ export function TikTokConnectionStatus() {
   const handleConnect = () => {
     setIsConnecting(true)
 
-    const clientKey = import.meta.env.VITE_TIKTOK_CLIENT_KEY || 'sbawnbpy8ri5x8kz7d'
-    // Use environment-specific redirect URI
-    const redirectUri = import.meta.env.VITE_TIKTOK_REDIRECT_URI
-
-    if (!redirectUri) {
-      console.error('VITE_TIKTOK_REDIRECT_URI is not configured')
-      alert('TikTok redirect URI is not configured. Please check environment variables.')
+    if (!user?.id) {
+      console.error('❌ User not authenticated')
+      alert('You must be logged in to connect TikTok')
       setIsConnecting(false)
       return
     }
 
-    if (clientKey && redirectUri) {
-      // Generate CSRF state with timestamp for uniqueness
-      const state = `${crypto.randomUUID()}-${Date.now()}`
-      console.log('Generated state:', state)
+    try {
+      // Store user ID for recovery after OAuth redirect
+      sessionStorage.setItem('tiktok_oauth_user_id', user.id)
+      localStorage.setItem('tiktok_oauth_user_id_backup', user.id)
 
-      // Store state in both sessionStorage and localStorage for reliability
-      sessionStorage.setItem('tiktok_oauth_state', state)
-      localStorage.setItem('tiktok_oauth_state_backup', state)
+      // Use centralized OAuth URL generation to ensure consistency
+      const authUrl = TikTokService.getTikTokAuthUrl()
 
-      // Also store the original redirect URI for verification
-      sessionStorage.setItem('tiktok_redirect_uri', redirectUri)
-
-      const authUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${clientKey}&scope=user.info.basic,user.info.profile,video.list&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}`
-
-      console.log('TikTok Auth URL:', authUrl)
-      console.log('State stored:', state)
-      console.log('Redirect URI:', redirectUri)
+      console.log('🚀 TikTok Auth URL (centralized):', authUrl)
+      console.log('👤 User ID stored:', user.id)
+      console.log('🌟 Using unified OAuth flow with consistent scopes')
 
       window.location.href = authUrl
-    } else {
-      console.error('Missing TikTok configuration')
-      alert('TikTok integration is not configured')
+    } catch (error) {
+      console.error('❌ Failed to generate TikTok auth URL:', error)
+      alert('Failed to initialize TikTok connection. Please check configuration.')
       setIsConnecting(false)
     }
   }

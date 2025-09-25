@@ -7,49 +7,167 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { code, userId } = req.body
+    const { code, userId, clientKey: frontendClientKey, redirectUri: frontendRedirectUri } = req.body
 
     if (!code || !userId) {
       return res.status(400).json({ error: 'Missing code or userId' })
     }
 
-    // TikTok OAuth configuration
-    const clientKey = process.env.TIKTOK_CLIENT_KEY || process.env.VITE_TIKTOK_CLIENT_KEY
-    const clientSecret = process.env.TIKTOK_CLIENT_SECRET || process.env.VITE_TIKTOK_CLIENT_SECRET
-    const redirectUri = process.env.TIKTOK_REDIRECT_URI || process.env.VITE_TIKTOK_REDIRECT_URI
+    console.log('🔄 Request received:', {
+      hasCode: !!code,
+      hasUserId: !!userId,
+      hasFrontendClientKey: !!frontendClientKey,
+      hasFrontendRedirectUri: !!frontendRedirectUri,
+      codePreview: code ? code.substring(0, 10) + '...' : 'NONE'
+    })
 
-    console.log('🔧 TikTok OAuth Configuration:')
+    // DON'T decode the authorization code - use it exactly as received from TikTok
+    console.log('🔄 Using authorization code exactly as received from TikTok:', {
+      codeLength: code?.length || 0,
+      codePreview: code ? code.substring(0, 15) + '...' : 'NONE'
+    })
+
+    // TikTok OAuth configuration - Use frontend values for consistency
+    const clientKey = frontendClientKey || process.env.TIKTOK_CLIENT_KEY
+    const clientSecret = process.env.TIKTOK_CLIENT_SECRET
+    const redirectUri = frontendRedirectUri || process.env.TIKTOK_REDIRECT_URI
+
+    console.log('🔑 OAuth Configuration Selection:', {
+      usingFrontendKey: !!frontendClientKey,
+      usingServerKey: !frontendClientKey && !!process.env.TIKTOK_CLIENT_KEY,
+      usingFrontendRedirectUri: !!frontendRedirectUri,
+      usingServerRedirectUri: !frontendRedirectUri && !!process.env.TIKTOK_REDIRECT_URI,
+      frontendKeyPreview: frontendClientKey ? `${frontendClientKey.substring(0, 4)}...${frontendClientKey.substring(frontendClientKey.length - 4)}` : 'NOT PROVIDED',
+      serverKeyPreview: process.env.TIKTOK_CLIENT_KEY ? `${process.env.TIKTOK_CLIENT_KEY.substring(0, 4)}...${process.env.TIKTOK_CLIENT_KEY.substring(process.env.TIKTOK_CLIENT_KEY.length - 4)}` : 'NOT SET',
+      frontendRedirectUri: frontendRedirectUri || 'NOT PROVIDED',
+      serverRedirectUri: process.env.TIKTOK_REDIRECT_URI || 'NOT SET'
+    })
+
+    console.log('🔧 Final TikTok OAuth Configuration:')
     console.log('Client Key exists:', !!clientKey)
+    console.log('Client Key (masked):', clientKey ? `${clientKey.substring(0, 4)}...${clientKey.substring(clientKey.length - 4)}` : 'NOT SET')
     console.log('Client Secret exists:', !!clientSecret)
+    console.log('Client Secret (masked):', clientSecret ? `${clientSecret.substring(0, 4)}...${clientSecret.substring(clientSecret.length - 4)}` : 'NOT SET')
     console.log('Redirect URI:', redirectUri)
+    console.log('Code provided:', !!code)
+    console.log('User ID:', userId)
+    console.log('🌍 Server Environment Variables:')
+    console.log('TIKTOK_CLIENT_KEY exists:', !!process.env.TIKTOK_CLIENT_KEY)
+    console.log('TIKTOK_CLIENT_SECRET exists:', !!process.env.TIKTOK_CLIENT_SECRET)
+    console.log('TIKTOK_REDIRECT_URI exists:', !!process.env.TIKTOK_REDIRECT_URI)
+
+    // Log actual values (masked) for debugging
+    console.log('🔐 Server-side credentials (masked):')
+    console.log('TIKTOK_CLIENT_KEY value:', process.env.TIKTOK_CLIENT_KEY ? `${process.env.TIKTOK_CLIENT_KEY.substring(0, 4)}...${process.env.TIKTOK_CLIENT_KEY.substring(process.env.TIKTOK_CLIENT_KEY.length - 4)}` : 'UNDEFINED')
+    console.log('TIKTOK_CLIENT_SECRET value:', process.env.TIKTOK_CLIENT_SECRET ? `${process.env.TIKTOK_CLIENT_SECRET.substring(0, 4)}...${process.env.TIKTOK_CLIENT_SECRET.substring(process.env.TIKTOK_CLIENT_SECRET.length - 4)}` : 'UNDEFINED')
+    console.log('TIKTOK_REDIRECT_URI value:', process.env.TIKTOK_REDIRECT_URI || 'UNDEFINED')
 
     if (!clientKey || !clientSecret || !redirectUri) {
-      console.error('Missing TikTok OAuth configuration')
-      return res.status(500).json({ error: 'Server configuration error' })
+      console.error('❌ Missing TikTok OAuth configuration on server-side:')
+      console.error('Missing TIKTOK_CLIENT_KEY:', !clientKey)
+      console.error('Missing TIKTOK_CLIENT_SECRET:', !clientSecret)
+      console.error('Missing TIKTOK_REDIRECT_URI:', !redirectUri)
+      console.error('🚨 CRITICAL: Server-side environment variables are not set in Vercel!')
+      return res.status(500).json({
+        error: 'Server configuration error - missing environment variables',
+        details: {
+          missingClientKey: !clientKey,
+          missingClientSecret: !clientSecret,
+          missingRedirectUri: !redirectUri
+        }
+      })
+    }
+
+    // CRITICAL: Verify the client key matches what was used for authorization
+    const expectedClientKey = 'sbawnbpy8ri5x8kz7d' // This is your sandbox client key
+    if (clientKey !== expectedClientKey) {
+      console.error('🚨 CRITICAL CLIENT KEY MISMATCH:')
+      console.error('Expected (from sandbox):', `${expectedClientKey.substring(0, 4)}...${expectedClientKey.substring(expectedClientKey.length - 4)}`)
+      console.error('Server received:', clientKey ? `${clientKey.substring(0, 4)}...${clientKey.substring(clientKey.length - 4)}` : 'UNDEFINED')
+      console.error('This explains the "Client key does not match authorization record" error!')
     }
 
     console.log('🔄 Exchanging code for access token...')
 
+    // Prepare exact parameters being sent to TikTok
+    const tokenParams = {
+      client_key: clientKey,
+      client_secret: clientSecret,
+      code: code, // Use original code, not decoded
+      grant_type: 'authorization_code',
+      redirect_uri: redirectUri
+    }
+
+    console.log('📤 Token request parameters:', {
+      client_key: clientKey ? `${clientKey.substring(0, 4)}...${clientKey.substring(clientKey.length - 4)}` : 'NOT SET',
+      client_secret: clientSecret ? `${clientSecret.substring(0, 4)}...${clientSecret.substring(clientSecret.length - 4)}` : 'NOT SET',
+      code: code ? `${code.substring(0, 8)}...` : 'NOT SET',
+      grant_type: 'authorization_code',
+      redirect_uri: redirectUri
+    })
+
     // Step 1: Exchange authorization code for access token
-    const tokenResponse = await fetch('https://open.tiktokapis.com/v2/oauth/token/', {
+    // Note: For sandbox, we might need a different endpoint, but using the standard one first
+    const tokenEndpoint = 'https://open.tiktokapis.com/v2/oauth/token/'
+    console.log('🌐 Using token endpoint:', tokenEndpoint)
+
+    // Create form-urlencoded body manually to ensure correct formatting
+    const formBody = `client_key=${encodeURIComponent(clientKey)}&client_secret=${encodeURIComponent(clientSecret)}&code=${encodeURIComponent(code)}&grant_type=authorization_code&redirect_uri=${encodeURIComponent(redirectUri)}`
+
+    console.log('📤 Exact form body being sent to TikTok:', formBody.replace(clientSecret, '***SECRET***'))
+
+    const tokenResponse = await fetch(tokenEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Cache-Control': 'no-cache'
       },
-      body: new URLSearchParams({
-        client_key: clientKey,
-        client_secret: clientSecret,
-        code: code,
-        grant_type: 'authorization_code',
-        redirect_uri: redirectUri
-      })
+      body: formBody
     })
 
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text()
       console.error('❌ Token exchange failed:', errorText)
-      return res.status(400).json({ error: 'Failed to exchange code for token' })
+      console.error('❌ Request was made with:')
+      console.error('   - client_key:', clientKey ? `${clientKey.substring(0, 4)}...${clientKey.substring(clientKey.length - 4)}` : 'NOT SET')
+      console.error('   - redirect_uri:', redirectUri)
+      console.error('   - code provided:', !!code)
+      console.error('❌ Response status:', tokenResponse.status)
+      console.error('❌ Response headers:', Object.fromEntries(tokenResponse.headers.entries()))
+
+      // Try to parse error response as JSON
+      let errorMessage = errorText
+      let errorDetails = {}
+
+      try {
+        const errorData = JSON.parse(errorText)
+        console.error('❌ Parsed TikTok error:', errorData)
+
+        if (errorData.error) {
+          errorMessage = errorData.error
+          errorDetails = errorData
+        } else if (errorData.error_description) {
+          errorMessage = errorData.error_description
+          errorDetails = errorData
+        } else if (errorData.message) {
+          errorMessage = errorData.message
+          errorDetails = errorData
+        }
+      } catch (parseError) {
+        console.error('❌ Could not parse error as JSON:', parseError.message)
+        console.error('❌ Raw error text:', errorText)
+      }
+
+      return res.status(400).json({
+        error: errorMessage,
+        details: errorText,
+        parsedError: errorDetails,
+        requestInfo: {
+          client_key: clientKey ? `${clientKey.substring(0, 4)}...${clientKey.substring(clientKey.length - 4)}` : 'NOT SET',
+          redirect_uri: redirectUri,
+          has_code: !!code
+        }
+      })
     }
 
     const tokenData = await tokenResponse.json()
