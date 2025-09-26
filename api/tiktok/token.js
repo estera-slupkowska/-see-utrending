@@ -248,9 +248,12 @@ export default async function handler(req, res) {
     console.log('Access token exists:', !!accessToken)
     console.log('Access token preview:', accessToken ? `${accessToken.substring(0, 10)}...` : 'NONE')
 
-    // Required fields parameter for TikTok User Info API
-    const fields = 'open_id,union_id,avatar_url,display_name,username,follower_count,following_count,likes_count,video_count,is_verified'
+    // SANDBOX MODE: Only request fields available with basic scopes
+    // Removed: follower_count,following_count,likes_count,video_count (these require user.info.stats scope)
+    const fields = 'open_id,union_id,avatar_url,display_name,username,is_verified'
     const userInfoUrl = `https://open.tiktokapis.com/v2/user/info/?fields=${encodeURIComponent(fields)}`
+
+    console.log('📋 SANDBOX: Requesting only basic scope fields:', fields)
 
     console.log('🌐 User info URL:', userInfoUrl)
 
@@ -296,13 +299,22 @@ export default async function handler(req, res) {
     console.log('Username:', tikTokUser.username)
     console.log('Followers:', tikTokUser.follower_count || 0)
 
-    // User stats are already included in the user info response
+    // SANDBOX MODE: Stats not available with basic scopes - use default values
+    // In production with user.info.stats scope, these would be real values
     const userStats = {
-      follower_count: tikTokUser.follower_count || 0,
-      following_count: tikTokUser.following_count || 0,
-      likes_count: tikTokUser.likes_count || 0,
-      video_count: tikTokUser.video_count || 0
+      follower_count: 0, // Not available in sandbox basic scope
+      following_count: 0, // Not available in sandbox basic scope
+      likes_count: 0, // Not available in sandbox basic scope
+      video_count: 0 // Not available in sandbox basic scope
     }
+
+    console.log('📊 SANDBOX: Using default stats (stats require user.info.stats scope)')
+    console.log('Available user data:', {
+      open_id: tikTokUser.open_id,
+      display_name: tikTokUser.display_name,
+      username: tikTokUser.username,
+      is_verified: tikTokUser.is_verified
+    })
 
     // Step 4: Save to Supabase
     const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
