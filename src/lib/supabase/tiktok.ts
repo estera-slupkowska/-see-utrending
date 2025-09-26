@@ -205,7 +205,13 @@ export class TikTokService {
       if (!tokenResponse.ok) {
         const errorData = await tokenResponse.json()
         console.error('❌ Token exchange failed:', errorData)
-        return { success: false, error: errorData.error || 'Failed to exchange code for token' }
+        // Extract meaningful error message from various possible error structures
+        const errorMessage = errorData.error?.message
+          || errorData.error_description
+          || errorData.details
+          || errorData.error
+          || 'Failed to exchange code for token'
+        return { success: false, error: errorMessage }
       }
 
       const responseData = await tokenResponse.json()

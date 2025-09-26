@@ -107,7 +107,11 @@ export function OAuthRedirect() {
           navigate('/dashboard?success=tiktok_connected&refresh=1')
         } else {
           console.error('❌ TikTok connection failed:', result.error)
-          navigate(`/dashboard?error=tiktok_connection_failed&details=${encodeURIComponent(result.error || 'Unknown error')}`)
+          // Extract string error message from potentially complex error object
+          const errorMessage = typeof result.error === 'object'
+            ? (result.error?.message || result.error?.details || JSON.stringify(result.error))
+            : (result.error || 'Unknown error')
+          navigate(`/dashboard?error=tiktok_connection_failed&details=${encodeURIComponent(errorMessage)}`)
         }
       } catch (error) {
         console.error('💥 TikTok callback error:', error)

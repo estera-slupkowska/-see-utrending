@@ -119,17 +119,31 @@ export function TikTokConnectionStatus() {
       sessionStorage.setItem('tiktok_oauth_user_id', user.id)
       localStorage.setItem('tiktok_oauth_user_id_backup', user.id)
 
-      // Use centralized OAuth URL generation to ensure consistency
-      const authUrl = TikTokService.getTikTokAuthUrl()
-
-      console.log('🚀 TikTok Auth URL (centralized):', authUrl)
+      console.log('🚀 Initiating TikTok OAuth flow...')
       console.log('👤 User ID stored:', user.id)
-      console.log('🌟 Using unified OAuth flow with consistent scopes')
+
+      // Generate OAuth URL with comprehensive validation
+      const authUrl = TikTokService.getTikTokAuthUrl()
+      console.log('🎯 Generated OAuth URL:', authUrl)
+      console.log('🔍 URL validation:', {
+        isValidUrl: authUrl && authUrl.startsWith('https://'),
+        containsTikTok: authUrl && authUrl.includes('tiktok.com'),
+        hasClientKey: authUrl && authUrl.includes('client_key='),
+        hasRedirectUri: authUrl && authUrl.includes('redirect_uri=')
+      })
+
+      // Validate URL before redirect
+      if (!authUrl || !authUrl.startsWith('https://www.tiktok.com')) {
+        throw new Error(`Invalid TikTok OAuth URL generated: ${authUrl}`)
+      }
+
+      console.log('🔗 Redirecting to TikTok authorization...')
+      console.log('⚠️ If you see this message but no redirect happens, check environment variables')
 
       window.location.href = authUrl
     } catch (error) {
-      console.error('❌ Failed to generate TikTok auth URL:', error)
-      alert('Failed to initialize TikTok connection. Please check configuration.')
+      console.error('❌ Failed to initiate TikTok OAuth:', error)
+      alert(`Failed to connect TikTok: ${error.message}`)
       setIsConnecting(false)
     }
   }
