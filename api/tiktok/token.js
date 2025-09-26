@@ -149,14 +149,50 @@ export default async function handler(req, res) {
     }
 
     const tokenData = await tokenResponse.json()
-    console.log('✅ Token exchange successful')
+    console.log('✅ Token exchange response received')
+    console.log('🔍 Full TikTok token response:', JSON.stringify(tokenData, null, 2))
 
+    // Handle TikTok's various response formats
     if (tokenData.error) {
       console.error('❌ TikTok token error:', tokenData.error_description)
       return res.status(400).json({ error: tokenData.error_description })
     }
 
+    // Check for TikTok's "ok" response format (sandbox mode)
+    if (tokenData.code === "ok") {
+      console.log('🔍 TikTok returned "ok" response - checking for access token')
+
+      // Look for access token in various possible locations
+      const accessToken = tokenData.access_token
+        || tokenData.data?.access_token
+        || tokenData.token
+        || tokenData.data?.token
+
+      console.log('🔑 Access token found:', !!accessToken)
+
+      if (!accessToken) {
+        console.error('❌ No access token found in TikTok response')
+        console.error('Available fields:', Object.keys(tokenData))
+        return res.status(400).json({
+          error: 'TikTok API returned success but no access token found',
+          tiktokResponse: tokenData
+        })
+      }
+
+      console.log('✅ Access token extracted from "ok" response')
+    } else if (!tokenData.access_token) {
+      console.error('❌ No access token in standard response format')
+      console.error('Response structure:', Object.keys(tokenData))
+      return res.status(400).json({
+        error: 'No access token in TikTok response',
+        tiktokResponse: tokenData
+      })
+    }
+
     const accessToken = tokenData.access_token
+      || tokenData.data?.access_token
+      || tokenData.token
+      || tokenData.data?.token
 
     // Step 2: Get user information from TikTok
     console.log('👤 Fetching user info with access token...')
