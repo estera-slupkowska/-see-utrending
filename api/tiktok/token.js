@@ -171,20 +171,43 @@ export default async function handler(req, res) {
       console.log('🔑 Access token found:', !!accessToken)
 
       if (!accessToken) {
-        console.error('❌ No access token found in TikTok response')
+        console.error('❌ No access token found in TikTok sandbox response')
         console.error('Available fields:', Object.keys(tokenData))
+        console.error('🏗️ This indicates TikTok sandbox mode limitations')
+
         return res.status(400).json({
-          error: 'TikTok API returned success but no access token found',
+          error: 'TikTok Sandbox Mode Limitation',
+          message: 'TikTok sandbox returned success but no access token. This is a known sandbox limitation.',
+          guidance: {
+            issue: 'Sandbox apps have limited functionality',
+            solutions: [
+              '1. Import your sandbox configuration to Production Draft in TikTok Developer portal',
+              '2. Submit your app for review to get production access',
+              '3. Ensure you are using target user accounts (esti_besti22, framefever14) for testing'
+            ],
+            nextSteps: 'Go to TikTok Developer portal → Switch to Production → Draft → Import from Sandbox'
+          },
           tiktokResponse: tokenData
         })
       }
 
       console.log('✅ Access token extracted from "ok" response')
     } else if (!tokenData.access_token) {
-      console.error('❌ No access token in standard response format')
+      console.error('❌ No access token in standard TikTok response format')
       console.error('Response structure:', Object.keys(tokenData))
+
+      // Check if this is an error response
+      if (tokenData.error || tokenData.error_description) {
+        const errorMsg = tokenData.error_description || tokenData.error || 'Unknown TikTok API error'
+        return res.status(400).json({
+          error: errorMsg,
+          tiktokResponse: tokenData
+        })
+      }
+
       return res.status(400).json({
-        error: 'No access token in TikTok response',
+        error: 'Unexpected TikTok API response format',
+        message: 'TikTok API returned an unexpected response structure',
         tiktokResponse: tokenData
       })
     }
