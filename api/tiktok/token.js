@@ -32,6 +32,14 @@ export default async function handler(req, res) {
     const clientSecret = 'itx3DHTZz7xjDpMy3IPfD7mNHdtWnGgv' // Sandbox client secret - hardcoded for reliability
     const redirectUri = frontendRedirectUri || 'https://seeutrending.vercel.app/oauth/redirect'
 
+    // Detect sandbox mode based on client key
+    const isSandboxMode = clientKey === 'sbawnbpy8ri5x8kz7d'
+    console.log('🏗️ Environment Detection:', {
+      isSandboxMode,
+      clientKeyType: isSandboxMode ? 'Sandbox' : 'Production',
+      expectedBehavior: isSandboxMode ? 'Limited scopes, may return different response format' : 'Full functionality'
+    })
+
     console.log('🔑 OAuth Configuration Selection:', {
       usingFrontendKey: !!frontendClientKey,
       usingServerKey: !frontendClientKey && !!process.env.TIKTOK_CLIENT_KEY,
@@ -160,7 +168,8 @@ export default async function handler(req, res) {
 
     // Check for TikTok's "ok" response format (sandbox mode)
     if (tokenData.code === "ok") {
-      console.log('🔍 TikTok returned "ok" response - checking for access token')
+      console.log('🔍 TikTok returned "ok" response - this is expected in sandbox mode')
+      console.log('🏗️ Sandbox Mode Detected - checking for access token in response')
 
       // Look for access token in various possible locations
       const accessToken = tokenData.access_token
@@ -168,30 +177,47 @@ export default async function handler(req, res) {
         || tokenData.token
         || tokenData.data?.token
 
-      console.log('🔑 Access token found:', !!accessToken)
+      console.log('🔑 Access token found in "ok" response:', !!accessToken)
 
       if (!accessToken) {
-        console.error('❌ No access token found in TikTok sandbox response')
-        console.error('Available fields:', Object.keys(tokenData))
-        console.error('🏗️ This indicates TikTok sandbox mode limitations')
+        console.error('❌ No access token found in TikTok sandbox "ok" response')
+        console.error('Available fields in response:', Object.keys(tokenData))
+        console.error('🏗️ This is a sandbox limitation - checking scope compatibility')
+
+        // Check if this is a scope mismatch issue
+        const scopeGuidance = isSandboxMode ?
+          'Sandbox mode may only support basic scopes (user.info.basic, user.info.profile)' :
+          'Check that all requested scopes are configured in TikTok Developer portal'
 
         return res.status(400).json({
-          error: 'TikTok Sandbox Mode Limitation',
-          message: 'TikTok sandbox returned success but no access token. This is a known sandbox limitation.',
+          error: 'TikTok Sandbox Mode - No Access Token',
+          message: 'TikTok sandbox returned "ok" but no access token. This typically indicates scope mismatch.',
           guidance: {
-            issue: 'Sandbox apps have limited functionality',
-            solutions: [
-              '1. Import your sandbox configuration to Production Draft in TikTok Developer portal',
-              '2. Submit your app for review to get production access',
-              '3. Ensure you are using target user accounts (esti_besti22, framefever14) for testing'
+            issue: 'Scope mismatch or sandbox configuration issue',
+            possibleCauses: [
+              '1. Requested scopes not configured in sandbox',
+              '2. Target user account not properly added to sandbox',
+              '3. Sandbox only supports basic scopes',
+              '4. App needs approval for advanced scopes'
             ],
-            nextSteps: 'Go to TikTok Developer portal → Switch to Production → Draft → Import from Sandbox'
+            solutions: [
+              '1. Verify sandbox is configured with only basic scopes (user.info.basic, user.info.profile)',
+              '2. Check that target user accounts (esti_besti22, framefever14) are added to sandbox',
+              '3. Test with minimal scopes first, then add more gradually',
+              '4. Ensure redirect URI matches exactly in TikTok Developer portal'
+            ],
+            nextSteps: scopeGuidance
           },
-          tiktokResponse: tokenData
+          tiktokResponse: tokenData,
+          debugInfo: {
+            isSandboxMode,
+            clientKey: clientKey ? `${clientKey.substring(0, 4)}...${clientKey.substring(clientKey.length - 4)}` : 'NOT SET',
+            redirectUri
+          }
         })
       }
 
-      console.log('✅ Access token extracted from "ok" response')
+      console.log('✅ Access token extracted from sandbox "ok" response')
     } else if (!tokenData.access_token) {
       console.error('❌ No access token in standard TikTok response format')
       console.error('Response structure:', Object.keys(tokenData))

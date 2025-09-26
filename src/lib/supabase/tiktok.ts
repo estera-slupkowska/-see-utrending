@@ -130,9 +130,22 @@ export class TikTokService {
     // Store state in sessionStorage for CSRF protection
     sessionStorage.setItem('tiktok_oauth_state', state)
 
+    // Use minimal scopes for sandbox mode to ensure compatibility
+    // Sandbox mode may not support all scopes, so start with basic ones
+    const isProduction = import.meta.env.PROD
+    const sandboxScopes = 'user.info.basic,user.info.profile'
+    const productionScopes = 'user.info.basic,user.info.profile,user.info.stats,video.list'
+    const scope = isProduction ? productionScopes : sandboxScopes
+
+    console.log('🏗️ OAuth Environment Detection:', {
+      isProduction,
+      usingScope: scope,
+      clientKeyPreview: clientKey ? `${clientKey.substring(0, 4)}...${clientKey.substring(clientKey.length - 4)}` : 'NOT SET'
+    })
+
     const params = new URLSearchParams({
       client_key: clientKey,
-      scope: 'user.info.basic,user.info.profile,user.info.stats,video.list',
+      scope: scope,
       response_type: 'code',
       redirect_uri: redirectUri,
       state: state
@@ -140,10 +153,11 @@ export class TikTokService {
 
     console.log('📋 OAuth Parameters:', {
       client_key: clientKey ? `${clientKey.substring(0, 4)}...${clientKey.substring(clientKey.length - 4)}` : 'NOT SET',
-      scope: 'user.info.basic,user.info.profile,user.info.stats,video.list',
+      scope: scope,
       response_type: 'code',
       redirect_uri: redirectUri,
-      state: state
+      state: state,
+      environment: isProduction ? 'production' : 'development/sandbox'
     })
 
     const authUrl = `https://www.tiktok.com/v2/auth/authorize/?${params.toString()}`
