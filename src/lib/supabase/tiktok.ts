@@ -130,35 +130,38 @@ export class TikTokService {
     // Store state in sessionStorage for CSRF protection
     sessionStorage.setItem('tiktok_oauth_state', state)
 
-    // FORCE SANDBOX SCOPES ONLY - must match exactly what's configured in TikTok Developer portal
-    // Using only basic scopes that are guaranteed to be available in sandbox
-    const scope = 'user.info.basic,user.info.profile'
-
-    console.log('🏗️ SANDBOX MODE - Using minimal scopes only:', {
-      scope,
-      reason: 'Sandbox only supports basic scopes - must match TikTok portal configuration exactly',
+    console.log('🏗️ Adding explicit scope to fix TikTok error:', {
+      reason: 'TikTok portal requires explicit scope parameter',
+      scope: 'user.info.basic',
       clientKeyPreview: clientKey ? `${clientKey.substring(0, 4)}...${clientKey.substring(clientKey.length - 4)}` : 'NOT SET'
     })
 
-    const params = new URLSearchParams({
-      client_key: clientKey,
-      scope: scope,
-      response_type: 'code',
-      redirect_uri: redirectUri,
-      state: state
-    })
+    // Build URL with explicit scope parameter - TikTok requires it
+    const baseUrl = 'https://www.tiktok.com/v2/auth/authorize/'
+    const paramString = [
+      `client_key=${clientKey}`,
+      `response_type=code`,
+      `scope=user.info.basic`,
+      `redirect_uri=${encodeURIComponent(redirectUri)}`,
+      `state=${state}`
+    ].join('&')
 
-    console.log('📋 OAuth Parameters (SANDBOX MODE):', {
+    console.log('📋 OAuth Parameters:', {
       client_key: clientKey ? `${clientKey.substring(0, 4)}...${clientKey.substring(clientKey.length - 4)}` : 'NOT SET',
-      scope: scope,
+      scope: 'user.info.basic',
       response_type: 'code',
       redirect_uri: redirectUri,
       state: state,
-      mode: 'SANDBOX - Basic scopes only'
+      mode: 'Explicit scope parameter'
     })
 
-    const authUrl = `https://www.tiktok.com/v2/auth/authorize/?${params.toString()}`
-    console.log('🎯 Final Auth URL:', authUrl)
+    const authUrl = `${baseUrl}?${paramString}`
+    console.log('🎯 Final Auth URL (manual build):', authUrl)
+    console.log('🔍 URL Check:', {
+      hasScopeParam: authUrl.includes('scope=user.info.basic'),
+      scopeValue: 'user.info.basic',
+      urlLength: authUrl.length
+    })
 
     return authUrl
   }
@@ -174,17 +177,34 @@ export class TikTokService {
     try {
       console.log('🔄 Processing TikTok OAuth callback...')
 
-      // Verify state parameter
+      // Enhanced state verification with detailed logging
       const storedState = sessionStorage.getItem('tiktok_oauth_state')
-      if (!storedState || storedState !== state) {
-        console.error('❌ State mismatch:', { stored: storedState, received: state })
-        return { success: false, error: 'Invalid state parameter - possible CSRF attack' }
+      console.log('🔐 State Verification Details:', {
+        receivedState: state ? `${state.substring(0, 10)}...${state.substring(state.length - 4)}` : 'NULL',
+        storedState: storedState ? `${storedState.substring(0, 10)}...${storedState.substring(storedState.length - 4)}` : 'NULL',
+        statesMatch: storedState === state,
+        sessionStorageKeys: Object.keys(sessionStorage),
+        localStorageKeys: Object.keys(localStorage)
+      })
+
+      if (!storedState) {
+        console.error('❌ No stored state found - OAuth session may have expired or been cleared')
+        return { success: false, error: 'OAuth session expired - please try connecting again' }
       }
 
-      // Clear stored state
-      sessionStorage.removeItem('tiktok_oauth_state')
+      if (storedState !== state) {
+        console.error('❌ State mismatch - possible CSRF attack or multiple OAuth attempts:', {
+          stored: storedState,
+          received: state,
+          suggestion: 'Try clearing browser data and connecting again'
+        })
+        // Clear potentially corrupted state
+        sessionStorage.removeItem('tiktok_oauth_state')
+        return { success: false, error: 'Security validation failed - please clear browser data and try again' }
+      }
 
-      console.log('✅ State verified, exchanging code for token...')
+      console.log('✅ State verification passed successfully')
+      console.log('🔄 Proceeding to token exchange...')
 
       // Use full URL for production environment
       const apiUrl = import.meta.env.PROD
@@ -194,13 +214,13 @@ export class TikTokService {
       console.log('🌐 API URL:', apiUrl)
 
       // Exchange code for access token using our API endpoint
-      // Pass client key AND redirect URI from frontend to ensure consistency
-      const clientKey = import.meta.env.VITE_TIKTOK_CLIENT_KEY
-      const redirectUri = import.meta.env.VITE_TIKTOK_REDIRECT_URI
+      // Pass the EXACT same client key and redirect URI used for authorization
+      const frontendClientKey = import.meta.env.VITE_TIKTOK_CLIENT_KEY
+      const frontendRedirectUri = import.meta.env.VITE_TIKTOK_REDIRECT_URI
 
-      console.log('🔑 Sending frontend config to backend for consistency:')
-      console.log('Client Key:', clientKey ? `${clientKey.substring(0, 4)}...${clientKey.substring(clientKey.length - 4)}` : 'NOT SET')
-      console.log('Redirect URI:', redirectUri)
+      console.log('🔑 Sending EXACT frontend config to backend:')
+      console.log('Client Key:', frontendClientKey ? `${frontendClientKey.substring(0, 4)}...${frontendClientKey.substring(frontendClientKey.length - 4)}` : 'NOT SET')
+      console.log('Redirect URI:', frontendRedirectUri)
 
       const tokenResponse = await fetch(apiUrl, {
         method: 'POST',
@@ -208,8 +228,8 @@ export class TikTokService {
         body: JSON.stringify({
           code,
           userId,
-          clientKey: clientKey, // Pass the EXACT same client key used for authorization
-          redirectUri: redirectUri // Pass the EXACT same redirect URI used for authorization
+          clientKey: frontendClientKey, // EXACT same client key used for authorization
+          redirectUri: frontendRedirectUri // EXACT same redirect URI used for authorization
         })
       })
 
@@ -227,6 +247,10 @@ export class TikTokService {
 
       const responseData = await tokenResponse.json()
       console.log('✅ TikTok OAuth completed successfully')
+
+      // Only clear state AFTER successful completion
+      sessionStorage.removeItem('tiktok_oauth_state')
+      console.log('🧹 Cleared OAuth state after success')
 
       return { success: true, data: responseData }
     } catch (error) {

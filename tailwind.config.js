@@ -72,26 +72,33 @@ export default {
         'slide-in-up': 'slideInUp 0.3s ease-out',
         'rank-change': 'rankChange 0.5s ease-in-out',
         
-        // Enhanced performance-optimized animations
-        'twinkle': 'twinkle 2s ease-in-out infinite',
-        'twinkle-slow': 'twinkle-slow 3s ease-in-out infinite',
-        'float-slow': 'float-slow 8s ease-in-out infinite',
-        'engagement-pulse': 'engagement-pulse 2s ease-in-out infinite',
-        'anticipation-glow': 'anticipation-glow 3s ease-in-out infinite alternate',
-        'excitement-bounce': 'excitement-bounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-        'neural-pulse': 'neural-pulse 1.5s ease-in-out infinite',
-        'reward-celebrate': 'reward-celebrate 0.8s ease-out',
-        'fomo-urgency': 'fomo-urgency 1s ease-in-out infinite alternate',
-        'achievement-unlock': 'achievement-unlock 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-        'social-proof-pulse': 'social-proof-pulse 2s ease-in-out infinite',
-        'gamification-level-up': 'gamification-level-up 1s ease-out',
-        'viral-shimmer': 'viral-shimmer 2s infinite',
+        // Enhanced performance-optimized animations (softened)
+        'twinkle': 'twinkle 4s ease-in-out infinite',
+        'twinkle-slow': 'twinkle-slow 6s ease-in-out infinite',
+        'float-slow': 'float-slow 12s ease-in-out infinite',
+        'engagement-pulse': 'engagement-pulse 4s ease-in-out infinite',
+        'anticipation-glow': 'anticipation-glow 5s ease-in-out infinite alternate',
+        'excitement-bounce': 'excitement-bounce 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        'neural-pulse': 'neural-pulse 3s ease-in-out infinite',
+        'reward-celebrate': 'reward-celebrate 1.2s ease-out',
+        'fomo-urgency': 'fomo-urgency 2s ease-in-out infinite alternate',
+        'achievement-unlock': 'achievement-unlock 1.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        'social-proof-pulse': 'social-proof-pulse 4s ease-in-out infinite',
+        'gamification-level-up': 'gamification-level-up 1.5s ease-out',
+        'viral-shimmer': 'viral-shimmer 3s infinite',
         
         // GPU-accelerated versions for performance
         'gpu-float': 'gpu-float 6s ease-in-out infinite',
         'gpu-pulse': 'gpu-pulse 2s ease-in-out infinite',
         'gpu-bounce': 'gpu-bounce 1s ease-in-out infinite',
         'gpu-rotate': 'gpu-rotate 20s linear infinite',
+
+        // Cosmic background animations
+        'orbit-slow': 'orbit-slow 30s linear infinite',
+        'orbit-reverse': 'orbit-reverse 25s linear infinite reverse',
+        'shooting-star': 'shooting-star 2s linear infinite',
+        'pulse-slow': 'pulse-slow 4s ease-in-out infinite',
+        'pulse-ultra-slow': 'pulse-ultra-slow 6s ease-in-out infinite',
       },
       keyframes: {
         float: {
@@ -180,22 +187,22 @@ export default {
           '75%': { transform: 'translateX(10px)' },
           '100%': { transform: 'translateX(0)' }
         },
-        // Enhanced keyframes for new animations
+        // Enhanced keyframes for new animations (softened)
         twinkle: {
-          '0%, 100%': { opacity: '0.3', transform: 'scale(0.8)' },
-          '50%': { opacity: '1', transform: 'scale(1.2)' }
+          '0%, 100%': { opacity: '0.2', transform: 'scale(0.95)' },
+          '50%': { opacity: '0.5', transform: 'scale(1.05)' }
         },
         'twinkle-slow': {
-          '0%, 100%': { opacity: '0.4', transform: 'scale(0.9)' },
-          '50%': { opacity: '0.8', transform: 'scale(1.1)' }
+          '0%, 100%': { opacity: '0.15', transform: 'scale(0.98)' },
+          '50%': { opacity: '0.4', transform: 'scale(1.02)' }
         },
         'float-slow': {
           '0%, 100%': { transform: 'translateY(0px) scale(1)' },
-          '50%': { transform: 'translateY(-20px) scale(1.05)' }
+          '50%': { transform: 'translateY(-15px) scale(1.02)' }
         },
         'engagement-pulse': {
-          '0%, 100%': { opacity: '0.8', transform: 'scale(1)' },
-          '50%': { opacity: '1', transform: 'scale(1.02)' }
+          '0%, 100%': { opacity: '0.5', transform: 'scale(1)' },
+          '50%': { opacity: '0.7', transform: 'scale(1.01)' }
         },
         'anticipation-glow': {
           '0%': { 'box-shadow': '0 0 5px rgba(139, 92, 246, 0.3)' },
@@ -261,6 +268,29 @@ export default {
         'gpu-rotate': {
           '0%': { transform: 'rotate3d(0, 0, 1, 0deg)' },
           '100%': { transform: 'rotate3d(0, 0, 1, 360deg)' }
+        },
+        // Cosmic background keyframes
+        'orbit-slow': {
+          '0%': { transform: 'rotate(0deg) translateX(20px) rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg) translateX(20px) rotate(-360deg)' }
+        },
+        'orbit-reverse': {
+          '0%': { transform: 'rotate(0deg) translateX(15px) rotate(0deg)' },
+          '100%': { transform: 'rotate(-360deg) translateX(15px) rotate(360deg)' }
+        },
+        'shooting-star': {
+          '0%': { opacity: '0', transform: 'translateY(-100px) translateX(-100px)' },
+          '10%': { opacity: '1' },
+          '90%': { opacity: '1' },
+          '100%': { opacity: '0', transform: 'translateY(100px) translateX(100px)' }
+        },
+        'pulse-slow': {
+          '0%, 100%': { opacity: '0.4', transform: 'scale(0.95)' },
+          '50%': { opacity: '0.8', transform: 'scale(1.05)' }
+        },
+        'pulse-ultra-slow': {
+          '0%, 100%': { opacity: '0.2', transform: 'scale(0.98)' },
+          '50%': { opacity: '0.5', transform: 'scale(1.02)' }
         }
       },
       backgroundImage: {

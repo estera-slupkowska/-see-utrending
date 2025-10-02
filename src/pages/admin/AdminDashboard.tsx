@@ -176,19 +176,28 @@ export function AdminDashboard() {
       <div className="bg-surface/50 backdrop-blur-sm border border-border rounded-2xl p-6">
         <h2 className="text-xl font-semibold text-white mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <button className="flex items-center space-x-3 p-4 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 rounded-lg transition-colors">
+          <button
+            onClick={() => navigate('/admin/contests?new=true')}
+            className="flex items-center space-x-3 p-4 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 rounded-lg transition-all duration-300 hover:scale-105"
+          >
             <Trophy className="w-5 h-5 text-purple-400" />
             <span className="text-white font-medium">Create Contest</span>
           </button>
-          <button className="flex items-center space-x-3 p-4 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-lg transition-colors">
+          <button
+            onClick={() => navigate('/admin/notifications?new=true')}
+            className="flex items-center space-x-3 p-4 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-lg transition-all duration-300 hover:scale-105"
+          >
             <Bell className="w-5 h-5 text-blue-400" />
             <span className="text-white font-medium">Send Notification</span>
           </button>
-          <button className="flex items-center space-x-3 p-4 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 rounded-lg transition-colors">
+          <button
+            onClick={() => navigate('/admin/users')}
+            className="flex items-center space-x-3 p-4 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 rounded-lg transition-all duration-300 hover:scale-105"
+          >
             <Users className="w-5 h-5 text-green-400" />
             <span className="text-white font-medium">Manage Users</span>
           </button>
-          <button 
+          <button
             onClick={() => navigate('/admin/team')}
             className="flex items-center space-x-3 p-4 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/20 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg group"
           >

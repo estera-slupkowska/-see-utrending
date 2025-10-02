@@ -188,101 +188,6 @@ export function RewardsPage() {
                 {t('rewards.hero.subtitle')}
               </p>
             </div>
-            
-            {/* Enhanced XP System Information - More Visible and Animated */}
-            <div className="relative p-10 rounded-3xl bg-gradient-to-br from-xp-gold/30 via-orange-500/20 to-primary/30 border-2 border-xp-gold/50 mb-12 overflow-hidden group hover:scale-105 transition-all duration-500 hover:shadow-2xl hover:shadow-xp-gold/20">
-
-              {/* Animated Background Particles */}
-              <div className="absolute inset-0 opacity-30">
-                <div className="absolute top-6 left-6 w-3 h-3 bg-xp-gold rounded-full animate-pulse" />
-                <div className="absolute top-12 right-8 w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }} />
-                <div className="absolute bottom-8 left-12 w-1.5 h-1.5 bg-yellow-300 rounded-full animate-ping" style={{ animationDelay: '1s' }} />
-                <div className="absolute bottom-6 right-6 w-2.5 h-2.5 bg-primary rounded-full animate-pulse" style={{ animationDelay: '1.5s' }} />
-              </div>
-
-              {/* Enhanced Header with Multiple Animations */}
-              <div className="flex items-center justify-center space-x-4 mb-8 relative z-10">
-                <div className="relative">
-                  <Zap className="h-12 w-12 text-xp-gold animate-pulse drop-shadow-lg" />
-                  <div className="absolute inset-0 h-12 w-12 border-2 border-xp-gold rounded-full animate-ping opacity-30" />
-                </div>
-                <span className="text-4xl font-bold text-xp-gold drop-shadow-lg animate-pulse-glow">
-                  System XP
-                </span>
-                <div className="relative">
-                  <Eye className="h-10 w-10 text-primary animate-bounce drop-shadow-lg" />
-                  <div className="absolute inset-0 h-10 w-10 border-2 border-primary rounded-full animate-ping opacity-20" style={{ animationDelay: '0.5s' }} />
-                </div>
-              </div>
-
-              {/* Main XP Message with Enhanced Typography */}
-              <div className="text-center space-y-6 relative z-10">
-                <div className="relative">
-                  <p className="text-2xl md:text-3xl text-white font-bold drop-shadow-lg">
-                    🎯 Zdobywaj <span className="text-xp-gold font-black text-3xl md:text-4xl animate-pulse-glow">10 XP</span> za każde <span className="text-primary font-black text-3xl md:text-4xl animate-pulse-glow">100 wyświetleń</span>!
-                  </p>
-
-                  {/* Floating Achievement Burst */}
-                  <div className="absolute -top-4 -right-4 opacity-0 group-hover:opacity-100 transition-all duration-500 animate-bounce">
-                    <div className="bg-gradient-to-r from-xp-gold to-orange-500 text-black text-sm font-bold px-3 py-1 rounded-full shadow-lg">
-                      +10 XP!
-                    </div>
-                  </div>
-                </div>
-
-                {/* Enhanced Visual Formula */}
-                <div className="flex items-center justify-center space-x-8 text-lg text-white/90 p-6 bg-black/20 rounded-2xl border border-xp-gold/20">
-                  <div className="flex items-center space-x-3 p-3 bg-primary/20 rounded-xl hover:bg-primary/30 transition-colors duration-300 group/item">
-                    <Eye className="w-6 h-6 text-primary group-hover/item:animate-bounce" />
-                    <span className="font-bold group-hover/item:text-white transition-colors duration-300">100 wyświetleń</span>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <span className="text-3xl text-xp-gold font-bold animate-pulse">=</span>
-                    <div className="w-8 h-0.5 bg-gradient-to-r from-xp-gold to-orange-500 animate-pulse" />
-                  </div>
-
-                  <div className="flex items-center space-x-3 p-3 bg-xp-gold/20 rounded-xl hover:bg-xp-gold/30 transition-colors duration-300 group/item">
-                    <Zap className="w-6 h-6 text-xp-gold group-hover/item:animate-bounce" />
-                    <span className="text-xp-gold font-black text-xl group-hover/item:text-yellow-200 transition-colors duration-300">10 XP</span>
-                  </div>
-                </div>
-
-                {/* Enhanced Motivational Message */}
-                <div className="relative p-4 rounded-xl bg-gradient-to-r from-orange-500/10 to-yellow-500/10 border border-orange-400/30">
-                  <p className="text-lg text-white/90 font-semibold flex items-center justify-center space-x-2">
-                    <Rocket className="w-5 h-5 text-orange-400 animate-bounce" />
-                    <span>Im więcej wyświetleń, tym więcej XP i wyższy poziom!</span>
-                    <Rocket className="w-5 h-5 text-orange-400 animate-bounce" style={{ animationDelay: '0.5s' }} />
-                  </p>
-
-                  {/* Progress Bar Simulation */}
-                  <div className="mt-4 h-2 bg-gray-700 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-xp-gold to-orange-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-2000 ease-out" />
-                  </div>
-                  <div className="flex justify-between text-xs text-white/60 mt-2">
-                    <span>0 XP</span>
-                    <span className="text-xp-gold font-bold">∞ XP</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Glow Effect */}
-              <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-xp-gold via-orange-500 to-yellow-400 opacity-0 group-hover:opacity-60 transition-opacity duration-500 rounded-b-3xl" />
-            </div>
-
-            <div className="relative p-8 rounded-2xl bg-surface/50 border border-border/50">
-              <div className="flex items-center justify-center space-x-4 mb-4">
-                <Camera className="h-8 w-8 text-primary" />
-                <span className="text-2xl font-semibold">TikTok</span>
-                <Zap className="h-6 w-6 text-accent" />
-                <span className="text-2xl font-semibold">{t('rewards.hero.realLife')}</span>
-                <Trophy className="h-8 w-8 text-xp-gold" />
-              </div>
-              <p className="text-lg text-text-secondary">
-                {t('rewards.hero.mainMessage')}
-              </p>
-            </div>
           </section>
 
           {/* Reward Types Section */}
@@ -399,6 +304,70 @@ export function RewardsPage() {
               <p className="text-xl text-gray-800 max-w-2xl mx-auto">
                 {t('rewards.badges.description')}
               </p>
+            </div>
+
+            {/* Special XP Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+              {/* Views XP Card */}
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-600 via-cyan-600 to-blue-600 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative bg-slate-950 rounded-3xl p-8 border-2 border-emerald-500/30">
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-center">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 p-5 shadow-xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                        <Eye className="w-full h-full text-white" />
+                      </div>
+                    </div>
+                    <div className="text-center space-y-3">
+                      <h3 className="text-2xl font-bold text-white">10 XP za każde 100 wyświetleń</h3>
+                      <p className="text-lg text-text-secondary">Zbieraj XP automatycznie za wyświetlenia Twoich filmów!</p>
+                    </div>
+                    <div className="flex items-center justify-center space-x-4 text-lg">
+                      <div className="flex items-center space-x-2 p-3 bg-emerald-500/20 rounded-xl">
+                        <Eye className="w-5 h-5 text-emerald-400" />
+                        <span className="font-bold text-white">100 views</span>
+                      </div>
+                      <span className="text-2xl text-emerald-400">=</span>
+                      <div className="flex items-center space-x-2 p-3 bg-xp-gold/20 rounded-xl">
+                        <Zap className="w-5 h-5 text-xp-gold" />
+                        <span className="font-bold text-xp-gold">10 XP</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Likes Bonus Card */}
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 via-rose-600 to-red-600 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative bg-slate-950 rounded-3xl p-8 border-2 border-pink-500/30">
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-center">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-500 to-red-500 p-5 shadow-xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                        <Heart className="w-full h-full text-white" />
+                      </div>
+                    </div>
+                    <div className="text-center space-y-3">
+                      <div className="flex items-center justify-center space-x-2">
+                        <h3 className="text-2xl font-bold text-white">Bonus: 10 XP za każde 50 likes</h3>
+                        <Star className="w-6 h-6 text-yellow-400 animate-pulse" />
+                      </div>
+                      <p className="text-lg text-text-secondary">Dodatkowe XP za zaangażowanie społeczności!</p>
+                    </div>
+                    <div className="flex items-center justify-center space-x-4 text-lg">
+                      <div className="flex items-center space-x-2 p-3 bg-pink-500/20 rounded-xl">
+                        <Heart className="w-5 h-5 text-pink-400" />
+                        <span className="font-bold text-white">50 likes</span>
+                      </div>
+                      <span className="text-2xl text-pink-400">=</span>
+                      <div className="flex items-center space-x-2 p-3 bg-xp-gold/20 rounded-xl">
+                        <Zap className="w-5 h-5 text-xp-gold" />
+                        <span className="font-bold text-xp-gold">+10 XP</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

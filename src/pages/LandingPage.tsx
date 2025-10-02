@@ -1,5 +1,5 @@
 import { HeroSection } from '../components/landing/HeroSection'
-import { LockedLeaderboard } from '../components/leaderboard/LockedLeaderboard'
+import { LiveLeaderboard } from '../components/leaderboard/LiveLeaderboard'
 import { UpdatesSection } from '../components/landing/UpdatesSection'
 import { HowItWorksSection } from '../components/landing/HowItWorksSection'
 import { ExplanatoryTrailer } from '../components/trailer/ExplanatoryTrailer'
@@ -62,33 +62,27 @@ export function LandingPage() {
       <div className="cosmic-background min-h-screen relative overflow-hidden">
         {/* Cosmic Background with Stars and Planets */}
         <CosmicBackground />
-        
-        {/* Enhanced background gradient overlay */}
-        <div className="absolute inset-0 gradient-overlay-rising opacity-25 z-10"></div>
-        
-        <div className="relative z-20">
+
+        <div className="relative z-10">
           {/* Keep the beautiful hero section but replace CTA buttons */}
           <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-            {/* Enhanced Background with Dynamic Elements */}
-            <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-            
             {/* Floating Interactive Elements */}
             <div className="absolute inset-0 pointer-events-none">
               {/* Dynamic floating icons */}
               <div className="absolute top-20 left-10 transform rotate-6 scale-105 transition-all duration-1500 ease-in-out">
-                <Trophy className="w-8 h-8 text-yellow-400 animate-bounce opacity-60" />
+                <Trophy className="w-8 h-8 text-yellow-400 animate-float-slow opacity-30" />
               </div>
-              
+
               <div className="absolute top-32 right-16 transform rotate-12 scale-108 transition-all duration-1800 ease-in-out">
-                <Star className="w-6 h-6 text-pink-400 animate-pulse opacity-70" />
+                <Star className="w-6 h-6 text-pink-400 animate-twinkle-slow opacity-25" />
               </div>
-              
+
               <div className="absolute bottom-32 left-20 transform rotate-15 scale-110 transition-all duration-2000 ease-in-out">
-                <Zap className="w-7 h-7 text-cyan-400 animate-twinkle opacity-50" />
+                <Zap className="w-7 h-7 text-cyan-400 animate-twinkle opacity-20" />
               </div>
-              
+
               <div className="absolute bottom-20 right-12 transform rotate-20 scale-112 transition-all duration-1800 ease-in-out">
-                <Gift className="w-6 h-6 text-purple-400 animate-bounce opacity-65" />
+                <Gift className="w-6 h-6 text-purple-400 animate-float-slow opacity-30" />
               </div>
             </div>
             
@@ -151,7 +145,7 @@ export function LandingPage() {
           <ExplanatoryTrailer className="relative z-20" />
 
           {/* Live Ranking Section for logged-in users */}
-          <LockedLeaderboard />
+          <LiveLeaderboard limit={10} showFilters={false} autoRefresh={true} />
 
           {/* Team Updates Section for logged-in users */}
           <UpdatesSection isLoggedIn={true} />
@@ -165,14 +159,11 @@ export function LandingPage() {
     <div className="cosmic-background min-h-screen relative overflow-hidden">
       {/* Cosmic Background with Stars and Planets */}
       <CosmicBackground />
-      
-      {/* Enhanced background gradient overlay */}
-      <div className="absolute inset-0 gradient-overlay-rising opacity-25 z-10"></div>
-      
-      <div className="relative z-20">
+
+      <div className="relative z-10">
         <HeroSection />
         <ExplanatoryTrailer />
-        <LockedLeaderboard />
+        <LiveLeaderboard limit={10} showFilters={false} autoRefresh={true} />
         <UpdatesSection isLoggedIn={false} />
         <HowItWorksSection />
       </div>

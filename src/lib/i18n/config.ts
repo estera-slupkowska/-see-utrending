@@ -20,7 +20,7 @@ const resources = {
       hero: {
         title: 'SeeUTrending',
         subtitle: 'Show w którym TY też możesz zagrać',
-        description: 'Gamifikowana platforma dla konkursów UGC marek, gdzie twórcy rywalizują w rankingach krajowych w czasie rzeczywistym.',
+        description: 'Pierwsza platforma, która pozwala Wam zdobywać nagrody w prawdziwym życiu, za kreatywność na TikToku',
         cta: {
           primary: 'Weź udział',
           secondary: 'Dla Marek'
@@ -279,23 +279,23 @@ const resources = {
             legendary: 'Legendarny'
           },
           hotStart: {
-            name: 'Hot Start',
+            name: 'Gorący Start',
             description: 'Twoje pierwsze 1000 wyświetleń to dopiero początek wielkiej przygody!'
           },
           viralStarter: {
-            name: 'Viral Stage',
+            name: '10K Klub',
             description: 'Ponad 10K wyświetleń? Twoje treści zaczynają przyciągać uwagę!'
           },
           viralKing: {
-            name: 'Golden Viral',
+            name: 'Złoty Viral',
             description: 'Pierwsze miejsce w konkursie - jesteś mistrzem tworzenia viral treści!'
           },
           silverWarrior: {
-            name: 'Silver Warrior',
+            name: 'Srebrny Wojownik',
             description: 'Drugie miejsce to świetny wynik! Jeszcze tylko krok do zwycięstwa.'
           },
           bronzeWarrior: {
-            name: 'Bronze Warrior',
+            name: 'Brązowy Wojownik',
             description: 'Trzecie miejsce pokazuje, że jesteś w czołówce najlepszych twórców!'
           },
           communityFavorite: {
@@ -303,16 +303,20 @@ const resources = {
             description: 'Najbardziej lubiany twórca - społeczność pokochała Twoje treści!'
           },
           fourthPlace: {
-            name: 'Rising Star',
+            name: 'Wschodząca Gwiazda',
             description: 'Czwarte miejsce to doskonały wynik - jesteś wschodząca gwiazdą!'
           },
           fifthPlace: {
-            name: 'Top Creator',
+            name: 'Top Twórca',
             description: 'Piąte miejsce w konkursie to świetny rezultat - należysz do topowych twórców!'
           },
           mostComments: {
-            name: 'Komentarz Master',
+            name: 'Mistrz Komentarzy',
             description: 'Najwięcej komentarzy pod treścią - potrafisz rozbudzić dyskusję!'
+          },
+          earlyAdopter: {
+            name: 'Złote Tysiąc',
+            description: 'Jesteś jednym z pierwszych 1000 użytkowników SeeUTrending - prawdziwy pionier!'
           },
           repeatableBadges: {
             title: 'Zdobywaj Wielokrotnie',
@@ -433,7 +437,7 @@ const resources = {
       },
       // Explanatory Trailer
       trailer: {
-        title: 'Zwiastun Wyjaśniający',
+        title: 'Jak to działa?',
         description: 'Zobacz jak działa SeeUTrending i poznaj wszystkie możliwości platformy',
         videoTitle: 'SeeUTrending - Jak To Działa',
         videoDescription: 'Kompletny przewodnik po platformie',
@@ -767,7 +771,7 @@ const resources = {
             description: 'Most comments on your content - you know how to spark discussions!'
           },
           earlyAdopter: {
-            name: 'Pioneer',
+            name: 'Golden Thousand',
             description: 'You are one of the first 1000 SeeUTrending users - a true pioneer!'
           },
           repeatableBadges: {

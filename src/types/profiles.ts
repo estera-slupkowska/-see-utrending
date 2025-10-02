@@ -1,3 +1,10 @@
+export interface UserBadge {
+  id: string
+  name: string
+  earnedAt: string
+  xp: number
+}
+
 export interface UserProfile {
   id: string
   email: string
@@ -18,6 +25,7 @@ export interface UserProfile {
     verified?: boolean
     last_updated?: string
   }
+  badges?: UserBadge[]
   total_followers: number
   verified: boolean
   xp_points: number

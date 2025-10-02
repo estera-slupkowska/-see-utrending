@@ -81,12 +81,14 @@ export function Navbar() {
                   Użytkownicy
                 </Link>
               )}
-              <Link
-                to="/brands"
-                className="text-text-secondary hover:text-primary transition-colors duration-200 px-3 py-2 text-sm font-medium whitespace-nowrap"
-              >
-                {t('nav.brands')}
-              </Link>
+              {!user && (
+                <Link
+                  to="/brands"
+                  className="text-text-secondary hover:text-primary transition-colors duration-200 px-3 py-2 text-sm font-medium whitespace-nowrap"
+                >
+                  {t('nav.brands')}
+                </Link>
+              )}
             </div>
           </div>
 

@@ -40,42 +40,39 @@ export function HeroSection() {
 
   return (
     <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Enhanced Background with Dynamic Elements */}
-      <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-      
       {/* Floating Interactive Elements */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Dynamic floating icons */}
         <div className={`absolute top-20 left-10 transition-all duration-1500 ease-in-out ${
-          animationState === 1 ? 'transform rotate-6 scale-105' : 
-          animationState === 2 ? 'transform -rotate-3 scale-100' : 
+          animationState === 1 ? 'transform rotate-6 scale-105' :
+          animationState === 2 ? 'transform -rotate-3 scale-100' :
           animationState === 3 ? 'transform rotate-3 scale-102' : 'transform -rotate-6 scale-98'
         }`}>
-          <Trophy className="w-8 h-8 text-yellow-400 animate-bounce opacity-60" />
+          <Trophy className="w-8 h-8 text-yellow-400 animate-float-slow opacity-30" />
         </div>
-        
+
         <div className={`absolute top-32 right-16 transition-all duration-1800 ease-in-out ${
-          animationState === 2 ? 'transform rotate-12 scale-108' : 
-          animationState === 3 ? 'transform -rotate-8 scale-96' : 
+          animationState === 2 ? 'transform rotate-12 scale-108' :
+          animationState === 3 ? 'transform -rotate-8 scale-96' :
           animationState === 4 ? 'transform rotate-4 scale-104' : 'transform -rotate-12 scale-100'
         }`}>
-          <Star className="w-6 h-6 text-pink-400 animate-pulse opacity-70" />
+          <Star className="w-6 h-6 text-pink-400 animate-twinkle-slow opacity-25" />
         </div>
-        
+
         <div className={`absolute bottom-32 left-20 transition-all duration-2000 ease-in-out ${
-          animationState === 3 ? 'transform rotate-15 scale-110' : 
-          animationState === 4 ? 'transform -rotate-10 scale-98' : 
+          animationState === 3 ? 'transform rotate-15 scale-110' :
+          animationState === 4 ? 'transform -rotate-10 scale-98' :
           animationState === 1 ? 'transform rotate-8 scale-103' : 'transform -rotate-15 scale-105'
         }`}>
-          <Sparkles className="w-7 h-7 text-cyan-400 animate-twinkle opacity-50" />
+          <Sparkles className="w-7 h-7 text-cyan-400 animate-twinkle opacity-20" />
         </div>
-        
+
         <div className={`absolute bottom-20 right-12 transition-all duration-1800 ease-in-out ${
-          animationState === 4 ? 'transform rotate-20 scale-112' : 
-          animationState === 1 ? 'transform -rotate-12 scale-96' : 
+          animationState === 4 ? 'transform rotate-20 scale-112' :
+          animationState === 1 ? 'transform -rotate-12 scale-96' :
           animationState === 2 ? 'transform rotate-10 scale-106' : 'transform -rotate-20 scale-100'
         }`}>
-          <Crown className="w-6 h-6 text-purple-400 animate-bounce opacity-65" />
+          <Crown className="w-6 h-6 text-purple-400 animate-float-slow opacity-30" />
         </div>
 
         {/* Particle Burst Effect */}
@@ -146,43 +143,39 @@ export function HeroSection() {
         
         {/* Enhanced CTA Buttons with Engagement Features */}
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
-          <div className="relative group">
-            <Button 
-              variant="gaming"
-              size="xl"
-              className="w-full sm:w-auto min-w-[280px] shadow-2xl relative overflow-hidden"
+          <div className="relative inline-block">
+            <button
+              className="group/button relative btn-vibrant-purple px-10 py-4 text-lg font-bold overflow-hidden"
               onClick={handleJoinClick}
               onMouseEnter={(e) => {
-                // Create excitement burst effect
-                const particles = Array.from({ length: 15 }, (_, i) => {
-                  const particle = document.createElement('div')
-                  particle.className = 'absolute w-1 h-1 bg-white rounded-full animate-ping pointer-events-none'
-                  particle.style.left = `${20 + Math.random() * 60}%`
-                  particle.style.top = `${20 + Math.random() * 60}%`
-                  particle.style.animationDelay = `${i * 80}ms`
-                  e.currentTarget.appendChild(particle)
-                  setTimeout(() => particle.remove(), 2000)
-                })
+                // Create particle burst effect
+                const particles = Array.from({ length: 8 }, (_, i) => {
+                  const particle = document.createElement('div');
+                  particle.className = 'absolute w-1 h-1 bg-white rounded-full animate-ping pointer-events-none';
+                  particle.style.left = `${Math.random() * 100}%`;
+                  particle.style.top = `${Math.random() * 100}%`;
+                  particle.style.animationDelay = `${i * 100}ms`;
+                  e.currentTarget.appendChild(particle);
+                  setTimeout(() => particle.remove(), 1000);
+                });
               }}
             >
               <span className="relative z-10 flex items-center space-x-2">
                 <span className="text-2xl">🚀</span>
                 <span>{t('hero.cta.primary')}</span>
-                <Sparkles className="w-5 h-5 group-hover:animate-spin" />
+                <Sparkles className="w-5 h-5 group-hover/button:animate-spin" />
               </span>
-              
-              {/* Enhanced shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-            </Button>
-            
-            {/* Orbiting success indicators */}
-            <div className="absolute -inset-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              <div className="absolute inset-0 animate-spin" style={{ animationDuration: '4s' }}>
-                <Trophy className="absolute top-0 left-1/2 w-4 h-4 text-yellow-400 transform -translate-x-1/2 -translate-y-2" />
-              </div>
-              <div className="absolute inset-0 animate-spin" style={{ animationDuration: '6s', animationDirection: 'reverse' }}>
-                <Crown className="absolute bottom-0 left-1/2 w-4 h-4 text-purple-400 transform -translate-x-1/2 translate-y-2" />
-              </div>
+
+              {/* Button Glow Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover/button:translate-x-full transition-transform duration-1000" />
+            </button>
+
+            {/* Orbiting Elements */}
+            <div className="absolute inset-0 animate-spin" style={{ animationDuration: '20s' }}>
+              <div className="absolute top-0 left-1/2 w-1 h-1 bg-yellow-400 rounded-full transform -translate-x-1/2 -translate-y-2" />
+            </div>
+            <div className="absolute inset-0 animate-spin" style={{ animationDuration: '15s', animationDirection: 'reverse' }}>
+              <div className="absolute bottom-0 left-1/2 w-1 h-1 bg-pink-400 rounded-full transform -translate-x-1/2 translate-y-2" />
             </div>
           </div>
           

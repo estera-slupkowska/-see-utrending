@@ -8,10 +8,20 @@ interface AdminRouteProps {
 }
 
 export function AdminRoute({ children }: AdminRouteProps) {
-  const { user, loading } = useAuth()
-  const { isAdmin } = usePermissions()
+  const { user, loading: authLoading } = useAuth()
+  const { isAdmin, loading: permissionsLoading } = usePermissions()
 
-  if (loading) {
+  console.log('AdminRoute: Checking access', {
+    hasUser: !!user,
+    authLoading,
+    permissionsLoading,
+    isAdmin: isAdmin(),
+    userId: user?.id
+  })
+
+  // Wait for both auth AND permissions to finish loading
+  if (authLoading || permissionsLoading) {
+    console.log('AdminRoute: Still loading, showing spinner')
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-4">
@@ -24,8 +34,13 @@ export function AdminRoute({ children }: AdminRouteProps) {
 
   // Proper admin check - only admin users can access admin panel
   if (!user || !isAdmin()) {
+    console.log('AdminRoute: Access denied, redirecting to home', {
+      hasUser: !!user,
+      isAdmin: isAdmin()
+    })
     return <Navigate to="/" replace />
   }
 
+  console.log('AdminRoute: Access granted')
   return <>{children}</>
 }

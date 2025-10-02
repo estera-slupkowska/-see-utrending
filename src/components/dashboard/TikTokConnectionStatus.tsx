@@ -105,6 +105,8 @@ export function TikTokConnectionStatus() {
   }, [searchParams])
 
   const handleConnect = () => {
+    console.log('🔥 BUTTON CLICKED - handleConnect function called!')
+    alert('Button was clicked! Check console for details.')
     setIsConnecting(true)
 
     if (!user?.id) {
@@ -115,34 +117,91 @@ export function TikTokConnectionStatus() {
     }
 
     try {
+      console.log('🔄 Starting OAuth process...')
+
       // Store user ID for recovery after OAuth redirect
+      console.log('💾 Storing user ID in session storage...')
       sessionStorage.setItem('tiktok_oauth_user_id', user.id)
       localStorage.setItem('tiktok_oauth_user_id_backup', user.id)
 
       console.log('🚀 Initiating TikTok OAuth flow...')
       console.log('👤 User ID stored:', user.id)
 
-      // Generate OAuth URL with comprehensive validation
-      const authUrl = TikTokService.getTikTokAuthUrl()
-      console.log('🎯 Generated OAuth URL:', authUrl)
-      console.log('🔍 URL validation:', {
-        isValidUrl: authUrl && authUrl.startsWith('https://'),
-        containsTikTok: authUrl && authUrl.includes('tiktok.com'),
-        hasClientKey: authUrl && authUrl.includes('client_key='),
-        hasRedirectUri: authUrl && authUrl.includes('redirect_uri=')
+      console.log('🏗️ About to call TikTokService.getTikTokAuthUrl()...')
+
+      // Check if TikTokService exists
+      if (!TikTokService) {
+        throw new Error('TikTokService is not available')
+      }
+
+      if (typeof TikTokService.getTikTokAuthUrl !== 'function') {
+        throw new Error('TikTokService.getTikTokAuthUrl is not a function')
+      }
+
+      // Generate OAuth URL
+      console.log('🔧 Environment check:', {
+        hasClientKey: !!import.meta.env.VITE_TIKTOK_CLIENT_KEY,
+        hasRedirectUri: !!import.meta.env.VITE_TIKTOK_REDIRECT_URI,
+        clientKeyPreview: import.meta.env.VITE_TIKTOK_CLIENT_KEY ?
+          `${import.meta.env.VITE_TIKTOK_CLIENT_KEY.substring(0, 4)}...` : 'NOT SET',
+        redirectUri: import.meta.env.VITE_TIKTOK_REDIRECT_URI || 'NOT SET'
       })
 
+      const authUrl = TikTokService.getTikTokAuthUrl()
+      console.log('🎯 Generated OAuth URL:', authUrl)
+      console.log('🔍 URL type:', typeof authUrl)
+      console.log('🔍 URL length:', authUrl?.length)
+
+      // Fallback manual URL generation if service fails
+      if (!authUrl || typeof authUrl !== 'string') {
+        console.log('⚠️ Service failed, trying manual URL generation...')
+        const clientKey = import.meta.env.VITE_TIKTOK_CLIENT_KEY || 'sbawnbpy8ri5x8kz7d'
+        const redirectUri = import.meta.env.VITE_TIKTOK_REDIRECT_URI || 'https://seeutrending.vercel.app/oauth/redirect'
+        const state = `tiktok_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+
+        sessionStorage.setItem('tiktok_oauth_state', state)
+
+        const fallbackUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${clientKey}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`
+        console.log('🛠️ Fallback URL generated:', fallbackUrl)
+
+        // Use fallback URL
+        const finalUrl = fallbackUrl
+        console.log('🔄 Using fallback URL for redirect')
+
+        setTimeout(() => {
+          window.location.href = finalUrl
+        }, 100)
+        return
+      }
+
       // Validate URL before redirect
-      if (!authUrl || !authUrl.startsWith('https://www.tiktok.com')) {
+      if (!authUrl) {
+        throw new Error('OAuth URL is null or undefined')
+      }
+
+      if (typeof authUrl !== 'string') {
+        throw new Error(`OAuth URL is not a string, got: ${typeof authUrl}`)
+      }
+
+      if (!authUrl.startsWith('https://www.tiktok.com')) {
         throw new Error(`Invalid TikTok OAuth URL generated: ${authUrl}`)
       }
 
+      console.log('✅ URL validation passed')
       console.log('🔗 Redirecting to TikTok authorization...')
-      console.log('⚠️ If you see this message but no redirect happens, check environment variables')
 
-      window.location.href = authUrl
+      // Add a small delay to ensure logging
+      setTimeout(() => {
+        window.location.href = authUrl
+      }, 100)
+
     } catch (error) {
       console.error('❌ Failed to initiate TikTok OAuth:', error)
+      console.error('❌ Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      })
       alert(`Failed to connect TikTok: ${error.message}`)
       setIsConnecting(false)
     }
@@ -295,6 +354,7 @@ export function TikTokConnectionStatus() {
             Twoje konto TikTok jest połączone i zweryfikowane. Możesz teraz przesyłać linki do swoich filmów w aktywnych konkursach.
           </p>
         </div>
+
       </div>
     )
   }

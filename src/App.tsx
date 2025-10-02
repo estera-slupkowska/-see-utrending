@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './lib/auth/context'
 import { ErrorBoundary } from './components/ui'
 import { Navbar } from './components/layout/Navbar'
+import { Footer } from './components/layout/Footer'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { AdminRoute } from './components/auth/AdminRoute'
 import { AdminLayout } from './components/admin/AdminLayout'
@@ -15,13 +16,17 @@ import { EducationHubPage } from './pages/EducationHubPage'
 import { RewardsPage } from './pages/RewardsPage'
 import { ContestsPage } from './pages/ContestsPage'
 import { UsersPage } from './pages/UsersPage'
+import { ProfilePage } from './pages/ProfilePage'
 import { OAuthRedirect } from './pages/OAuthRedirect'
 import { TermsOfService } from './pages/TermsOfService'
 import { PrivacyPolicy } from './pages/PrivacyPolicy'
 import { AdminDashboard } from './pages/admin/AdminDashboard'
 import { TeamStructurePage } from './pages/admin/TeamStructurePage'
+import { AdminUsers } from './pages/admin/AdminUsers'
+import { ContestManagement } from './pages/admin/ContestManagement'
+import { ContentManagement } from './pages/admin/ContentManagement'
+import { NotificationsPage } from './pages/admin/NotificationsPage'
 import { TikTokCallback } from './components/auth/TikTokCallback'
-import { DemoContestPage } from './pages/DemoContestPage'
 
 function App() {
   return (
@@ -40,12 +45,12 @@ function App() {
           >
             <Route index element={<AdminDashboard />} />
             <Route path="team" element={<TeamStructurePage />} />
-            <Route path="contests" element={<div className="text-white p-6">Contest Management - Coming Soon</div>} />
-            <Route path="users" element={<div className="text-white p-6">User Management - Coming Soon</div>} />
-            <Route path="content" element={<div className="text-white p-6">Content Management - Coming Soon</div>} />
+            <Route path="contests" element={<ContestManagement />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="content" element={<ContentManagement />} />
+            <Route path="notifications" element={<NotificationsPage />} />
             <Route path="submissions" element={<div className="text-white p-6">Submissions - Coming Soon</div>} />
             <Route path="analytics" element={<div className="text-white p-6">Analytics - Coming Soon</div>} />
-            <Route path="notifications" element={<div className="text-white p-6">Notifications - Coming Soon</div>} />
             <Route path="settings" element={<div className="text-white p-6">Settings - Coming Soon</div>} />
           </Route>
 
@@ -68,7 +73,6 @@ function App() {
                     <Route path="/terms" element={<TermsOfService />} />
                     <Route path="/privacy" element={<PrivacyPolicy />} />
                     <Route path="/oauth/redirect" element={<OAuthRedirect />} />
-                    <Route path="/demo-contest" element={<DemoContestPage />} />
                     
                     {/* Protected routes */}
                     <Route
@@ -79,11 +83,20 @@ function App() {
                         </ProtectedRoute>
                       }
                     />
-                    
+                    <Route
+                      path="/profile"
+                      element={
+                        <ProtectedRoute>
+                          <ProfilePage />
+                        </ProtectedRoute>
+                      }
+                    />
+
                     {/* Catch all - redirect to home */}
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </main>
+                <Footer />
               </div>
             }
           />

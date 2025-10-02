@@ -6,6 +6,8 @@ interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
+  userRole: string | null
+  roleLoading: boolean
   signUp: (email: string, password: string, metadata?: Record<string, any>) => Promise<{ data: any, error: AuthError | null }>
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>
   signOut: () => Promise<{ error: AuthError | null }>
@@ -31,19 +33,60 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [userRole, setUserRole] = useState<string | null>(null)
+  const [roleLoading, setRoleLoading] = useState(false)
+
+  // Fetch user role from profiles table
+  useEffect(() => {
+    async function fetchUserRole() {
+      if (!user?.id) {
+        setUserRole(null)
+        return
+      }
+
+      setRoleLoading(true)
+      try {
+        console.log('AuthContext: Fetching role for user:', user.id)
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single()
+
+        if (error) {
+          console.error('AuthContext: Error fetching user role:', error)
+          const fallbackRole = user.user_metadata?.role || 'spectator'
+          console.log('AuthContext: Using fallback role:', fallbackRole)
+          setUserRole(fallbackRole)
+        } else {
+          console.log('AuthContext: Successfully fetched role from database:', data.role)
+          setUserRole(data.role)
+        }
+      } catch (err) {
+        console.error('AuthContext: Exception fetching user role:', err)
+        const fallbackRole = user.user_metadata?.role || 'spectator'
+        console.log('AuthContext: Using fallback role after exception:', fallbackRole)
+        setUserRole(fallbackRole)
+      } finally {
+        setRoleLoading(false)
+      }
+    }
+
+    fetchUserRole()
+  }, [user])
 
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
       const { data: { session }, error } = await supabase.auth.getSession()
-      
+
       if (error) {
         console.error('Error getting session:', error)
       } else {
         setSession(session)
         setUser(session?.user ?? null)
       }
-      
+
       setLoading(false)
     }
 
@@ -125,6 +168,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     session,
     loading,
+    userRole,
+    roleLoading,
     signUp,
     signIn,
     signOut,

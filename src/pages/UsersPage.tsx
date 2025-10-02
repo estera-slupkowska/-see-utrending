@@ -14,7 +14,7 @@ import {
   Flame,
   ArrowLeft
 } from 'lucide-react'
-import { Button, Badge } from '../components/ui'
+import { Button, Badge, DefaultAvatar } from '../components/ui'
 import { ProfileService } from '../lib/supabase/profiles'
 import type { UserProfile } from '../types/profiles'
 
@@ -26,7 +26,6 @@ interface UserDisplayData {
   avatar?: string
   xp: number
   monthlyXp: number
-  level: number
   rank: number
   badges: string[]
   contestsParticipated: number
@@ -42,11 +41,8 @@ interface UserDisplayData {
 
 // Convert Supabase profile to display format
 const profileToDisplayData = (profile: UserProfile, rank: number): UserDisplayData => {
-  // Generate mock data for fields not yet in database
-  const mockBadges = ['early-adopter']
-  if (profile.xp_points > 1000) mockBadges.push('hot-start')
-  if (profile.level >= 5) mockBadges.push('viral-starter')
-  if (profile.monthly_xp > 500) mockBadges.push('streak-14')
+  // All users should have the "Złote Tysiąc" badge
+  const mockBadges = ['early-adopter'] // Everyone gets the Golden Thousand badge
 
   return {
     id: profile.id,
@@ -54,10 +50,9 @@ const profileToDisplayData = (profile: UserProfile, rank: number): UserDisplayDa
     email: profile.email,
     handle: profile.tiktok_handle || `@${profile.name?.toLowerCase().replace(' ', '_')}` || '@user',
     avatar: profile.avatar_url,
-    xp: profile.xp_points,
-    monthlyXp: profile.monthly_xp || 0,
-    level: profile.level,
-    rank,
+    xp: 100, // Fixed XP from Złote Tysiąc badge
+    monthlyXp: 100, // Show the badge XP in monthly view too
+      rank,
     badges: mockBadges,
     contestsParticipated: Math.floor(profile.xp_points / 100), // Mock calculation
     totalViews: profile.xp_points * 10, // Mock calculation
@@ -148,8 +143,22 @@ export function UsersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Vibrant floating background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-3 h-3 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full animate-bounce"></div>
+        <div className="absolute top-32 right-20 w-2 h-2 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full animate-pulse"></div>
+        <div className="absolute bottom-32 left-20 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-twinkle"></div>
+        <div className="absolute bottom-20 right-16 w-2.5 h-2.5 bg-gradient-to-r from-emerald-400 to-green-400 rounded-full animate-ping"></div>
+        <div className="absolute top-1/3 left-1/4 w-2 h-2 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full animate-bounce" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-2/3 right-1/3 w-3 h-3 bg-gradient-to-r from-violet-400 to-fuchsia-400 rounded-full animate-pulse" style={{animationDelay: '2s'}}></div>
+
+        {/* Rainbow gradient orbs */}
+        <div className="absolute top-40 left-1/3 w-6 h-6 rounded-full opacity-30 animate-pulse" style={{background: 'linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24, #f0932b, #eb4d4b, #6c5ce7)', animationDelay: '1.5s'}}></div>
+        <div className="absolute bottom-40 right-1/4 w-5 h-5 rounded-full opacity-25 animate-ping" style={{background: 'linear-gradient(135deg, #a8edea, #fed6e3, #ffecd2, #fcb69f)', animationDelay: '3s'}}></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Back button */}
         <button
           onClick={() => navigate('/')}
@@ -252,16 +261,24 @@ export function UsersPage() {
                     <div
                       key={user.id}
                       onClick={() => setSelectedUser(user)}
-                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-surface-light transition-colors cursor-pointer group"
+                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-surface-light transition-all duration-300 cursor-pointer group"
                     >
                       <div className={`text-lg font-bold ${getRankColor(index + 1)} min-w-[2rem]`}>
                         #{index + 1}
                       </div>
-                      <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                        <Users className="w-5 h-5 text-primary" />
+                      <div className="w-10 h-10">
+                        {user.avatar ? (
+                          <img
+                            src={user.avatar}
+                            alt={user.name}
+                            className="w-10 h-10 rounded-full object-cover border-2 border-primary/30"
+                          />
+                        ) : (
+                          <DefaultAvatar name={user.name} size="md" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-text-primary truncate group-hover:text-primary transition-colors">
+                        <p className="font-semibold text-text-primary truncate group-hover:text-primary transition-colors duration-300">
                           {user.name}
                         </p>
                         <p className="text-sm text-text-muted">{user.handle}</p>
@@ -274,7 +291,7 @@ export function UsersPage() {
                           }
                         </p>
                         <p className="text-xs text-text-muted">
-                          {rankingPeriod === 'monthly' ? 'W tym miesiącu' : `Poziom ${user.level}`}
+                          {rankingPeriod === 'monthly' ? 'W tym miesiącu' : 'Cały czas'}
                         </p>
                       </div>
                     </div>
@@ -286,28 +303,34 @@ export function UsersPage() {
             {/* User Grid */}
             <div className="lg:col-span-2">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {rankedUsers.map((user) => (
+                {rankedUsers.map((user, index) => (
                   <div
                     key={user.id}
                     onClick={() => setSelectedUser(user)}
-                    className="card-clean cursor-pointer hover:scale-105 transition-all duration-300 hover:shadow-lg group"
+                    className="bg-gradient-to-br from-purple-600/10 via-pink-600/5 to-cyan-600/10 backdrop-blur-sm border border-purple-400/30 rounded-2xl p-6 cursor-pointer hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/20 group hover:border-pink-400/50 animate-pulse-glow hover:animate-none"
+                    style={{animationDelay: `${index * 0.1}s`}}
                   >
                     <div className="flex items-start space-x-4 mb-4">
-                      <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
-                        <Users className="w-8 h-8 text-primary" />
+                      <div className="w-16 h-16 animate-pulse-glow group-hover:animate-bounce">
+                        {user.avatar ? (
+                          <img
+                            src={user.avatar}
+                            alt={user.name}
+                            className="w-16 h-16 rounded-full object-cover border-4 border-purple-400/50 shadow-lg"
+                          />
+                        ) : (
+                          <DefaultAvatar name={user.name} size="lg" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-bold text-text-primary group-hover:text-primary transition-colors">
+                        <h3 className="text-lg font-bold text-text-primary group-hover:text-primary transition-colors animate-twinkle" style={{animationDelay: `${index * 0.2}s`}}>
                           {user.name}
                         </h3>
-                        <p className="text-text-muted">{user.handle}</p>
+                        <p className="text-text-muted animate-twinkle" style={{animationDelay: `${index * 0.3}s`}}>{user.handle}</p>
                         <div className="flex items-center space-x-2 mt-1">
-                          <Badge variant="secondary" size="sm">
+                          <div className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-300 hover:scale-110 ${user.rank === 1 ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black animate-pulse shadow-lg shadow-yellow-500/50' : user.rank <= 3 ? 'bg-gradient-to-r from-gray-300 to-gray-400 text-black animate-twinkle shadow-lg shadow-gray-400/30' : user.rank <= 10 ? 'bg-gradient-to-r from-orange-400 to-red-400 text-white animate-pulse shadow-lg shadow-orange-500/30' : 'bg-gradient-to-r from-purple-400 to-pink-400 text-white animate-twinkle shadow-lg shadow-purple-500/30'}`}>
                             #{user.rank}
-                          </Badge>
-                          <Badge variant="primary" size="sm">
-                            Poziom {user.level}
-                          </Badge>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -384,8 +407,16 @@ export function UsersPage() {
                 {/* Modal Header */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-4">
-                    <div className="w-20 h-20 bg-gradient-to-br from-primary to-purple-600 rounded-full flex items-center justify-center animate-pulse-glow">
-                      <Users className="w-10 h-10 text-white" />
+                    <div className="w-20 h-20 animate-pulse-glow">
+                      {selectedUser.avatar ? (
+                        <img
+                          src={selectedUser.avatar}
+                          alt={selectedUser.name}
+                          className="w-20 h-20 rounded-full object-cover border-4 border-primary shadow-xl"
+                        />
+                      ) : (
+                        <DefaultAvatar name={selectedUser.name} size="xl" />
+                      )}
                     </div>
                     <div>
                       <h2 className="text-2xl font-bold gradient-text">{selectedUser.name}</h2>
@@ -393,9 +424,6 @@ export function UsersPage() {
                       <div className="flex items-center space-x-2 mt-2">
                         <Badge variant="secondary">
                           #{selectedUser.rank} w rankingu
-                        </Badge>
-                        <Badge variant="primary">
-                          Poziom {selectedUser.level}
                         </Badge>
                       </div>
                       {selectedUser.location && (

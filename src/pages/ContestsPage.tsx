@@ -2,7 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Lock, Calendar, Trophy, Sparkles, Clock, Users, Zap, Star, Flame, Crown, Gift, PartyPopper, Play } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { Button } from '../components/ui'
+import { Button, CosmicBackground } from '../components/ui'
+import { LiveLeaderboard } from '../components/leaderboard/LiveLeaderboard'
 
 export function ContestsPage() {
   const { t } = useTranslation()
@@ -42,15 +43,22 @@ export function ContestsPage() {
   const { days, hours, minutes } = countdown > 0 ? formatTime(countdown) : { days: 0, hours: 0, minutes: 0 }
 
   return (
-    <div className="page-purple-theme py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="relative max-w-4xl mx-auto z-20">
-        <button
-          onClick={() => navigate('/')}
-          className="inline-flex items-center space-x-2 text-white/80 hover:text-white transition-colors mb-8"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>{t('common.back')}</span>
-        </button>
+    <div className="relative min-h-screen bg-slate-950 overflow-hidden">
+      <CosmicBackground />
+
+      {/* Hero gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-transparent to-cyan-900/20 pointer-events-none" />
+
+      <div className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          {/* Back button */}
+          <button
+            onClick={() => navigate('/')}
+            className="group inline-flex items-center space-x-2 text-white/70 hover:text-white transition-all duration-300 mb-12 hover:scale-105"
+          >
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
+            <span className="font-medium">{t('common.back')}</span>
+          </button>
 
         <div className="text-center space-y-12">
           <div className="space-y-6">
@@ -199,6 +207,11 @@ export function ContestsPage() {
                     </div>
                   </div>
                   
+                  {/* Live Leaderboard Preview */}
+                  <div className="my-12">
+                    <LiveLeaderboard limit={15} showFilters={true} autoRefresh={true} />
+                  </div>
+
                   {/* Enhanced Early Access Banner */}
                   <div className="relative bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 rounded-2xl p-8 text-white text-center overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
@@ -222,55 +235,6 @@ export function ContestsPage() {
             </div>
           </div>
 
-          {/* Demo Contest Section */}
-          <div className="space-y-8 text-center mb-16">
-            <div className="bg-gradient-to-r from-yellow-500/20 via-orange-500/20 to-pink-500/20 backdrop-blur-sm rounded-2xl p-8 border border-yellow-400/30 max-w-4xl mx-auto">
-              <div className="flex items-center justify-center space-x-2 mb-6">
-                <Play className="w-8 h-8 text-yellow-400 animate-pulse" />
-                <h3 className="text-3xl font-display font-bold text-white">
-                  🧪 Demo Contest - Wypróbuj już teraz!
-                </h3>
-                <Sparkles className="w-8 h-8 text-pink-400 animate-pulse" />
-              </div>
-              
-              <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                Nie możesz się doczekać prawdziwych konkursów? Wypróbuj nasz interaktywny demo z pełną funkcjonalnością!
-              </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white/10 rounded-lg p-4 border border-white/20">
-                  <Trophy className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-                  <h4 className="font-semibold text-white mb-1">Live Ranking</h4>
-                  <p className="text-sm text-white/70">Zobacz rankingi na żywo</p>
-                </div>
-                <div className="bg-white/10 rounded-lg p-4 border border-white/20">
-                  <Zap className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
-                  <h4 className="font-semibold text-white mb-1">Video Submission</h4>
-                  <p className="text-sm text-white/70">Prześlij swój film TikTok</p>
-                </div>
-                <div className="bg-white/10 rounded-lg p-4 border border-white/20">
-                  <Crown className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-                  <h4 className="font-semibold text-white mb-1">Real Metrics</h4>
-                  <p className="text-sm text-white/70">Prawdziwe metryki zaangażowania</p>
-                </div>
-              </div>
-              
-              <Button
-                variant="gaming"
-                size="lg"
-                onClick={() => navigate('/demo-contest')}
-                className="text-xl px-8 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 transform hover:scale-110 transition-all duration-300 shadow-2xl shadow-yellow-500/25"
-              >
-                <Play className="w-6 h-6 mr-2" />
-                Sprawdź Demo Contest
-                <Sparkles className="w-6 h-6 ml-2 animate-pulse" />
-              </Button>
-              
-              <p className="text-sm text-white/60 mt-4">
-                * Demo korzysta z symulowanych danych, ale pokazuje pełną funkcjonalność platformy
-              </p>
-            </div>
-          </div>
 
           {/* Enhanced CTA Section */}
           <div className="space-y-8 text-center">
@@ -369,6 +333,7 @@ export function ContestsPage() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   )

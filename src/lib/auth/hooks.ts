@@ -147,45 +147,9 @@ function getErrorMessage(errorMessage: string): string {
 }
 
 // Hook for checking if user has specific permissions
+// Now uses centralized role state from AuthContext
 export function usePermissions() {
-  const { user } = useAuth()
-  const [userRole, setUserRole] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-
-  // Fetch user role from profiles table
-  useEffect(() => {
-    async function fetchUserRole() {
-      if (!user?.id) {
-        setUserRole(null)
-        return
-      }
-
-      setLoading(true)
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single()
-
-        if (error) {
-          console.error('Error fetching user role:', error)
-          // Fallback to user_metadata
-          setUserRole(user.user_metadata?.role || 'spectator')
-        } else {
-          setUserRole(data.role)
-        }
-      } catch (err) {
-        console.error('Error fetching user role:', err)
-        // Fallback to user_metadata
-        setUserRole(user.user_metadata?.role || 'spectator')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchUserRole()
-  }, [user])
+  const { userRole, roleLoading } = useAuth()
 
   const hasRole = (role: string): boolean => {
     return userRole === role
@@ -198,7 +162,7 @@ export function usePermissions() {
 
   return {
     userRole,
-    loading,
+    loading: roleLoading,
     hasRole,
     isCreator,
     isBrand,
