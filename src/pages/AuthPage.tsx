@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth/context'
+import { usePermissions } from '../lib/auth/hooks'
 import { LoginForm } from '../components/auth/LoginForm'
 import { RegisterForm } from '../components/auth/RegisterForm'
 import { X } from 'lucide-react'
@@ -13,31 +14,54 @@ interface AuthPageProps {
 
 export function AuthPage({ mode: initialMode = 'login' }: AuthPageProps) {
   const [mode, setMode] = useState<AuthMode>(initialMode)
-  const { user, loading } = useAuth()
+  const { user, loading, userRole, roleLoading } = useAuth()
+  const { isAdmin } = usePermissions()
   const navigate = useNavigate()
+  const [shouldRedirect, setShouldRedirect] = useState(false)
+
+  // Auto-redirect based on role when user logs in
+  useEffect(() => {
+    if (user && !loading && !roleLoading && userRole && shouldRedirect) {
+      console.log('🚀 Auto-redirecting user based on role:', userRole)
+
+      if (isAdmin()) {
+        console.log('✅ Admin detected - redirecting to /admin')
+        navigate('/admin', { replace: true })
+      } else {
+        console.log('✅ Regular user - redirecting to /dashboard')
+        navigate('/dashboard', { replace: true })
+      }
+
+      setShouldRedirect(false)
+    }
+  }, [user, loading, roleLoading, userRole, shouldRedirect, isAdmin, navigate])
 
   // Redirect to Panel główny if already authenticated
-  if (user && !loading) {
-    return <Navigate to="/" replace />
+  if (user && !loading && !roleLoading && userRole && !shouldRedirect) {
+    if (isAdmin()) {
+      return <Navigate to="/admin" replace />
+    }
+    return <Navigate to="/dashboard" replace />
   }
 
   // Show loading state while checking authentication
-  if (loading) {
+  if (loading || (user && roleLoading)) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-text-secondary">Sprawdzanie autoryzacji...</p>
+          <p className="text-text-secondary">
+            {roleLoading ? 'Sprawdzanie uprawnień...' : 'Sprawdzanie autoryzacji...'}
+          </p>
         </div>
       </div>
     )
   }
 
   const handleAuthSuccess = () => {
-    // Add a small delay to ensure auth state updates, then navigate to Panel główny
-    setTimeout(() => {
-      navigate('/', { replace: true })
-    }, 100)
+    // Trigger redirect logic via useEffect
+    console.log('🎯 Login successful - triggering role-based redirect')
+    setShouldRedirect(true)
   }
 
   return (
