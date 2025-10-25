@@ -41,6 +41,16 @@ export interface UserStats {
   }>
 }
 
+export interface ContestParticipation {
+  contest_id: string
+  contest_title: string
+  contest_status: 'draft' | 'active' | 'completed' | 'cancelled'
+  submission_id: string
+  submitted_at: string
+  video_url?: string
+  engagement_score?: number
+}
+
 export class UsersService {
   // Get all users with optional filtering
   static async getUsers(options?: {
@@ -296,5 +306,45 @@ export class UsersService {
     }
 
     return data
+  }
+
+  // Get user's contest participations
+  static async getUserContestParticipations(userId: string): Promise<ContestParticipation[]> {
+    const { data, error } = await supabase
+      .from('contest_submissions')
+      .select(`
+        id,
+        submitted_at,
+        video_url,
+        engagement_score,
+        contests:contest_id (
+          id,
+          title,
+          status
+        )
+      `)
+      .eq('user_id', userId)
+      .order('submitted_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching user contest participations:', error)
+      // Return empty array if table doesn't exist yet
+      return []
+    }
+
+    if (!data || data.length === 0) {
+      return []
+    }
+
+    // Transform the data to match ContestParticipation interface
+    return data.map(submission => ({
+      contest_id: submission.contests?.id || '',
+      contest_title: submission.contests?.title || 'Unknown Contest',
+      contest_status: submission.contests?.status || 'draft',
+      submission_id: submission.id,
+      submitted_at: submission.submitted_at,
+      video_url: submission.video_url,
+      engagement_score: submission.engagement_score
+    }))
   }
 }

@@ -15,7 +15,7 @@ import {
   Crown,
   Star
 } from 'lucide-react'
-import { UsersService, UserProfile, UserStats } from '../../services/admin/users.service'
+import { UsersService, UserProfile, UserStats, ContestParticipation } from '../../services/admin/users.service'
 
 export function AdminUsers() {
   const [users, setUsers] = useState<UserProfile[]>([])
@@ -26,6 +26,8 @@ export function AdminUsers() {
   const [roleFilter, setRoleFilter] = useState<string>('all')
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null)
   const [showUserModal, setShowUserModal] = useState(false)
+  const [contestParticipations, setContestParticipations] = useState<ContestParticipation[]>([])
+  const [loadingParticipations, setLoadingParticipations] = useState(false)
 
   useEffect(() => {
     loadUsers()
@@ -137,6 +139,18 @@ export function AdminUsers() {
   const openUserModal = async (user: UserProfile) => {
     setSelectedUser(user)
     setShowUserModal(true)
+
+    // Load contest participations
+    setLoadingParticipations(true)
+    try {
+      const participations = await UsersService.getUserContestParticipations(user.id)
+      setContestParticipations(participations)
+    } catch (err) {
+      console.error('Failed to load contest participations:', err)
+      setContestParticipations([])
+    } finally {
+      setLoadingParticipations(false)
+    }
   }
 
   const getRoleBadgeColor = (role: UserProfile['role']) => {
@@ -542,16 +556,23 @@ export function AdminUsers() {
                 <div className="bg-background/50 rounded-lg p-4">
                   <h5 className="text-white font-medium mb-2">TikTok Info</h5>
                   <div className="space-y-2 text-sm">
-                    <div>
-                      <span className="text-text-muted">Handle: </span>
-                      <span className="text-purple-400">
-                        {selectedUser.tiktok_handle ? `@${selectedUser.tiktok_handle}` : 'Not connected'}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-text-muted">Followers: </span>
-                      <span className="text-white">{selectedUser.total_followers.toLocaleString()}</span>
-                    </div>
+                    {selectedUser.tiktok_handle ? (
+                      <>
+                        <div>
+                          <span className="text-text-muted">Handle: </span>
+                          <span className="text-purple-400">@{selectedUser.tiktok_handle}</span>
+                        </div>
+                        <div>
+                          <span className="text-text-muted">Followers: </span>
+                          <span className="text-white">{selectedUser.total_followers.toLocaleString()}</span>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex items-center space-x-2 text-yellow-400">
+                        <Eye className="w-4 h-4" />
+                        <span>TikTok API not connected yet</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -562,6 +583,45 @@ export function AdminUsers() {
                   <p className="text-text-muted text-sm">{selectedUser.bio}</p>
                 </div>
               )}
+
+              {/* Contest Participation Section */}
+              <div className="bg-background/50 rounded-lg p-4">
+                <h5 className="text-white font-medium mb-3">Contest Participation</h5>
+                {loadingParticipations ? (
+                  <div className="flex items-center justify-center py-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-400"></div>
+                  </div>
+                ) : contestParticipations.length === 0 ? (
+                  <p className="text-text-muted text-sm">No contests participated yet</p>
+                ) : (
+                  <div className="space-y-2">
+                    {contestParticipations.map((participation) => {
+                      const isActive = participation.contest_status === 'active'
+                      const isCompleted = participation.contest_status === 'completed'
+
+                      return (
+                        <div key={participation.submission_id} className="flex items-center justify-between p-2 bg-background/30 rounded-lg">
+                          <div className="flex-1">
+                            <p className="text-white text-sm font-medium">{participation.contest_title}</p>
+                            <p className="text-text-muted text-xs">
+                              {new Date(participation.submitted_at).toLocaleDateString('pl-PL')}
+                            </p>
+                          </div>
+                          <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            isActive
+                              ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                              : isCompleted
+                              ? 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                              : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                          }`}>
+                            {isActive ? 'Active' : isCompleted ? 'Finished' : participation.contest_status}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

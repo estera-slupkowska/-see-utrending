@@ -21,7 +21,6 @@ import { OAuthRedirect } from './pages/OAuthRedirect'
 import { TermsOfService } from './pages/TermsOfService'
 import { PrivacyPolicy } from './pages/PrivacyPolicy'
 import { AdminDashboard } from './pages/admin/AdminDashboard'
-import { TeamStructurePage } from './pages/admin/TeamStructurePage'
 import { AdminUsers } from './pages/admin/AdminUsers'
 import { ContestManagement } from './pages/admin/ContestManagement'
 import { ContentManagement } from './pages/admin/ContentManagement'
@@ -44,7 +43,6 @@ function App() {
             }
           >
             <Route index element={<AdminDashboard />} />
-            <Route path="team" element={<TeamStructurePage />} />
             <Route path="contests" element={<ContestManagement />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="content" element={<ContentManagement />} />

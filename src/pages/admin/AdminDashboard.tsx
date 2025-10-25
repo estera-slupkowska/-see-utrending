@@ -144,11 +144,15 @@ export function AdminDashboard() {
             const IconComponent = stat.icon
             const isPositive = stat.change.startsWith('+')
             const isNegative = stat.change.startsWith('-')
-            
+            const isClickable = stat.title === 'Total Users'
+
             return (
               <div
                 key={stat.title}
-                className="bg-surface/50 backdrop-blur-sm border border-border rounded-2xl p-6 hover:bg-surface/70 transition-all duration-300"
+                onClick={() => isClickable && navigate('/admin/users')}
+                className={`bg-surface/50 backdrop-blur-sm border border-border rounded-2xl p-6 hover:bg-surface/70 transition-all duration-300 ${
+                  isClickable ? 'cursor-pointer hover:scale-105 hover:border-blue-400/50' : ''
+                }`}
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className={`p-2 rounded-lg bg-background/50 ${stat.color}`}>
@@ -175,7 +179,7 @@ export function AdminDashboard() {
       {/* Quick Actions */}
       <div className="bg-surface/50 backdrop-blur-sm border border-border rounded-2xl p-6">
         <h2 className="text-xl font-semibold text-white mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <button
             onClick={() => navigate('/admin/contests?new=true')}
             className="flex items-center space-x-3 p-4 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 rounded-lg transition-all duration-300 hover:scale-105"
@@ -196,13 +200,6 @@ export function AdminDashboard() {
           >
             <Users className="w-5 h-5 text-green-400" />
             <span className="text-white font-medium">Manage Users</span>
-          </button>
-          <button
-            onClick={() => navigate('/admin/team')}
-            className="flex items-center space-x-3 p-4 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/20 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg group"
-          >
-            <Building2 className="w-5 h-5 text-yellow-400 group-hover:animate-pulse" />
-            <span className="text-white font-medium">Team Structure</span>
           </button>
         </div>
       </div>
