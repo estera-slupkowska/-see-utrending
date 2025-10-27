@@ -51,9 +51,9 @@ export function AdminLayout() {
       label: 'Analytics'
     },
     {
-      path: '/admin/notifications',
+      path: '/admin/emails',
       icon: Bell,
-      label: 'Notifications'
+      label: 'Emails'
     },
     {
       path: '/admin/content',

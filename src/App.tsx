@@ -24,7 +24,7 @@ import { AdminDashboard } from './pages/admin/AdminDashboard'
 import { AdminUsers } from './pages/admin/AdminUsers'
 import { ContestManagement } from './pages/admin/ContestManagement'
 import { ContentManagement } from './pages/admin/ContentManagement'
-import { NotificationsPage } from './pages/admin/NotificationsPage'
+import { EmailsPage } from './pages/admin/EmailsPage'
 import { TikTokCallback } from './components/auth/TikTokCallback'
 
 function App() {
@@ -46,7 +46,7 @@ function App() {
             <Route path="contests" element={<ContestManagement />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="content" element={<ContentManagement />} />
-            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="emails" element={<EmailsPage />} />
             <Route path="submissions" element={<div className="text-white p-6">Submissions - Coming Soon</div>} />
             <Route path="analytics" element={<div className="text-white p-6">Analytics - Coming Soon</div>} />
             <Route path="settings" element={<div className="text-white p-6">Settings - Coming Soon</div>} />

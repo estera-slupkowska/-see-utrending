@@ -1,15 +1,37 @@
 import { useTranslation } from 'react-i18next'
-import { CalendarDays, Users, Trophy, Sparkles, Zap, Star, Flame } from 'lucide-react'
+import { CalendarDays, Users, Trophy, Sparkles, Zap, Star, Flame, Bell, Megaphone } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { ContentService, ContentNotification } from '../../services/admin/content.service'
 
 interface UpdatesSectionProps {
   isLoggedIn?: boolean
 }
 
 export function UpdatesSection({ isLoggedIn = false }: UpdatesSectionProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const [animationTrigger, setAnimationTrigger] = useState(0)
+  const [notifications, setNotifications] = useState<ContentNotification[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // Fetch notifications from database
+  useEffect(() => {
+    loadNotifications()
+  }, [])
+
+  const loadNotifications = async () => {
+    try {
+      setLoading(true)
+      const data = await ContentService.getVisibleNotifications()
+      setNotifications(data)
+    } catch (error) {
+      console.error('Failed to load notifications:', error)
+      // Fall back to empty array on error
+      setNotifications([])
+    } finally {
+      setLoading(false)
+    }
+  }
 
   // Trigger subtle animation every 8 seconds for attention
   useEffect(() => {
@@ -19,30 +41,52 @@ export function UpdatesSection({ isLoggedIn = false }: UpdatesSectionProps) {
     return () => clearInterval(interval)
   }, [])
 
-  const updates = [
-    {
-      id: 'early-adopters',
-      icon: Users,
-      title: t('updates.earlyAdopters.title'),
-      description: t('updates.earlyAdopters.description'),
-      date: t('updates.earlyAdopters.date'),
-      type: 'announcement',
-      priority: 'high',
-      color: 'from-purple-500 via-pink-500 to-red-500',
-      glowColor: 'shadow-purple-500/25'
-    },
-    {
-      id: 'first-contest',
-      icon: Trophy,
-      title: t('updates.firstContest.title'),
-      description: t('updates.firstContest.description'),
-      date: t('updates.firstContest.date'),
-      type: 'upcoming',
-      priority: 'high',
-      color: 'from-yellow-400 via-orange-500 to-red-500',
-      glowColor: 'shadow-yellow-500/25'
+  // Check current language
+  const isPolish = i18n.language === 'pl'
+
+  // Map database notifications to display format
+  const updates = notifications.map((notification) => {
+
+    // Determine icon based on badge_type
+    let icon = Bell
+    if (notification.badge_type === 'announcement') {
+      icon = Megaphone
+    } else if (notification.badge_type === 'upcoming') {
+      icon = Trophy
     }
-  ]
+
+    // Determine colors based on badge_status
+    let color = 'from-purple-500 via-pink-500 to-red-500'
+    let glowColor = 'shadow-purple-500/25'
+
+    if (notification.badge_status === 'coming_soon') {
+      color = 'from-yellow-400 via-orange-500 to-red-500'
+      glowColor = 'shadow-yellow-500/25'
+    }
+
+    // Determine type for display badge
+    const type = notification.badge_type === 'announcement' ? 'announcement' : 'upcoming'
+
+    // Format date
+    const date = new Date(notification.created_at).toLocaleDateString(isPolish ? 'pl-PL' : 'en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+
+    return {
+      id: notification.id,
+      icon,
+      title: isPolish ? notification.title_pl : notification.title_en,
+      description: isPolish ? notification.content_pl : notification.content_en,
+      date,
+      type,
+      priority: 'high',
+      color,
+      glowColor,
+      badge_status: notification.badge_status
+    }
+  })
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 relative">
@@ -64,8 +108,20 @@ export function UpdatesSection({ isLoggedIn = false }: UpdatesSectionProps) {
           </div>
         </div>
 
-        <div className="space-y-8">
-          {updates.map((update, index) => (
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+          </div>
+        ) : updates.length === 0 ? (
+          <div className="text-center py-12 bg-surface/50 rounded-2xl border border-border">
+            <Bell className="w-16 h-16 mx-auto text-text-muted mb-4 opacity-50" />
+            <p className="text-text-muted text-lg">
+              {isPolish ? 'Brak aktualności w tej chwili' : 'No updates at the moment'}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {updates.map((update, index) => (
             <div 
               key={update.id} 
               className={`
@@ -215,8 +271,9 @@ export function UpdatesSection({ isLoggedIn = false }: UpdatesSectionProps) {
                 `} />
               </div>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Enhanced Call to Action - Only for non-logged users */}
         {!isLoggedIn && (

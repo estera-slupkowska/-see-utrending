@@ -1,19 +1,57 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Play, ExternalLink } from 'lucide-react'
+import { Play, ExternalLink, Loader } from 'lucide-react'
+import { ContentService, TrailerConfig } from '../../services/admin/content.service'
 
 interface ExplanatoryTrailerProps {
   className?: string
 }
 
 export function ExplanatoryTrailer({ className = '' }: ExplanatoryTrailerProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [isHovered, setIsHovered] = useState(false)
+  const [trailerConfig, setTrailerConfig] = useState<TrailerConfig | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  // Placeholder YouTube video - Rick Astley "Never Gonna Give You Up"
-  const youtubeVideoId = 'dQw4w9WgXcQ'
+  // Fetch trailer configuration on mount
+  useEffect(() => {
+    loadTrailerConfig()
+  }, [])
+
+  const loadTrailerConfig = async () => {
+    try {
+      setLoading(true)
+      const config = await ContentService.getTrailerConfig()
+      setTrailerConfig(config)
+    } catch (error) {
+      console.error('Failed to load trailer config:', error)
+      // Fall back to default config on error
+      setTrailerConfig({
+        id: '',
+        youtube_video_id: 'dQw4w9WgXcQ',
+        title_pl: 'Jak to działa',
+        title_en: 'How it Works',
+        description_pl: 'Zobacz krótki film wyjaśniający, jak działa platforma SeeUTrending',
+        description_en: 'Watch a short video explaining how the SeeUTrending platform works',
+        visible: true,
+        updated_at: new Date().toISOString()
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Don't render if config is not loaded or not visible
+  if (loading || !trailerConfig || !trailerConfig.visible) {
+    return null
+  }
+
+  const isPolish = i18n.language === 'pl'
+  const youtubeVideoId = trailerConfig.youtube_video_id
   const youtubeUrl = `https://www.youtube.com/watch?v=${youtubeVideoId}`
   const thumbnailUrl = `https://img.youtube.com/vi/${youtubeVideoId}/maxresdefault.jpg`
+  const title = isPolish ? trailerConfig.title_pl : trailerConfig.title_en
+  const description = isPolish ? trailerConfig.description_pl : trailerConfig.description_en
 
   const handleVideoClick = () => {
     window.open(youtubeUrl, '_blank', 'noopener,noreferrer')
@@ -25,11 +63,13 @@ export function ExplanatoryTrailer({ className = '' }: ExplanatoryTrailerProps) 
         {/* Section Title */}
         <div className="mb-8">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-text-primary mb-4">
-            {t('trailer.title')}
+            {title}
           </h2>
-          <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-            {t('trailer.description')}
-          </p>
+          {description && (
+            <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+              {description}
+            </p>
+          )}
         </div>
 
         {/* Video Thumbnail with Hover Effects */}
@@ -45,7 +85,7 @@ export function ExplanatoryTrailer({ className = '' }: ExplanatoryTrailerProps) 
             {/* Thumbnail Image */}
             <img
               src={thumbnailUrl}
-              alt="SeeUTrending Explanatory Trailer"
+              alt={title}
               className="w-full aspect-video object-cover"
             />
 
@@ -74,15 +114,17 @@ export function ExplanatoryTrailer({ className = '' }: ExplanatoryTrailerProps) 
               <div className="flex items-center justify-between">
                 <div className="text-left">
                   <h3 className="text-white font-semibold text-lg">
-                    {t('trailer.videoTitle')}
+                    {title}
                   </h3>
-                  <p className="text-white/80 text-sm">
-                    {t('trailer.videoDescription')}
-                  </p>
+                  {description && (
+                    <p className="text-white/80 text-sm">
+                      {description}
+                    </p>
+                  )}
                 </div>
                 <div className="text-right">
                   <p className="text-white/60 text-xs">
-                    {t('trailer.clickToWatch')}
+                    {isPolish ? 'Kliknij aby obejrzeć' : 'Click to watch'}
                   </p>
                 </div>
               </div>
@@ -98,11 +140,13 @@ export function ExplanatoryTrailer({ className = '' }: ExplanatoryTrailerProps) 
         </div>
 
         {/* Call to Action */}
-        <div className="mt-6">
-          <p className="text-text-muted text-sm">
-            {t('trailer.cta')}
-          </p>
-        </div>
+        {description && (
+          <div className="mt-6">
+            <p className="text-text-muted text-sm">
+              {isPolish ? 'Kliknij na wideo powyżej aby obejrzeć pełny film' : 'Click the video above to watch the full video'}
+            </p>
+          </div>
+        )}
       </div>
     </section>
   )
