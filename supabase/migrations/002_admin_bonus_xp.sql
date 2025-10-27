@@ -60,9 +60,9 @@ CREATE POLICY "Admins can manage all contests" ON public.contests
 -- Contest submissions policies
 CREATE POLICY "Creators can submit to contests" ON public.contest_submissions
   FOR INSERT WITH CHECK (
-    auth.uid() = creator_id AND
+    auth.uid() = user_id AND
     EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'creator') AND
-    EXISTS (SELECT 1 FROM public.contests WHERE id = contest_id AND status = 'live')
+    EXISTS (SELECT 1 FROM public.contests WHERE id = contest_id AND status = 'active')
   );
 
 CREATE POLICY "Admins can manage all submissions" ON public.contest_submissions
