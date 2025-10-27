@@ -1,23 +1,27 @@
 import { useState, useEffect } from 'react'
-import { 
-  Users, 
-  Search, 
+import {
+  Users,
+  Search,
   Filter,
-  Edit,
   Shield,
   ShieldCheck,
   Award,
   TrendingUp,
   Download,
   Eye,
-  UserCheck,
-  UserX,
   Crown,
-  Star
+  Star,
+  ExternalLink,
+  TrendingUpIcon,
+  MessageCircle,
+  Heart,
+  Play
 } from 'lucide-react'
-import { UsersService, UserProfile, UserStats, ContestParticipation } from '../../services/admin/users.service'
+import { UsersService, UserProfile, UserStats, ContestParticipation, AdminBonusRecord } from '../../services/admin/users.service'
+import { useAuth } from '../../lib/auth/context'
 
 export function AdminUsers() {
+  const { user } = useAuth()
   const [users, setUsers] = useState<UserProfile[]>([])
   const [stats, setStats] = useState<UserStats | null>(null)
   const [loading, setLoading] = useState(true)
@@ -28,6 +32,11 @@ export function AdminUsers() {
   const [showUserModal, setShowUserModal] = useState(false)
   const [contestParticipations, setContestParticipations] = useState<ContestParticipation[]>([])
   const [loadingParticipations, setLoadingParticipations] = useState(false)
+  const [selectedContest, setSelectedContest] = useState<ContestParticipation | null>(null)
+  const [showContestDetail, setShowContestDetail] = useState(false)
+  const [bonusXP, setBonusXP] = useState('')
+  const [bonusReason, setBonusReason] = useState('')
+  const [addingBonus, setAddingBonus] = useState(false)
 
   useEffect(() => {
     loadUsers()
@@ -75,30 +84,35 @@ export function AdminUsers() {
     }
   }
 
-  const handleVerificationUpdate = async (userId: string, verified: boolean) => {
-    try {
-      await UsersService.updateUserVerification(userId, verified)
-      loadUsers()
-      if (selectedUser?.id === userId) {
-        setSelectedUser({ ...selectedUser, verified })
-      }
-    } catch (err) {
-      console.error('Failed to update user verification:', err)
-      setError('Failed to update user verification')
-    }
-  }
+  const handleAddBonusXP = async () => {
+    if (!selectedUser || !user) return
 
-  const handleXPUpdate = async (userId: string, xpPoints: number) => {
+    const amount = parseInt(bonusXP)
+    if (isNaN(amount) || amount <= 0) {
+      setError('Please enter a valid positive number')
+      return
+    }
+
+    setAddingBonus(true)
     try {
-      await UsersService.updateUserXP(userId, xpPoints)
+      const updatedUser = await UsersService.addAdminBonusXP(
+        selectedUser.id,
+        amount,
+        user.id,
+        user.email || 'Admin',
+        bonusReason || 'Bonus points'
+      )
+
+      setSelectedUser(updatedUser)
+      setBonusXP('')
+      setBonusReason('')
       loadUsers()
-      loadStats() // Refresh stats to show updated averages
-      if (selectedUser?.id === userId) {
-        setSelectedUser({ ...selectedUser, xp_points: xpPoints })
-      }
+      loadStats()
     } catch (err) {
-      console.error('Failed to update user XP:', err)
-      setError('Failed to update user XP')
+      console.error('Failed to add bonus XP:', err)
+      setError('Failed to add bonus XP')
+    } finally {
+      setAddingBonus(false)
     }
   }
 
@@ -157,8 +171,6 @@ export function AdminUsers() {
     switch (role) {
       case 'admin': return 'bg-red-500/20 text-red-400 border-red-500/30'
       case 'creator': return 'bg-purple-500/20 text-purple-400 border-purple-500/30'
-      case 'brand': return 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-      case 'spectator': return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
       default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
     }
   }
@@ -167,8 +179,6 @@ export function AdminUsers() {
     switch (role) {
       case 'admin': return <Crown className="w-3 h-3" />
       case 'creator': return <Star className="w-3 h-3" />
-      case 'brand': return <Award className="w-3 h-3" />
-      case 'spectator': return <Eye className="w-3 h-3" />
       default: return <Users className="w-3 h-3" />
     }
   }
@@ -281,8 +291,6 @@ export function AdminUsers() {
             >
               <option value="all">All Roles</option>
               <option value="creator">Creators</option>
-              <option value="brand">Brands</option>
-              <option value="spectator">Spectators</option>
               <option value="admin">Admins</option>
             </select>
           </div>
@@ -412,21 +420,11 @@ export function AdminUsers() {
                   <div className="flex items-center space-x-2 ml-4">
                     <button
                       onClick={() => openUserModal(user)}
-                      className="p-2 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors"
-                      title="View details"
+                      className="flex items-center space-x-2 px-4 py-2 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors border border-blue-500/30"
+                      title="View user details"
                     >
-                      <Eye className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleVerificationUpdate(user.id, !user.verified)}
-                      className={`p-2 rounded-lg transition-colors ${
-                        user.verified 
-                          ? 'text-yellow-400 hover:bg-yellow-500/20' 
-                          : 'text-green-400 hover:bg-green-500/20'
-                      }`}
-                      title={user.verified ? 'Unverify user' : 'Verify user'}
-                    >
-                      {user.verified ? <UserX className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}
+                      <Eye className="w-5 h-5" />
+                      <span className="font-medium">Details</span>
                     </button>
                   </div>
                 </div>
@@ -439,7 +437,7 @@ export function AdminUsers() {
       {/* User Detail Modal */}
       {showUserModal && selectedUser && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-surface border border-border rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-surface border border-border rounded-2xl p-6 max-w-5xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-white">User Details</h2>
               <button
@@ -466,9 +464,18 @@ export function AdminUsers() {
                 )}
                 
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-white mb-1">
-                    {selectedUser.name || selectedUser.email.split('@')[0]}
-                  </h3>
+                  <div className="flex items-center space-x-2 mb-1">
+                    <h3 className="text-xl font-semibold text-white">
+                      {selectedUser.name || selectedUser.email.split('@')[0]}
+                    </h3>
+                    {selectedUser.tiktok_handle ? (
+                      <span className="text-sm text-text-muted">
+                        (@{selectedUser.tiktok_handle} • {selectedUser.total_followers.toLocaleString()} followers)
+                      </span>
+                    ) : (
+                      <span className="text-sm text-yellow-400">(TikTok not connected yet)</span>
+                    )}
+                  </div>
                   <p className="text-text-muted mb-2">{selectedUser.email}</p>
                   <div className="flex items-center space-x-3">
                     <div className={`flex items-center space-x-1 px-3 py-1 rounded-full text-sm border ${getRoleBadgeColor(selectedUser.role)}`}>
@@ -489,7 +496,7 @@ export function AdminUsers() {
               <div className="bg-background/50 rounded-lg p-4">
                 <h4 className="text-white font-semibold mb-3">Role Management</h4>
                 <div className="flex flex-wrap gap-2">
-                  {(['creator', 'brand', 'spectator', 'admin'] as const).map((role) => (
+                  {(['creator', 'admin'] as const).map((role) => (
                     <button
                       key={role}
                       onClick={() => handleRoleUpdate(selectedUser.id, role)}
@@ -508,28 +515,78 @@ export function AdminUsers() {
               {/* XP Management */}
               <div className="bg-background/50 rounded-lg p-4">
                 <h4 className="text-white font-semibold mb-3">XP Management</h4>
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="number"
-                    min="0"
-                    defaultValue={selectedUser.xp_points}
-                    className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:border-purple-500"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        const newXP = parseInt((e.target as HTMLInputElement).value)
-                        if (!isNaN(newXP) && newXP >= 0) {
-                          handleXPUpdate(selectedUser.id, newXP)
-                        }
-                      }
-                    }}
-                  />
-                  <span className="text-text-muted text-sm">XP Points</span>
+
+                {/* XP Breakdown */}
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-text-muted">Badge XP (Złote Tysiąc):</span>
+                    <span className="text-white font-semibold">{(selectedUser.xp_points || 0) - (selectedUser.admin_bonus_xp || 0)} XP</span>
+                  </div>
+                  {(selectedUser.admin_bonus_xp || 0) > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-text-muted">Punkty przyznane przez SeeUTrending Team:</span>
+                      <span className="text-green-400 font-semibold">+{selectedUser.admin_bonus_xp} XP</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-sm pt-2 border-t border-border">
+                    <span className="text-white font-semibold">Total XP:</span>
+                    <span className="text-purple-400 font-bold">{selectedUser.xp_points || 0} XP</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-text-muted">Current Level:</span>
+                    <span className={`font-semibold ${getLevelColor(selectedUser.level)}`}>
+                      {selectedUser.level}
+                    </span>
+                  </div>
                 </div>
-                <p className="text-text-muted text-sm mt-2">
-                  Current Level: <span className={`font-semibold ${getLevelColor(selectedUser.level)}`}>
-                    {selectedUser.level}
-                  </span>
-                </p>
+
+                {/* Add Bonus XP Form */}
+                <div className="border-t border-border pt-4 space-y-3">
+                  <h5 className="text-white text-sm font-medium">Add Bonus Points</h5>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="number"
+                      min="1"
+                      value={bonusXP}
+                      onChange={(e) => setBonusXP(e.target.value)}
+                      placeholder="Amount"
+                      className="w-24 px-3 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:border-purple-500"
+                    />
+                    <input
+                      type="text"
+                      value={bonusReason}
+                      onChange={(e) => setBonusReason(e.target.value)}
+                      placeholder="Reason (optional)"
+                      className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:border-purple-500"
+                    />
+                    <button
+                      onClick={handleAddBonusXP}
+                      disabled={addingBonus || !bonusXP}
+                      className="px-4 py-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                    >
+                      {addingBonus ? 'Adding...' : 'Add'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Admin Bonus History */}
+                {selectedUser.admin_bonus_history && selectedUser.admin_bonus_history.length > 0 && (
+                  <div className="border-t border-border pt-4 mt-4">
+                    <h5 className="text-white text-sm font-medium mb-2">Bonus History</h5>
+                    <div className="space-y-1 max-h-32 overflow-y-auto">
+                      {selectedUser.admin_bonus_history.map((bonus, index) => (
+                        <div key={index} className="text-xs flex justify-between items-center p-2 bg-background/30 rounded">
+                          <span className="text-text-muted">
+                            +{bonus.amount} XP - {bonus.reason}
+                          </span>
+                          <span className="text-text-muted">
+                            {new Date(bonus.granted_at).toLocaleDateString('pl-PL')}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Statistics */}
@@ -538,13 +595,15 @@ export function AdminUsers() {
                   <h5 className="text-white font-medium mb-2">Account Info</h5>
                   <div className="space-y-2 text-sm">
                     <div>
-                      <span className="text-text-muted">Streak: </span>
-                      <span className="text-white">{selectedUser.streak_days} days</span>
+                      <span className="text-text-muted">Account Created: </span>
+                      <span className="text-white">
+                        {new Date(selectedUser.created_at).toLocaleDateString('pl-PL')}
+                      </span>
                     </div>
                     <div>
                       <span className="text-text-muted">Last Active: </span>
                       <span className="text-white">
-                        {selectedUser.last_activity_date 
+                        {selectedUser.last_activity_date
                           ? new Date(selectedUser.last_activity_date).toLocaleDateString('pl-PL')
                           : 'Never'
                         }
@@ -594,34 +653,198 @@ export function AdminUsers() {
                 ) : contestParticipations.length === 0 ? (
                   <p className="text-text-muted text-sm">No contests participated yet</p>
                 ) : (
-                  <div className="space-y-2">
-                    {contestParticipations.map((participation) => {
-                      const isActive = participation.contest_status === 'active'
-                      const isCompleted = participation.contest_status === 'completed'
-
-                      return (
-                        <div key={participation.submission_id} className="flex items-center justify-between p-2 bg-background/30 rounded-lg">
-                          <div className="flex-1">
-                            <p className="text-white text-sm font-medium">{participation.contest_title}</p>
-                            <p className="text-text-muted text-xs">
-                              {new Date(participation.submitted_at).toLocaleDateString('pl-PL')}
-                            </p>
-                          </div>
-                          <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            isActive
-                              ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                              : isCompleted
-                              ? 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
-                              : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                          }`}>
-                            {isActive ? 'Active' : isCompleted ? 'Finished' : participation.contest_status}
-                          </div>
+                  <div className="space-y-4">
+                    {/* Active Contests */}
+                    {contestParticipations.filter(p => p.contest_status === 'active').length > 0 && (
+                      <div>
+                        <h6 className="text-green-400 text-sm font-medium mb-2">Active Contests</h6>
+                        <div className="space-y-2">
+                          {contestParticipations
+                            .filter(p => p.contest_status === 'active')
+                            .map((participation) => (
+                              <button
+                                key={participation.submission_id}
+                                onClick={() => {
+                                  setSelectedContest(participation)
+                                  setShowContestDetail(true)
+                                }}
+                                className="w-full flex items-center justify-between p-3 bg-background/30 hover:bg-background/50 rounded-lg transition-colors cursor-pointer"
+                              >
+                                <div className="flex-1 text-left">
+                                  <p className="text-white text-sm font-medium">{participation.contest_title}</p>
+                                  <p className="text-text-muted text-xs">
+                                    Submitted: {new Date(participation.submitted_at).toLocaleDateString('pl-PL')}
+                                  </p>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <div className="px-2 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
+                                    Active
+                                  </div>
+                                  <ExternalLink className="w-4 h-4 text-blue-400" />
+                                </div>
+                              </button>
+                            ))}
                         </div>
-                      )
-                    })}
+                      </div>
+                    )}
+
+                    {/* Ended Contests */}
+                    {contestParticipations.filter(p => p.contest_status === 'completed').length > 0 && (
+                      <div>
+                        <h6 className="text-gray-400 text-sm font-medium mb-2">Ended Contests</h6>
+                        <div className="space-y-2">
+                          {contestParticipations
+                            .filter(p => p.contest_status === 'completed')
+                            .map((participation) => (
+                              <button
+                                key={participation.submission_id}
+                                onClick={() => {
+                                  setSelectedContest(participation)
+                                  setShowContestDetail(true)
+                                }}
+                                className="w-full flex items-center justify-between p-3 bg-background/30 hover:bg-background/50 rounded-lg transition-colors cursor-pointer"
+                              >
+                                <div className="flex-1 text-left">
+                                  <p className="text-white text-sm font-medium">{participation.contest_title}</p>
+                                  <p className="text-text-muted text-xs">
+                                    Submitted: {new Date(participation.submitted_at).toLocaleDateString('pl-PL')}
+                                  </p>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <div className="px-2 py-1 rounded-full text-xs font-medium bg-gray-500/20 text-gray-400 border border-gray-500/30">
+                                    Finished
+                                  </div>
+                                  <ExternalLink className="w-4 h-4 text-blue-400" />
+                                </div>
+                              </button>
+                            ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Contest Detail Modal */}
+      {showContestDetail && selectedContest && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+          <div className="bg-surface border border-border rounded-2xl p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">{selectedContest.contest_title}</h2>
+              <button
+                onClick={() => {
+                  setShowContestDetail(false)
+                  setSelectedContest(null)
+                }}
+                className="text-text-muted hover:text-white"
+              >
+                <Users className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Contest Status */}
+              <div className="flex items-center space-x-3">
+                <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  selectedContest.contest_status === 'active'
+                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                    : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                }`}>
+                  {selectedContest.contest_status === 'active' ? 'Active Contest' : 'Finished Contest'}
+                </div>
+                <span className="text-text-muted text-sm">
+                  Submitted: {new Date(selectedContest.submitted_at).toLocaleDateString('pl-PL')}
+                </span>
+              </div>
+
+              {/* Video Submission */}
+              <div className="bg-background/50 rounded-lg p-4">
+                <h4 className="text-white font-semibold mb-3">Video Submission</h4>
+
+                {selectedContest.video_url ? (
+                  <div className="space-y-3">
+                    <a
+                      href={selectedContest.video_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-colors"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      <span>Open on TikTok</span>
+                    </a>
+
+                    {/* Video Statistics */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-3 border-t border-border">
+                      <div className="flex items-center space-x-2">
+                        <Play className="w-5 h-5 text-purple-400" />
+                        <div>
+                          <p className="text-text-muted text-xs">Views</p>
+                          <p className="text-white font-semibold">
+                            {selectedContest.views_count !== undefined
+                              ? selectedContest.views_count.toLocaleString()
+                              : 'N/A'}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <Heart className="w-5 h-5 text-red-400" />
+                        <div>
+                          <p className="text-text-muted text-xs">Likes</p>
+                          <p className="text-white font-semibold">
+                            {selectedContest.likes_count !== undefined
+                              ? selectedContest.likes_count.toLocaleString()
+                              : 'N/A'}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <MessageCircle className="w-5 h-5 text-blue-400" />
+                        <div>
+                          <p className="text-text-muted text-xs">Comments</p>
+                          <p className="text-white font-semibold">
+                            {selectedContest.comments_count !== undefined
+                              ? selectedContest.comments_count.toLocaleString()
+                              : 'N/A'}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <TrendingUpIcon className="w-5 h-5 text-green-400" />
+                        <div>
+                          <p className="text-text-muted text-xs">Shares</p>
+                          <p className="text-white font-semibold">
+                            {selectedContest.shares_count !== undefined
+                              ? selectedContest.shares_count.toLocaleString()
+                              : 'N/A'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-2 text-yellow-400">
+                    <Eye className="w-4 h-4" />
+                    <span>TikTok API not connected yet - video stats unavailable</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Engagement Score */}
+              {selectedContest.engagement_score !== undefined && (
+                <div className="bg-background/50 rounded-lg p-4">
+                  <h4 className="text-white font-semibold mb-2">Engagement Score</h4>
+                  <p className="text-purple-400 text-2xl font-bold">
+                    {selectedContest.engagement_score.toLocaleString()}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
