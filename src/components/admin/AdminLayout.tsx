@@ -36,11 +36,6 @@ export function AdminLayout() {
       label: 'Contests'
     },
     {
-      path: '/admin/submissions',
-      icon: Eye,
-      label: 'Submissions'
-    },
-    {
       path: '/admin/users',
       icon: Users,
       label: 'Users'
@@ -51,14 +46,14 @@ export function AdminLayout() {
       label: 'Analytics'
     },
     {
-      path: '/admin/emails',
-      icon: Bell,
-      label: 'Emails'
-    },
-    {
       path: '/admin/content',
       icon: FileText,
       label: 'Content'
+    },
+    {
+      path: '/admin/emails',
+      icon: Bell,
+      label: 'Emails'
     },
     {
       path: '/admin/settings',
