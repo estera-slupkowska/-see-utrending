@@ -188,11 +188,11 @@ export function AdminDashboard() {
             <span className="text-white font-medium">Create Contest</span>
           </button>
           <button
-            onClick={() => navigate('/admin/notifications?new=true')}
+            onClick={() => navigate('/admin/emails?new=true')}
             className="flex items-center space-x-3 p-4 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-lg transition-all duration-300 hover:scale-105"
           >
             <Bell className="w-5 h-5 text-blue-400" />
-            <span className="text-white font-medium">Send Notification</span>
+            <span className="text-white font-medium">Send Email</span>
           </button>
           <button
             onClick={() => navigate('/admin/users')}

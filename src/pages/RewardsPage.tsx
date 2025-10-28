@@ -311,7 +311,7 @@ export function RewardsPage() {
               {/* Views XP Card */}
               <div className="group relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-emerald-600 via-cyan-600 to-blue-600 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative bg-slate-950 rounded-3xl p-8 border-2 border-emerald-500/30">
+                <div className="relative bg-surface/40 backdrop-blur-md rounded-3xl p-8 border-2 border-emerald-500/30">
                   <div className="space-y-6">
                     <div className="flex items-center justify-center">
                       <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 p-5 shadow-xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
@@ -340,7 +340,7 @@ export function RewardsPage() {
               {/* Likes Bonus Card */}
               <div className="group relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 via-rose-600 to-red-600 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative bg-slate-950 rounded-3xl p-8 border-2 border-pink-500/30">
+                <div className="relative bg-surface/40 backdrop-blur-md rounded-3xl p-8 border-2 border-pink-500/30">
                   <div className="space-y-6">
                     <div className="flex items-center justify-center">
                       <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-500 to-red-500 p-5 shadow-xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
@@ -349,7 +349,7 @@ export function RewardsPage() {
                     </div>
                     <div className="text-center space-y-3">
                       <div className="flex items-center justify-center space-x-2">
-                        <h3 className="text-2xl font-bold text-white">Bonus: 10 XP za każde 50 likes</h3>
+                        <h3 className="text-2xl font-bold text-white">Bonus: 30 XP za każde 100 likes</h3>
                         <Star className="w-6 h-6 text-yellow-400 animate-pulse" />
                       </div>
                       <p className="text-lg text-text-secondary">Dodatkowe XP za zaangażowanie społeczności!</p>
@@ -357,12 +357,12 @@ export function RewardsPage() {
                     <div className="flex items-center justify-center space-x-4 text-lg">
                       <div className="flex items-center space-x-2 p-3 bg-pink-500/20 rounded-xl">
                         <Heart className="w-5 h-5 text-pink-400" />
-                        <span className="font-bold text-white">50 likes</span>
+                        <span className="font-bold text-white">100 likes</span>
                       </div>
                       <span className="text-2xl text-pink-400">=</span>
                       <div className="flex items-center space-x-2 p-3 bg-xp-gold/20 rounded-xl">
                         <Zap className="w-5 h-5 text-xp-gold" />
-                        <span className="font-bold text-xp-gold">+10 XP</span>
+                        <span className="font-bold text-xp-gold">+30 XP</span>
                       </div>
                     </div>
                   </div>

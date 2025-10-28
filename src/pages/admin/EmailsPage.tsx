@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
-  Bell,
+  Mail,
   Plus,
   Search,
   Filter,
@@ -12,205 +12,296 @@ import {
   Users,
   Calendar,
   TrendingUp,
-  CheckCircle,
   Clock,
   X,
-  Image,
-  Link as LinkIcon
+  CheckCircle,
+  XCircle,
+  MousePointer,
+  BarChart3,
+  TestTube
 } from 'lucide-react'
-import { NotificationsService, Notification, CreateNotificationData, NotificationType } from '../../services/admin/notifications.service'
+import { EmailService, EmailCampaign, CampaignStats } from '../../services/admin/email.service'
 
 export function EmailsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [stats, setStats] = useState<any>(null)
+  const [campaigns, setCampaigns] = useState<EmailCampaign[]>([])
+  const [overallStats, setOverallStats] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null)
+  const [isComposerOpen, setIsComposerOpen] = useState(false)
+  const [selectedCampaign, setSelectedCampaign] = useState<EmailCampaign | null>(null)
+  const [campaignStats, setCampaignStats] = useState<Record<string, CampaignStats>>({})
 
-  // Form state
-  const [formData, setFormData] = useState<CreateNotificationData>({
-    title: '',
-    message: '',
-    type: 'announcement',
-    target_audience: ['all'],
-    action_url: '',
-    image_url: '',
-    published: false
+  // Composer form state
+  const [formData, setFormData] = useState({
+    subject: '',
+    preview_text: '',
+    html_content: '',
+    plain_text_content: '',
+    from_name: 'SeeUTrending',
+    from_email: 'noreply@seeutrending.com',
+    reply_to: '',
+    target_all_users: true,
+    target_roles: [] as string[],
+    scheduled_at: ''
   })
 
-  useEffect(() => {
-    loadNotifications()
-    loadStats()
+  // Test email state
+  const [testEmailAddress, setTestEmailAddress] = useState('')
+  const [sendingTest, setSendingTest] = useState(false)
 
-    // Open create modal if ?new=true in URL
+  useEffect(() => {
+    loadCampaigns()
+    loadOverallStats()
+
+    // Open composer if ?new=true in URL
     if (searchParams.get('new') === 'true') {
-      setIsCreateModalOpen(true)
+      setIsComposerOpen(true)
       setSearchParams({}) // Clear URL param
     }
   }, [statusFilter])
 
-  const loadNotifications = async () => {
+  const loadCampaigns = async () => {
     try {
       setLoading(true)
       setError(null)
 
-      const data = await NotificationsService.getNotifications({
-        published: statusFilter === 'published' ? true : statusFilter === 'draft' ? false : undefined,
+      const data = await EmailService.getCampaigns({
+        status: statusFilter === 'all' ? undefined : statusFilter as any,
         limit: 50
       })
 
-      setNotifications(data)
+      setCampaigns(data)
+
+      // Load stats for each campaign
+      const statsPromises = data.map(campaign =>
+        EmailService.getCampaignStats(campaign.id).catch(() => null)
+      )
+      const stats = await Promise.all(statsPromises)
+
+      const statsMap: Record<string, CampaignStats> = {}
+      data.forEach((campaign, index) => {
+        if (stats[index]) {
+          statsMap[campaign.id] = stats[index]
+        }
+      })
+      setCampaignStats(statsMap)
+
     } catch (err) {
-      console.error('Failed to load notifications:', err)
-      setError('Failed to load notifications')
+      console.error('Failed to load campaigns:', err)
+      setError('Failed to load email campaigns')
     } finally {
       setLoading(false)
     }
   }
 
-  const loadStats = async () => {
+  const loadOverallStats = async () => {
     try {
-      const statsData = await NotificationsService.getNotificationStats()
-      setStats(statsData)
+      const stats = await EmailService.getOverallStats()
+      setOverallStats(stats)
     } catch (err) {
-      console.error('Failed to load stats:', err)
+      console.error('Failed to load overall stats:', err)
     }
   }
 
-  const handleCreateNotification = async () => {
+  const handleCreateCampaign = async () => {
     try {
       setError(null)
-      await NotificationsService.createNotification(formData)
-      setIsCreateModalOpen(false)
+
+      // Build target audience
+      const target_audience = formData.target_all_users
+        ? { all: true }
+        : { roles: formData.target_roles }
+
+      await EmailService.createCampaign({
+        subject: formData.subject,
+        preview_text: formData.preview_text,
+        html_content: formData.html_content,
+        plain_text_content: formData.plain_text_content,
+        from_name: formData.from_name,
+        from_email: formData.from_email,
+        reply_to: formData.reply_to || undefined,
+        target_audience,
+        scheduled_at: formData.scheduled_at || undefined
+      })
+
+      setIsComposerOpen(false)
       resetForm()
-      loadNotifications()
-      loadStats()
+      loadCampaigns()
+      loadOverallStats()
     } catch (err) {
-      console.error('Failed to create notification:', err)
-      setError('Failed to create notification')
+      console.error('Failed to create campaign:', err)
+      setError('Failed to create email campaign')
     }
   }
 
-  const handlePublishNotification = async (id: string) => {
+  const handleSendCampaign = async (campaignId: string) => {
+    if (!confirm('Are you sure you want to send this email campaign? This action cannot be undone.')) return
+
     try {
-      await NotificationsService.publishNotification(id)
-      loadNotifications()
-      loadStats()
+      setError(null)
+      const result = await EmailService.sendCampaign(campaignId)
+      alert(`Campaign sent! ${result.sent} of ${result.total} emails sent successfully.`)
+      loadCampaigns()
+      loadOverallStats()
     } catch (err) {
-      console.error('Failed to publish notification:', err)
-      setError('Failed to publish notification')
+      console.error('Failed to send campaign:', err)
+      setError('Failed to send campaign')
+      alert('Failed to send campaign. Please try again.')
     }
   }
 
-  const handleDeleteNotification = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this notification?')) return
+  const handleDeleteCampaign = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this campaign? This will also delete all tracking data.')) return
 
     try {
-      await NotificationsService.deleteNotification(id)
-      loadNotifications()
-      loadStats()
+      await EmailService.deleteCampaign(id)
+      loadCampaigns()
+      loadOverallStats()
     } catch (err) {
-      console.error('Failed to delete notification:', err)
-      setError('Failed to delete notification')
+      console.error('Failed to delete campaign:', err)
+      setError('Failed to delete campaign')
+    }
+  }
+
+  const handleSendTestEmail = async (campaignId: string) => {
+    if (!testEmailAddress) {
+      alert('Please enter a test email address')
+      return
+    }
+
+    try {
+      setSendingTest(true)
+      await EmailService.sendTestEmail(campaignId, testEmailAddress)
+      alert(`Test email sent to ${testEmailAddress}`)
+      setTestEmailAddress('')
+    } catch (err) {
+      console.error('Failed to send test email:', err)
+      alert('Failed to send test email')
+    } finally {
+      setSendingTest(false)
     }
   }
 
   const resetForm = () => {
     setFormData({
-      title: '',
-      message: '',
-      type: 'announcement',
-      target_audience: ['all'],
-      action_url: '',
-      image_url: '',
-      published: false
+      subject: '',
+      preview_text: '',
+      html_content: '',
+      plain_text_content: '',
+      from_name: 'SeeUTrending',
+      from_email: 'noreply@seeutrending.com',
+      reply_to: '',
+      target_all_users: true,
+      target_roles: [],
+      scheduled_at: ''
     })
   }
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'announcement':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-      case 'contest_start':
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'sent':
         return 'bg-green-500/20 text-green-400 border-green-500/30'
-      case 'contest_end':
-        return 'bg-orange-500/20 text-orange-400 border-orange-500/30'
-      case 'winner':
-        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-      case 'badge_earned':
+      case 'sending':
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+      case 'scheduled':
         return 'bg-purple-500/20 text-purple-400 border-purple-500/30'
+      case 'draft':
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+      case 'failed':
+        return 'bg-red-500/20 text-red-400 border-red-500/30'
       default:
         return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
     }
   }
 
-  const filteredNotifications = notifications.filter(notification =>
-    notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    notification.message.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCampaigns = campaigns.filter(campaign =>
+    campaign.subject.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  // Check if in dev mode (no Resend API key)
+  const isDevMode = !import.meta.env.VITE_RESEND_API_KEY
 
   return (
     <div className="space-y-6">
+      {/* Dev Mode Banner */}
+      {isDevMode && (
+        <div className="bg-yellow-500/10 border-2 border-yellow-500/30 rounded-2xl p-4">
+          <div className="flex items-start space-x-3">
+            <div className="p-2 bg-yellow-500/20 rounded-lg">
+              <TestTube className="w-5 h-5 text-yellow-400" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-yellow-400 font-semibold mb-1">Development Mode Active</h3>
+              <p className="text-yellow-400/80 text-sm">
+                Email campaigns will be simulated without actually sending emails. All UI features are fully functional - campaigns will be marked as sent in the database, but no real emails will be delivered. Check the browser console to see simulated email details.
+              </p>
+              <p className="text-yellow-400/60 text-xs mt-2">
+                To enable real email sending, add your Resend API key to .env.local: <code className="bg-black/30 px-2 py-1 rounded">VITE_RESEND_API_KEY=your_key</code>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-display font-bold text-white">Email Notifications Management</h1>
-          <p className="text-text-muted mt-1">Create and manage email notifications sent to users</p>
+          <h1 className="text-3xl font-display font-bold text-white">Email Campaigns</h1>
+          <p className="text-text-muted mt-1">Send newsletters and bulk emails to your users with tracking</p>
         </div>
         <button
-          onClick={() => setIsCreateModalOpen(true)}
+          onClick={() => setIsComposerOpen(true)}
           className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg font-medium transition-all duration-300 hover:scale-105"
         >
           <Plus className="w-5 h-5" />
-          <span>Create Email Notification</span>
+          <span>Create Campaign</span>
         </button>
       </div>
 
       {/* Stats Grid */}
-      {stats && (
+      {overallStats && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-surface/50 backdrop-blur-sm border border-border rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="p-2 rounded-lg bg-blue-500/20">
-                <Bell className="w-5 h-5 text-blue-400" />
+                <Mail className="w-5 h-5 text-blue-400" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-white mb-1">{stats.totalNotifications}</p>
-            <p className="text-text-muted text-sm">Total Notifications</p>
+            <p className="text-2xl font-bold text-white mb-1">{overallStats.totalCampaigns}</p>
+            <p className="text-text-muted text-sm">Total Campaigns</p>
           </div>
 
           <div className="bg-surface/50 backdrop-blur-sm border border-border rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="p-2 rounded-lg bg-green-500/20">
-                <CheckCircle className="w-5 h-5 text-green-400" />
+                <Send className="w-5 h-5 text-green-400" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-white mb-1">{stats.publishedNotifications}</p>
-            <p className="text-text-muted text-sm">Published</p>
-          </div>
-
-          <div className="bg-surface/50 backdrop-blur-sm border border-border rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-2 rounded-lg bg-yellow-500/20">
-                <Clock className="w-5 h-5 text-yellow-400" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold text-white mb-1">{stats.draftNotifications}</p>
-            <p className="text-text-muted text-sm">Drafts</p>
+            <p className="text-2xl font-bold text-white mb-1">{overallStats.totalSent.toLocaleString()}</p>
+            <p className="text-text-muted text-sm">Emails Sent</p>
           </div>
 
           <div className="bg-surface/50 backdrop-blur-sm border border-border rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="p-2 rounded-lg bg-purple-500/20">
-                <TrendingUp className="w-5 h-5 text-purple-400" />
+                <Eye className="w-5 h-5 text-purple-400" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-white mb-1">{stats.readRate}</p>
-            <p className="text-text-muted text-sm">Read Rate</p>
+            <p className="text-2xl font-bold text-white mb-1">{overallStats.averageOpenRate.toFixed(1)}%</p>
+            <p className="text-text-muted text-sm">Average Open Rate</p>
+          </div>
+
+          <div className="bg-surface/50 backdrop-blur-sm border border-border rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-2 rounded-lg bg-yellow-500/20">
+                <MousePointer className="w-5 h-5 text-yellow-400" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-white mb-1">{overallStats.averageClickRate.toFixed(1)}%</p>
+            <p className="text-text-muted text-sm">Average Click Rate</p>
           </div>
         </div>
       )}
@@ -222,7 +313,7 @@ export function EmailsPage() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-muted" />
             <input
               type="text"
-              placeholder="Search notifications..."
+              placeholder="Search campaigns..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
@@ -237,107 +328,156 @@ export function EmailsPage() {
               className="px-4 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="all">All Status</option>
-              <option value="published">Published</option>
               <option value="draft">Drafts</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="sending">Sending</option>
+              <option value="sent">Sent</option>
+              <option value="failed">Failed</option>
             </select>
           </div>
         </div>
       </div>
 
-      {/* Notifications List */}
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4">
+          <p className="text-red-400">{error}</p>
+        </div>
+      )}
+
+      {/* Campaigns List */}
       <div className="bg-surface/50 backdrop-blur-sm border border-border rounded-2xl p-6">
         {loading ? (
           <div className="text-center py-12">
             <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-text-muted">Loading notifications...</p>
+            <p className="text-text-muted">Loading campaigns...</p>
           </div>
-        ) : error ? (
+        ) : filteredCampaigns.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-red-400">{error}</p>
-          </div>
-        ) : filteredNotifications.length === 0 ? (
-          <div className="text-center py-12">
-            <Bell className="w-16 h-16 text-text-muted mx-auto mb-4 opacity-50" />
-            <p className="text-text-muted mb-2">No notifications found</p>
+            <Mail className="w-16 h-16 text-text-muted mx-auto mb-4 opacity-50" />
+            <p className="text-text-muted mb-2">No email campaigns found</p>
             <button
-              onClick={() => setIsCreateModalOpen(true)}
+              onClick={() => setIsComposerOpen(true)}
               className="text-primary hover:underline"
             >
-              Create your first notification
+              Create your first campaign
             </button>
           </div>
         ) : (
           <div className="space-y-4">
-            {filteredNotifications.map((notification) => (
-              <div
-                key={notification.id}
-                className="flex items-start justify-between p-4 bg-background/50 rounded-lg border border-border hover:border-border-light transition-colors"
-              >
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="text-lg font-semibold text-white">{notification.title}</h3>
-                    <span className={`px-2 py-1 text-xs rounded-full border ${getTypeColor(notification.type)}`}>
-                      {notification.type.replace('_', ' ')}
-                    </span>
-                    <span className={`px-2 py-1 text-xs rounded-full border ${
-                      notification.published
-                        ? 'bg-green-500/20 text-green-400 border-green-500/30'
-                        : 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-                    }`}>
-                      {notification.published ? 'Published' : 'Draft'}
-                    </span>
+            {filteredCampaigns.map((campaign) => {
+              const stats = campaignStats[campaign.id]
+              return (
+                <div
+                  key={campaign.id}
+                  className="flex items-start justify-between p-4 bg-background/50 rounded-lg border border-border hover:border-border-light transition-colors"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-3 mb-2">
+                      <h3 className="text-lg font-semibold text-white">{campaign.subject}</h3>
+                      <span className={`px-2 py-1 text-xs rounded-full border ${getStatusColor(campaign.status)}`}>
+                        {campaign.status}
+                      </span>
+                    </div>
+
+                    {campaign.preview_text && (
+                      <p className="text-text-secondary text-sm mb-3">{campaign.preview_text}</p>
+                    )}
+
+                    <div className="flex items-center space-x-6 text-sm text-text-muted">
+                      <div className="flex items-center space-x-1">
+                        <Users className="w-4 h-4" />
+                        <span>{campaign.total_recipients} recipients</span>
+                      </div>
+                      {campaign.status === 'sent' && stats && (
+                        <>
+                          <div className="flex items-center space-x-1">
+                            <Send className="w-4 h-4" />
+                            <span>{campaign.total_sent} sent</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Eye className="w-4 h-4" />
+                            <span>{stats.total_opened} opened ({stats.open_rate.toFixed(1)}%)</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <MousePointer className="w-4 h-4" />
+                            <span>{stats.total_clicked} clicked ({stats.click_rate.toFixed(1)}%)</span>
+                          </div>
+                        </>
+                      )}
+                      <div className="flex items-center space-x-1">
+                        <Calendar className="w-4 h-4" />
+                        <span>
+                          {campaign.sent_at
+                            ? `Sent ${new Date(campaign.sent_at).toLocaleDateString()}`
+                            : campaign.scheduled_at
+                            ? `Scheduled ${new Date(campaign.scheduled_at).toLocaleDateString()}`
+                            : `Created ${new Date(campaign.created_at).toLocaleDateString()}`
+                          }
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Test Email for Drafts */}
+                    {campaign.status === 'draft' && (
+                      <div className="mt-4 flex items-center space-x-2">
+                        <input
+                          type="email"
+                          placeholder="test@example.com"
+                          value={selectedCampaign?.id === campaign.id ? testEmailAddress : ''}
+                          onChange={(e) => {
+                            setTestEmailAddress(e.target.value)
+                            setSelectedCampaign(campaign)
+                          }}
+                          className="flex-1 max-w-xs px-3 py-1.5 text-sm bg-background border border-border rounded-lg text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                        <button
+                          onClick={() => handleSendTestEmail(campaign.id)}
+                          disabled={sendingTest || !testEmailAddress}
+                          className="flex items-center space-x-1 px-3 py-1.5 text-sm bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          <TestTube className="w-3.5 h-3.5" />
+                          <span>Send Test</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
 
-                  <p className="text-text-secondary mb-3">{notification.message}</p>
-
-                  <div className="flex items-center space-x-6 text-sm text-text-muted">
-                    <div className="flex items-center space-x-1">
-                      <Users className="w-4 h-4" />
-                      <span>{notification.total_sent} sent</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Eye className="w-4 h-4" />
-                      <span>{notification.total_read} read</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Calendar className="w-4 h-4" />
-                      <span>{new Date(notification.created_at).toLocaleDateString()}</span>
-                    </div>
+                  <div className="flex items-center space-x-2">
+                    {(campaign.status === 'draft' || campaign.status === 'scheduled') && (
+                      <button
+                        onClick={() => handleSendCampaign(campaign.id)}
+                        className="p-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-colors"
+                        title="Send Campaign"
+                      >
+                        <Send className="w-4 h-4" />
+                      </button>
+                    )}
+                    {campaign.status !== 'sending' && (
+                      <button
+                        onClick={() => handleDeleteCampaign(campaign.id)}
+                        className="p-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
-
-                <div className="flex items-center space-x-2">
-                  {!notification.published && (
-                    <button
-                      onClick={() => handlePublishNotification(notification.id)}
-                      className="p-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-colors"
-                      title="Publish"
-                    >
-                      <Send className="w-4 h-4" />
-                    </button>
-                  )}
-                  <button
-                    onClick={() => handleDeleteNotification(notification.id)}
-                    className="p-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
-                    title="Delete"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
 
-      {/* Create/Edit Modal */}
-      {isCreateModalOpen && (
+      {/* Email Composer Modal */}
+      {isComposerOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-surface border border-border rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-surface border border-border rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-border flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">Create Email Notification</h2>
+              <h2 className="text-2xl font-bold text-white">Create Email Campaign</h2>
               <button
-                onClick={() => { setIsCreateModalOpen(false); resetForm(); }}
+                onClick={() => { setIsComposerOpen(false); resetForm(); }}
                 className="p-2 hover:bg-background rounded-lg transition-colors"
               >
                 <X className="w-5 h-5 text-text-muted" />
@@ -345,129 +485,162 @@ export function EmailsPage() {
             </div>
 
             <div className="p-6 space-y-6">
-              {/* Title */}
+              {/* Subject */}
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Title *</label>
+                <label className="block text-sm font-medium text-white mb-2">Email Subject *</label>
                 <input
                   type="text"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  value={formData.subject}
+                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                   className="w-full px-4 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="Notification title..."
+                  placeholder="Your amazing subject line..."
                 />
               </div>
 
-              {/* Message */}
+              {/* Preview Text */}
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Message *</label>
+                <label className="block text-sm font-medium text-white mb-2">Preview Text (optional)</label>
+                <input
+                  type="text"
+                  value={formData.preview_text}
+                  onChange={(e) => setFormData({ ...formData, preview_text: e.target.value })}
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Appears in email preview..."
+                />
+                <p className="text-xs text-text-muted mt-1">This text appears in email clients before opening</p>
+              </div>
+
+              {/* HTML Content */}
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">Email Content (HTML) *</label>
                 <textarea
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  rows={4}
+                  value={formData.html_content}
+                  onChange={(e) => setFormData({ ...formData, html_content: e.target.value })}
+                  rows={12}
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="<div>Your HTML email content here...</div>"
+                />
+                <p className="text-xs text-text-muted mt-1">Use HTML for rich formatting. Links and images will be tracked automatically.</p>
+              </div>
+
+              {/* Plain Text Content */}
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">Plain Text Version (optional)</label>
+                <textarea
+                  value={formData.plain_text_content}
+                  onChange={(e) => setFormData({ ...formData, plain_text_content: e.target.value })}
+                  rows={6}
                   className="w-full px-4 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="Notification message..."
+                  placeholder="Plain text fallback for email clients that don't support HTML..."
                 />
               </div>
 
-              {/* Type */}
+              {/* Sender Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">From Name</label>
+                  <input
+                    type="text"
+                    value={formData.from_name}
+                    onChange={(e) => setFormData({ ...formData, from_name: e.target.value })}
+                    className="w-full px-4 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">From Email</label>
+                  <input
+                    type="email"
+                    value={formData.from_email}
+                    onChange={(e) => setFormData({ ...formData, from_email: e.target.value })}
+                    className="w-full px-4 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+              </div>
+
+              {/* Reply To */}
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Type *</label>
-                <select
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value as NotificationType })}
+                <label className="block text-sm font-medium text-white mb-2">Reply To (optional)</label>
+                <input
+                  type="email"
+                  value={formData.reply_to}
+                  onChange={(e) => setFormData({ ...formData, reply_to: e.target.value })}
                   className="w-full px-4 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="announcement">Announcement</option>
-                  <option value="contest_start">Contest Start</option>
-                  <option value="contest_end">Contest End</option>
-                  <option value="winner">Winner</option>
-                  <option value="badge_earned">Badge Earned</option>
-                </select>
+                  placeholder="support@seeutrending.com"
+                />
               </div>
 
               {/* Target Audience */}
               <div>
                 <label className="block text-sm font-medium text-white mb-2">Target Audience *</label>
-                <div className="space-y-2">
-                  {['all', 'creators', 'brands', 'spectators'].map(audience => (
-                    <label key={audience} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={formData.target_audience?.includes(audience)}
-                        onChange={(e) => {
-                          const current = formData.target_audience || []
-                          if (e.target.checked) {
-                            setFormData({ ...formData, target_audience: [...current, audience] })
-                          } else {
-                            setFormData({ ...formData, target_audience: current.filter(a => a !== audience) })
-                          }
-                        }}
-                        className="w-4 h-4 rounded border-border bg-background text-primary focus:ring-2 focus:ring-primary"
-                      />
-                      <span className="text-white capitalize">{audience}</span>
-                    </label>
-                  ))}
+                <div className="space-y-3">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      checked={formData.target_all_users}
+                      onChange={() => setFormData({ ...formData, target_all_users: true, target_roles: [] })}
+                      className="w-4 h-4 text-primary focus:ring-2 focus:ring-primary"
+                    />
+                    <span className="text-white">All registered users</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      checked={!formData.target_all_users}
+                      onChange={() => setFormData({ ...formData, target_all_users: false })}
+                      className="w-4 h-4 text-primary focus:ring-2 focus:ring-primary"
+                    />
+                    <span className="text-white">Specific user roles</span>
+                  </label>
+                  {!formData.target_all_users && (
+                    <div className="ml-6 space-y-2">
+                      {['creator', 'brand', 'spectator'].map(role => (
+                        <label key={role} className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            checked={formData.target_roles.includes(role)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setFormData({ ...formData, target_roles: [...formData.target_roles, role] })
+                              } else {
+                                setFormData({ ...formData, target_roles: formData.target_roles.filter(r => r !== role) })
+                              }
+                            }}
+                            className="w-4 h-4 rounded border-border bg-background text-primary focus:ring-2 focus:ring-primary"
+                          />
+                          <span className="text-white capitalize">{role}s</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Action URL */}
+              {/* Schedule */}
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Action URL (optional)</label>
-                <div className="relative">
-                  <LinkIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-muted" />
-                  <input
-                    type="url"
-                    value={formData.action_url}
-                    onChange={(e) => setFormData({ ...formData, action_url: e.target.value })}
-                    className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="https://..."
-                  />
-                </div>
-              </div>
-
-              {/* Image URL */}
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">Image URL (optional)</label>
-                <div className="relative">
-                  <Image className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-muted" />
-                  <input
-                    type="url"
-                    value={formData.image_url}
-                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="https://..."
-                  />
-                </div>
-              </div>
-
-              {/* Publish Immediately */}
-              <div>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={formData.published}
-                    onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
-                    className="w-4 h-4 rounded border-border bg-background text-primary focus:ring-2 focus:ring-primary"
-                  />
-                  <span className="text-white">Publish immediately</span>
-                </label>
-                <p className="text-sm text-text-muted mt-1">If unchecked, notification will be saved as draft</p>
+                <label className="block text-sm font-medium text-white mb-2">Schedule (optional)</label>
+                <input
+                  type="datetime-local"
+                  value={formData.scheduled_at}
+                  onChange={(e) => setFormData({ ...formData, scheduled_at: e.target.value })}
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+                <p className="text-xs text-text-muted mt-1">Leave empty to save as draft</p>
               </div>
             </div>
 
             <div className="p-6 border-t border-border flex justify-end space-x-4">
               <button
-                onClick={() => { setIsCreateModalOpen(false); resetForm(); }}
+                onClick={() => { setIsComposerOpen(false); resetForm(); }}
                 className="px-6 py-2 border border-border rounded-lg text-white hover:bg-background transition-colors"
               >
                 Cancel
               </button>
               <button
-                onClick={handleCreateNotification}
-                disabled={!formData.title || !formData.message}
+                onClick={handleCreateCampaign}
+                disabled={!formData.subject || !formData.html_content || (!formData.target_all_users && formData.target_roles.length === 0)}
                 className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-all"
               >
-                {formData.published ? 'Create & Publish' : 'Save as Draft'}
+                {formData.scheduled_at ? 'Schedule Campaign' : 'Save as Draft'}
               </button>
             </div>
           </div>

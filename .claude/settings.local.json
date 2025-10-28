@@ -98,7 +98,8 @@
       "Bash(cd:*)",
       "WebFetch(domain:seeutrending-3hyhh3syi-seeutrendings-projects.vercel.app)",
       "mcp__sequential-thinking__sequentialthinking",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(npx supabase:*)"
     ],
     "deny": [],
     "ask": []
