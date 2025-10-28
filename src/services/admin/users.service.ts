@@ -1,13 +1,5 @@
 import { supabase } from '../../lib/supabase/client'
 
-export interface AdminBonusRecord {
-  amount: number
-  admin_id: string
-  admin_name: string
-  reason: string
-  granted_at: string
-}
-
 export interface UserProfile {
   id: string
   email: string
@@ -20,8 +12,6 @@ export interface UserProfile {
   total_followers: number
   verified: boolean
   xp_points: number
-  admin_bonus_xp: number
-  admin_bonus_history: AdminBonusRecord[]
   level: number
   streak_days: number
   last_activity_date?: string
@@ -364,80 +354,5 @@ export class UsersService {
       comments_count: submission.comments_count,
       shares_count: submission.shares_count
     }))
-  }
-
-  // Add admin bonus XP to a user
-  static async addAdminBonusXP(
-    userId: string,
-    amount: number,
-    adminId: string,
-    adminName: string,
-    reason: string = 'Bonus points'
-  ) {
-    try {
-      // Get current profile
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('admin_bonus_xp, admin_bonus_history, xp_points')
-        .eq('id', userId)
-        .single()
-
-      if (!profile) {
-        throw new Error('User not found')
-      }
-
-      const bonusRecord: AdminBonusRecord = {
-        amount,
-        admin_id: adminId,
-        admin_name: adminName,
-        reason,
-        granted_at: new Date().toISOString()
-      }
-
-      const newBonusXP = (profile.admin_bonus_xp || 0) + amount
-      const newTotalXP = (profile.xp_points || 0) + amount
-      const updatedHistory = [...(profile.admin_bonus_history || []), bonusRecord]
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .update({
-          admin_bonus_xp: newBonusXP,
-          admin_bonus_history: updatedHistory,
-          xp_points: newTotalXP,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', userId)
-        .select()
-        .single()
-
-      if (error) {
-        throw new Error(`Failed to add admin bonus XP: ${error.message}`)
-      }
-
-      return data as UserProfile
-    } catch (error) {
-      console.error('Error adding admin bonus XP:', error)
-      throw error
-    }
-  }
-
-  // Get admin bonus history for a user
-  static async getAdminBonusHistory(userId: string): Promise<AdminBonusRecord[]> {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('admin_bonus_history')
-        .eq('id', userId)
-        .single()
-
-      if (error) {
-        throw new Error(`Failed to fetch admin bonus history: ${error.message}`)
-      }
-
-      return data?.admin_bonus_history || []
-    } catch (error) {
-      console.error('Error fetching admin bonus history:', error)
-      return []
-    }
   }
 }

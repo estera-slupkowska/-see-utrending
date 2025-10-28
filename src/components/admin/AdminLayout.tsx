@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { NavLink, useNavigate, Outlet } from 'react-router-dom'
+import { NavLink, useNavigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuthForm } from '../../lib/auth/hooks'
 import { 
   LayoutDashboard,
@@ -17,6 +17,7 @@ import {
 export function AdminLayout() {
   const { signOut } = useAuthForm()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const handleSignOut = async () => {
     await signOut()
@@ -147,7 +148,7 @@ export function AdminLayout() {
 
           {/* Content Area */}
           <main className="flex-1 p-6 overflow-auto">
-            <Outlet />
+            <Outlet key={location.pathname} />
           </main>
         </div>
       </div>

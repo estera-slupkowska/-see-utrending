@@ -17,7 +17,7 @@ import {
   Heart,
   Play
 } from 'lucide-react'
-import { UsersService, UserProfile, UserStats, ContestParticipation, AdminBonusRecord } from '../../services/admin/users.service'
+import { UsersService, UserProfile, UserStats, ContestParticipation } from '../../services/admin/users.service'
 import { useAuth } from '../../lib/auth/context'
 
 export function AdminUsers() {
@@ -34,9 +34,6 @@ export function AdminUsers() {
   const [loadingParticipations, setLoadingParticipations] = useState(false)
   const [selectedContest, setSelectedContest] = useState<ContestParticipation | null>(null)
   const [showContestDetail, setShowContestDetail] = useState(false)
-  const [bonusXP, setBonusXP] = useState('')
-  const [bonusReason, setBonusReason] = useState('')
-  const [addingBonus, setAddingBonus] = useState(false)
 
   useEffect(() => {
     loadUsers()
@@ -81,38 +78,6 @@ export function AdminUsers() {
     } catch (err) {
       console.error('Failed to update user role:', err)
       setError('Failed to update user role')
-    }
-  }
-
-  const handleAddBonusXP = async () => {
-    if (!selectedUser || !user) return
-
-    const amount = parseInt(bonusXP)
-    if (isNaN(amount) || amount <= 0) {
-      setError('Please enter a valid positive number')
-      return
-    }
-
-    setAddingBonus(true)
-    try {
-      const updatedUser = await UsersService.addAdminBonusXP(
-        selectedUser.id,
-        amount,
-        user.id,
-        user.email || 'Admin',
-        bonusReason || 'Bonus points'
-      )
-
-      setSelectedUser(updatedUser)
-      setBonusXP('')
-      setBonusReason('')
-      loadUsers()
-      loadStats()
-    } catch (err) {
-      console.error('Failed to add bonus XP:', err)
-      setError('Failed to add bonus XP')
-    } finally {
-      setAddingBonus(false)
     }
   }
 
@@ -539,54 +504,6 @@ export function AdminUsers() {
                     </span>
                   </div>
                 </div>
-
-                {/* Add Bonus XP Form */}
-                <div className="border-t border-border pt-4 space-y-3">
-                  <h5 className="text-white text-sm font-medium">Add Bonus Points</h5>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="number"
-                      min="1"
-                      value={bonusXP}
-                      onChange={(e) => setBonusXP(e.target.value)}
-                      placeholder="Amount"
-                      className="w-24 px-3 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:border-purple-500"
-                    />
-                    <input
-                      type="text"
-                      value={bonusReason}
-                      onChange={(e) => setBonusReason(e.target.value)}
-                      placeholder="Reason (optional)"
-                      className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-white focus:outline-none focus:border-purple-500"
-                    />
-                    <button
-                      onClick={handleAddBonusXP}
-                      disabled={addingBonus || !bonusXP}
-                      className="px-4 py-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
-                    >
-                      {addingBonus ? 'Adding...' : 'Add'}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Admin Bonus History */}
-                {selectedUser.admin_bonus_history && selectedUser.admin_bonus_history.length > 0 && (
-                  <div className="border-t border-border pt-4 mt-4">
-                    <h5 className="text-white text-sm font-medium mb-2">Bonus History</h5>
-                    <div className="space-y-1 max-h-32 overflow-y-auto">
-                      {selectedUser.admin_bonus_history.map((bonus, index) => (
-                        <div key={index} className="text-xs flex justify-between items-center p-2 bg-background/30 rounded">
-                          <span className="text-text-muted">
-                            +{bonus.amount} XP - {bonus.reason}
-                          </span>
-                          <span className="text-text-muted">
-                            {new Date(bonus.granted_at).toLocaleDateString('pl-PL')}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Statistics */}

@@ -149,7 +149,7 @@ export function AdminDashboard() {
             return (
               <div
                 key={stat.title}
-                onClick={() => isClickable && navigate('/admin/users')}
+                onClick={() => isClickable && navigate('/admin/users', { replace: false })}
                 className={`bg-surface/50 backdrop-blur-sm border border-border rounded-2xl p-6 hover:bg-surface/70 transition-all duration-300 ${
                   isClickable ? 'cursor-pointer hover:scale-105 hover:border-blue-400/50' : ''
                 }`}
@@ -181,21 +181,21 @@ export function AdminDashboard() {
         <h2 className="text-xl font-semibold text-white mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <button
-            onClick={() => navigate('/admin/contests?new=true')}
+            onClick={() => navigate('/admin/contests?new=true', { replace: false })}
             className="flex items-center space-x-3 p-4 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 rounded-lg transition-all duration-300 hover:scale-105"
           >
             <Trophy className="w-5 h-5 text-purple-400" />
             <span className="text-white font-medium">Create Contest</span>
           </button>
           <button
-            onClick={() => navigate('/admin/emails?new=true')}
+            onClick={() => navigate('/admin/emails?new=true', { replace: false })}
             className="flex items-center space-x-3 p-4 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-lg transition-all duration-300 hover:scale-105"
           >
             <Bell className="w-5 h-5 text-blue-400" />
             <span className="text-white font-medium">Send Email</span>
           </button>
           <button
-            onClick={() => navigate('/admin/users')}
+            onClick={() => navigate('/admin/users', { replace: false })}
             className="flex items-center space-x-3 p-4 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 rounded-lg transition-all duration-300 hover:scale-105"
           >
             <Users className="w-5 h-5 text-green-400" />

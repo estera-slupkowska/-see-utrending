@@ -47,7 +47,6 @@ function App() {
             <Route path="users" element={<AdminUsers />} />
             <Route path="content" element={<ContentManagement />} />
             <Route path="emails" element={<EmailsPage />} />
-            <Route path="submissions" element={<div className="text-white p-6">Submissions - Coming Soon</div>} />
             <Route path="analytics" element={<div className="text-white p-6">Analytics - Coming Soon</div>} />
             <Route path="settings" element={<div className="text-white p-6">Settings - Coming Soon</div>} />
           </Route>
