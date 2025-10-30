@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { 
   Plus, 
   Search, 
@@ -29,6 +30,7 @@ interface Contest {
 }
 
 export function ContestManagement() {
+  const navigate = useNavigate()
   const [contests, setContests] = useState<Contest[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
@@ -77,13 +79,22 @@ export function ContestManagement() {
           <h1 className="text-3xl font-display font-bold text-white">Contest Management</h1>
           <p className="text-text-muted mt-1">Create and manage TikTok contests</p>
         </div>
-        <button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="flex items-center space-x-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors"
-        >
-          <Plus className="w-5 h-5" />
-          <span>Create Contest</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/admin/contests/preview')}
+            className="flex items-center space-x-2 px-6 py-3 bg-surface hover:bg-surface-light text-white font-medium rounded-lg transition-colors border border-primary/30"
+          >
+            <Eye className="w-5 h-5" />
+            <span>Preview Demo Contest</span>
+          </button>
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center space-x-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Create Contest</span>
+          </button>
+        </div>
       </div>
 
       {/* Stats Cards */}

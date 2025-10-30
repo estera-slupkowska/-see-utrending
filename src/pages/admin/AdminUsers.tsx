@@ -15,7 +15,8 @@ import {
   TrendingUpIcon,
   MessageCircle,
   Heart,
-  Play
+  Play,
+  Trophy
 } from 'lucide-react'
 import { UsersService, UserProfile, UserStats, ContestParticipation } from '../../services/admin/users.service'
 import { useAuth } from '../../lib/auth/context'
@@ -28,6 +29,7 @@ export function AdminUsers() {
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState<string>('all')
+  const [badgeFilter, setBadgeFilter] = useState<string>('all')
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null)
   const [showUserModal, setShowUserModal] = useState(false)
   const [contestParticipations, setContestParticipations] = useState<ContestParticipation[]>([])
@@ -252,11 +254,38 @@ export function AdminUsers() {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="bg-background border border-border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500"
+              className="bg-background border border-border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500 min-w-[120px]"
             >
               <option value="all">All Roles</option>
               <option value="creator">Creators</option>
               <option value="admin">Admins</option>
+            </select>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Trophy className="text-text-muted w-4 h-4" />
+            <select
+              value={badgeFilter}
+              onChange={(e) => setBadgeFilter(e.target.value)}
+              className="bg-background border border-border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500 min-w-[180px]"
+            >
+              <option value="all">All Badges</option>
+              <option value="has_any">Has Any Badge</option>
+              <option value="has_none">No Badges</option>
+              <optgroup label="Legendary">
+                <option value="diamond-creator-contest">Diamentowy Twórca (Contest)</option>
+                <option value="golden-viral">Złoty Viral</option>
+                <option value="favorite-viral">Ulubiony Viral</option>
+                <option value="silver-viral">Srebrny Viral</option>
+                <option value="bronze-viral">Brązowy Viral</option>
+              </optgroup>
+              <optgroup label="Epic">
+                <option value="diamond-creator-platform">Diamentowy Twórca (Platform)</option>
+                <option value="red-arrow">Czerwona Strzała</option>
+              </optgroup>
+              <optgroup label="Rare">
+                <option value="red-ring">Czerwony Pierścień</option>
+                <option value="golden-thousand">Złoty Tysiąc</option>
+              </optgroup>
             </select>
           </div>
         </div>

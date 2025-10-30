@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Trophy, 
-  Zap, 
-  Star, 
-  Flame as Fire, 
-  Crown, 
+import {
+  ArrowLeft,
+  Trophy,
+  Zap,
+  Star,
+  Flame as Fire,
+  Crown,
   TrendingUp,
   Sparkles,
   Target,
@@ -17,7 +17,8 @@ import {
   ShoppingBag,
   PartyPopper,
   Camera,
-  Eye
+  Eye,
+  Circle
 } from 'lucide-react'
 import { Button, Badge, CosmicBackground } from '../components/ui'
 
@@ -25,108 +26,137 @@ export function RewardsPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
-  const badges = [
+  // Legendary Badges (tylko organiczne wyświetlenia)
+  const legendaryBadges = [
     {
-      id: 'hot-start',
-      name: t('rewards.badges.hotStart.name'),
-      description: t('rewards.badges.hotStart.description'),
-      icon: Fire,
-      color: 'from-orange-500 to-red-500',
-      requirement: '1K views',
-      rarity: 'common',
-      xp: 20
-    },
-    {
-      id: 'viral-starter',
-      name: t('rewards.badges.viralStarter.name'),
-      description: t('rewards.badges.viralStarter.description'),
-      icon: Rocket,
-      color: 'from-purple-500 to-pink-500',
-      requirement: '10K views',
-      rarity: 'rare',
-      xp: 100
-    },
-    {
-      id: 'viral-king',
-      name: t('rewards.badges.viralKing.name'),
-      description: t('rewards.badges.viralKing.description'),
+      id: 'diamond-creator-contest',
+      name: 'Diamentowy Twórca',
+      nameEn: 'Diamond Creator',
+      description: 'Jeśli łącznie Twoje filmiki w danym konkursie zdobędą więcej niż 1 milion wyświetleń',
+      descriptionEn: 'If your videos in a given contest gain more than 1 million views in total',
       icon: Crown,
-      color: 'from-yellow-500 to-orange-500',
-      requirement: '1st place',
+      color: 'from-yellow-400 via-yellow-500 to-orange-500',
+      requirement: '1M+ views in contest',
       rarity: 'legendary',
+      category: 'legendary',
       xp: 10000
     },
     {
-      id: 'silver-warrior',
-      name: t('rewards.badges.silverWarrior.name'),
-      description: t('rewards.badges.silverWarrior.description'),
-      icon: Award,
-      color: 'from-gray-400 to-gray-600',
-      requirement: '2nd place',
-      rarity: 'legendary',
-      xp: 8000
-    },
-    {
-      id: 'bronze-warrior',
-      name: t('rewards.badges.bronzeWarrior.name'),
-      description: t('rewards.badges.bronzeWarrior.description'),
-      icon: Target,
-      color: 'from-orange-600 to-yellow-600',
-      requirement: '3rd place',
-      rarity: 'legendary',
-      xp: 6000
-    },
-    {
-      id: 'community-favorite',
-      name: t('rewards.badges.communityFavorite.name'),
-      description: t('rewards.badges.communityFavorite.description'),
-      icon: Heart,
-      color: 'from-pink-500 to-rose-500',
-      requirement: 'Most liked',
-      rarity: 'rare',
-      xp: 5000
-    },
-    {
-      id: 'fourth-place',
-      name: t('rewards.badges.fourthPlace.name'),
-      description: t('rewards.badges.fourthPlace.description'),
-      icon: Star,
-      color: 'from-indigo-500 to-purple-500',
-      requirement: '4th place',
-      rarity: 'epic',
-      xp: 5000
-    },
-    {
-      id: 'fifth-place',
-      name: t('rewards.badges.fifthPlace.name'),
-      description: t('rewards.badges.fifthPlace.description'),
+      id: 'golden-viral',
+      name: 'Złoty Viral',
+      nameEn: 'Golden Viral',
+      description: 'Dodatkowe punkty jeśli Twój filmik ma najwięcej wyświetleń w konkursie!',
+      descriptionEn: 'Bonus points if your video has the most views in the contest!',
       icon: TrendingUp,
-      color: 'from-green-500 to-teal-500',
-      requirement: '5th place',
-      rarity: 'epic',
-      xp: 5000
-    },
-    {
-      id: 'most-comments',
-      name: t('rewards.badges.mostComments.name'),
-      description: t('rewards.badges.mostComments.description'),
-      icon: Sparkles,
-      color: 'from-cyan-500 to-blue-500',
-      requirement: 'Most comments',
-      rarity: 'rare',
+      color: 'from-yellow-500 to-yellow-600',
+      requirement: 'Most views in contest',
+      rarity: 'legendary',
+      category: 'legendary',
       xp: 4000
     },
     {
-      id: 'early-adopter',
-      name: t('rewards.badges.earlyAdopter.name'),
-      description: t('rewards.badges.earlyAdopter.description'),
-      icon: Crown,
-      color: 'from-purple-600 to-pink-600',
-      requirement: 'First 1000 users',
+      id: 'favorite-viral',
+      name: 'Ulubiony Viral',
+      nameEn: 'Favorite Viral',
+      description: 'Dodatkowe punkty jeśli Twój filmik ma najwięcej like-ów w konkursie!',
+      descriptionEn: 'Bonus points if your video has the most likes in the contest!',
+      icon: Heart,
+      color: 'from-pink-500 to-rose-600',
+      requirement: 'Most likes in contest',
       rarity: 'legendary',
-      xp: 100
+      category: 'legendary',
+      xp: 4000
+    },
+    {
+      id: 'silver-viral',
+      name: 'Srebrny Viral',
+      nameEn: 'Silver Viral',
+      description: 'Dodatkowe punkty jeśli Twój filmik ma jako drugi najwięcej wyświetleń lub like-ów w konkursie!',
+      descriptionEn: 'Bonus points if your video is the second most views or likes in the contest!',
+      icon: Award,
+      color: 'from-gray-300 to-gray-500',
+      requirement: '2nd place (views/likes)',
+      rarity: 'legendary',
+      category: 'legendary',
+      xp: 3000
+    },
+    {
+      id: 'bronze-viral',
+      name: 'Brązowy Viral',
+      nameEn: 'Bronze Viral',
+      description: 'Dodatkowe punkty jeśli Twój filmik jako trzeci ma najwięcej wyświetleń lub like-ów w konkursie!',
+      descriptionEn: 'Bonus points if your video is the third most views or likes in the contest!',
+      icon: Target,
+      color: 'from-orange-600 to-amber-700',
+      requirement: '3rd place (views/likes)',
+      rarity: 'legendary',
+      category: 'legendary',
+      xp: 2000
     }
   ]
+
+  // Epic Badges (tylko organiczne wyświetlenia)
+  const epicBadges = [
+    {
+      id: 'diamond-creator-platform',
+      name: 'Diamentowy Twórca',
+      nameEn: 'Diamond Creator',
+      description: 'Jeśli łącznie zdobędziesz dla platformy 5 milionów wyświetleń',
+      descriptionEn: 'If you reach 5 million views for the platform',
+      icon: Sparkles,
+      color: 'from-cyan-400 via-blue-500 to-purple-600',
+      requirement: '5M+ platform views',
+      rarity: 'epic',
+      category: 'epic',
+      xp: 10000
+    },
+    {
+      id: 'red-arrow',
+      name: 'Czerwona Strzała',
+      nameEn: 'Red Arrow',
+      description: 'Dodatkowe punkty jeśli Twój filmik zdobędzie 100K like-ów',
+      descriptionEn: 'Bonus points if your video reaches 100,000 likes',
+      icon: Zap,
+      color: 'from-red-500 to-red-700',
+      requirement: '100K likes',
+      rarity: 'epic',
+      category: 'epic',
+      xp: 2000
+    }
+  ]
+
+  // Rare Badges (tylko organiczne wyświetlenia)
+  const rareBadges = [
+    {
+      id: 'red-ring',
+      name: 'Czerwony Pierścień',
+      nameEn: 'Red Ring',
+      description: 'Dodatkowe punkty jeśli Twój filmik zdobędzie 10K like-ów',
+      descriptionEn: 'Bonus points if your video reaches 10,000 likes',
+      icon: Circle,
+      color: 'from-red-400 to-pink-500',
+      requirement: '10K likes',
+      rarity: 'rare',
+      category: 'rare',
+      xp: 400
+    },
+    {
+      id: 'golden-thousand',
+      name: 'Złoty Tysiąc',
+      nameEn: 'Golden Thousand',
+      description: 'Dodatkowe punkty jeśli założysz konto jako jedna z pierwszych 1000 osób',
+      descriptionEn: 'Bonus points if you are one of the first 1,000 people to create an account',
+      icon: Star,
+      color: 'from-yellow-400 to-orange-500',
+      requirement: 'First 1000 users',
+      rarity: 'rare',
+      category: 'rare',
+      xp: 30
+    }
+  ]
+
+  // Combine all badges for rendering
+  const badges = [...legendaryBadges, ...epicBadges, ...rareBadges]
 
   const rewardTypes = [
     {
@@ -319,18 +349,18 @@ export function RewardsPage() {
                       </div>
                     </div>
                     <div className="text-center space-y-3">
-                      <h3 className="text-2xl font-bold text-white">10 XP za każde 100 wyświetleń</h3>
+                      <h3 className="text-2xl font-bold text-white">+10 XP za każde 1000 wyświetleń</h3>
                       <p className="text-lg text-text-secondary">Zbieraj XP automatycznie za wyświetlenia Twoich filmów!</p>
                     </div>
                     <div className="flex items-center justify-center space-x-4 text-lg">
                       <div className="flex items-center space-x-2 p-3 bg-emerald-500/20 rounded-xl">
                         <Eye className="w-5 h-5 text-emerald-400" />
-                        <span className="font-bold text-white">100 views</span>
+                        <span className="font-bold text-white">1000 views</span>
                       </div>
                       <span className="text-2xl text-emerald-400">=</span>
                       <div className="flex items-center space-x-2 p-3 bg-xp-gold/20 rounded-xl">
                         <Zap className="w-5 h-5 text-xp-gold" />
-                        <span className="font-bold text-xp-gold">10 XP</span>
+                        <span className="font-bold text-xp-gold">+10 XP</span>
                       </div>
                     </div>
                   </div>
@@ -349,7 +379,7 @@ export function RewardsPage() {
                     </div>
                     <div className="text-center space-y-3">
                       <div className="flex items-center justify-center space-x-2">
-                        <h3 className="text-2xl font-bold text-white">Bonus: 30 XP za każde 100 likes</h3>
+                        <h3 className="text-2xl font-bold text-white">+10 XP za każde 100 polubień</h3>
                         <Star className="w-6 h-6 text-yellow-400 animate-pulse" />
                       </div>
                       <p className="text-lg text-text-secondary">Dodatkowe XP za zaangażowanie społeczności!</p>
@@ -362,7 +392,7 @@ export function RewardsPage() {
                       <span className="text-2xl text-pink-400">=</span>
                       <div className="flex items-center space-x-2 p-3 bg-xp-gold/20 rounded-xl">
                         <Zap className="w-5 h-5 text-xp-gold" />
-                        <span className="font-bold text-xp-gold">+30 XP</span>
+                        <span className="font-bold text-xp-gold">+10 XP</span>
                       </div>
                     </div>
                   </div>

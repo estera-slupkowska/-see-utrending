@@ -23,6 +23,7 @@ import { PrivacyPolicy } from './pages/PrivacyPolicy'
 import { AdminDashboard } from './pages/admin/AdminDashboard'
 import { AdminUsers } from './pages/admin/AdminUsers'
 import { ContestManagement } from './pages/admin/ContestManagement'
+import { ContestPreviewPage } from './pages/admin/ContestPreviewPage'
 import { ContentManagement } from './pages/admin/ContentManagement'
 import { EmailsPage } from './pages/admin/EmailsPage'
 import { TikTokCallback } from './components/auth/TikTokCallback'
@@ -44,6 +45,7 @@ function App() {
           >
             <Route index element={<AdminDashboard />} />
             <Route path="contests" element={<ContestManagement />} />
+            <Route path="contests/preview" element={<ContestPreviewPage />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="content" element={<ContentManagement />} />
             <Route path="emails" element={<EmailsPage />} />
