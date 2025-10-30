@@ -40,14 +40,15 @@ export function AdminUsers() {
   useEffect(() => {
     loadUsers()
     loadStats()
-  }, [searchTerm, roleFilter])
+  }, [searchTerm, roleFilter, badgeFilter])
 
   const loadUsers = async () => {
     try {
       setLoading(true)
       const data = await UsersService.getUsers({
-        role: roleFilter,
+        role: roleFilter !== 'all' ? roleFilter : undefined,
         search: searchTerm || undefined,
+        badgeFilter: badgeFilter !== 'all' ? badgeFilter : undefined,
         limit: 100,
         orderBy: 'created_at',
         ascending: false
@@ -86,7 +87,8 @@ export function AdminUsers() {
   const exportUsers = async () => {
     try {
       const data = await UsersService.exportUsers({
-        role: roleFilter === 'all' ? undefined : roleFilter
+        role: roleFilter === 'all' ? undefined : roleFilter,
+        badgeFilter: badgeFilter === 'all' ? undefined : badgeFilter
       })
       
       // Convert to CSV and download

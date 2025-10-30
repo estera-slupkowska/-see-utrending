@@ -58,6 +58,7 @@ export class UsersService {
   static async getUsers(options?: {
     role?: string
     search?: string
+    badgeFilter?: string
     limit?: number
     offset?: number
     orderBy?: 'created_at' | 'xp_points' | 'name'
@@ -75,6 +76,20 @@ export class UsersService {
       query = query.or(
         `name.ilike.%${options.search}%,email.ilike.%${options.search}%,tiktok_handle.ilike.%${options.search}%`
       )
+    }
+
+    // Badge filtering
+    if (options?.badgeFilter) {
+      if (options.badgeFilter === 'has_any') {
+        // Users with at least one badge
+        query = query.not('badges', 'is', null).neq('badges', '[]')
+      } else if (options.badgeFilter === 'has_none') {
+        // Users with no badges
+        query = query.or('badges.is.null,badges.eq.[]')
+      } else {
+        // Specific badge ID - use PostgreSQL JSONB contains operator
+        query = query.contains('badges', [{ id: options.badgeFilter }])
+      }
     }
 
     const orderBy = options?.orderBy || 'created_at'
@@ -283,13 +298,24 @@ export class UsersService {
   }
 
   // Export users to CSV
-  static async exportUsers(filters?: { role?: string; dateRange?: string }) {
+  static async exportUsers(filters?: { role?: string; badgeFilter?: string; dateRange?: string }) {
     let query = supabase
       .from('profiles')
-      .select('email, name, role, xp_points, level, verified, created_at')
+      .select('email, name, role, xp_points, level, verified, created_at, badges')
 
     if (filters?.role && filters.role !== 'all') {
       query = query.eq('role', filters.role)
+    }
+
+    // Badge filtering
+    if (filters?.badgeFilter) {
+      if (filters.badgeFilter === 'has_any') {
+        query = query.not('badges', 'is', null).neq('badges', '[]')
+      } else if (filters.badgeFilter === 'has_none') {
+        query = query.or('badges.is.null,badges.eq.[]')
+      } else {
+        query = query.contains('badges', [{ id: filters.badgeFilter }])
+      }
     }
 
     if (filters?.dateRange) {

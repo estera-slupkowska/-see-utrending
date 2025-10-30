@@ -23,7 +23,7 @@ import {
 import { Button, Badge, CosmicBackground } from '../components/ui'
 
 export function RewardsPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
 
   // Legendary Badges (tylko organiczne wyświetlenia)
@@ -466,7 +466,7 @@ export function RewardsPage() {
                         {/* Enhanced Header */}
                         <div className="flex items-start justify-between">
                           <h3 className="text-lg font-bold text-white group-hover:text-yellow-100 transition-colors duration-300">
-                            {badge.name}
+                            {i18n.language === 'en' ? badge.nameEn : badge.name}
                           </h3>
                           
                           {/* Animated Rarity Badge */}
@@ -496,7 +496,7 @@ export function RewardsPage() {
                         
                         {/* Enhanced Description */}
                         <p className="text-sm text-text-secondary leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
-                          {badge.description}
+                          {i18n.language === 'en' ? badge.descriptionEn : badge.description}
                         </p>
                         
                         {/* Enhanced Requirements Section */}
