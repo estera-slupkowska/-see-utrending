@@ -1,19 +1,21 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Edit, 
-  Trash2, 
-  Play, 
-  Pause, 
+import {
+  Plus,
+  Search,
+  Filter,
+  Edit,
+  Trash2,
+  Play,
+  Pause,
   Eye,
   Trophy,
   Calendar,
   Users,
   BarChart3
 } from 'lucide-react'
+import { ContestCreationForm } from '../../components/admin/ContestCreationForm'
+import { ContestsService } from '../../services/admin/contests.service'
 
 interface Contest {
   id: string
@@ -35,11 +37,30 @@ export function ContestManagement() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Mock data - will be replaced with real API calls
-  const mockContests: Contest[] = [
-    // This will be populated from the database
-  ]
+  // Load contests from database
+  const loadContests = async () => {
+    try {
+      setIsLoading(true)
+      const data = await ContestsService.getContests()
+      setContests(data)
+    } catch (error) {
+      console.error('Failed to load contests:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Load contests on mount
+  useEffect(() => {
+    loadContests()
+  }, [])
+
+  // Handle successful contest creation
+  const handleContestCreated = () => {
+    loadContests()
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -261,31 +282,12 @@ export function ContestManagement() {
         )}
       </div>
 
-      {/* Create Contest Modal - Placeholder */}
+      {/* Create Contest Form */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-surface border border-border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-border">
-              <h2 className="text-xl font-bold text-white">Create New Contest</h2>
-            </div>
-            <div className="p-6">
-              <div className="text-center py-8">
-                <Trophy className="w-16 h-16 text-primary mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-white mb-2">Contest Creator</h3>
-                <p className="text-text-muted mb-4">Full contest creation interface coming soon</p>
-                <p className="text-sm text-text-muted">This will include form fields for title, description, dates, prizes, rules, and more.</p>
-              </div>
-            </div>
-            <div className="p-6 border-t border-border flex justify-end">
-              <button
-                onClick={() => setIsCreateModalOpen(false)}
-                className="px-4 py-2 text-text-muted hover:text-white transition-colors"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
+        <ContestCreationForm
+          onClose={() => setIsCreateModalOpen(false)}
+          onSuccess={handleContestCreated}
+        />
       )}
     </div>
   )
