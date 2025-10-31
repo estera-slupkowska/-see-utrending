@@ -1,9 +1,9 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useEffect, useRef, useState } from 'react'
 import {
-  ArrowLeft, Users, TrendingUp, Target, BarChart3, Shield, Zap,
-  Sparkles, Star, Trophy, Rocket, Heart, Eye, Crown, Gift, Mail,
+  ArrowLeft, Users, TrendingUp, Target, BarChart3, Shield,
+  Sparkles, Star, Trophy, Rocket, Heart, Eye, Crown, Mail,
   CheckCircle, DollarSign, Settings, Globe
 } from 'lucide-react'
 import { CosmicBackground } from '../components/ui'
@@ -11,9 +11,16 @@ import { CosmicBackground } from '../components/ui'
 export function BrandPage() {
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const [hoveredStat, setHoveredStat] = useState<number | null>(null)
-  const [hoveredWhy, setHoveredWhy] = useState<number | null>(null)
-  const [hoveredValue, setHoveredValue] = useState<number | null>(null)
+  const [scrollY, setScrollY] = useState(0)
+  const statsRef = useRef<HTMLDivElement>(null)
+  const whyRef = useRef<HTMLDivElement>(null)
+  const valuesRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // TikTok Statistics for Poland
   const stats = [
@@ -111,370 +118,277 @@ export function BrandPage() {
   ]
 
   return (
-    <div className="relative min-h-screen bg-slate-950 overflow-hidden">
+    <div className="relative min-h-screen bg-black overflow-hidden">
       <CosmicBackground />
 
-      {/* Hero gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-transparent to-cyan-900/20 pointer-events-none" />
+      {/* Cinematic gradient overlays with parallax */}
+      <div
+        className="absolute inset-0 bg-gradient-to-b from-purple-900/10 via-transparent to-transparent pointer-events-none"
+        style={{ transform: `translateY(${scrollY * 0.3}px)` }}
+      />
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-cyan-900/10 via-transparent to-transparent pointer-events-none"
+        style={{ transform: `translateY(${-scrollY * 0.2}px)` }}
+      />
 
-      <div className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Back button */}
+      <div className="relative z-10 py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          {/* Minimal back button */}
           <button
             onClick={() => navigate('/')}
-            className="group inline-flex items-center space-x-2 text-white/70 hover:text-white transition-all duration-300 mb-12 hover:scale-105"
+            className="group inline-flex items-center space-x-2 text-white/50 hover:text-white transition-all duration-500 mb-16"
           >
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
-            <span className="font-medium">{t('brands.back_home')}</span>
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-2 transition-transform duration-500" />
+            <span className="text-sm font-light tracking-wide">{t('brands.back_home')}</span>
           </button>
 
-          {/* Hero Section */}
-          <div className="text-center mb-20 relative">
-            {/* Floating decorations */}
-            <div className="absolute -top-10 left-10 w-20 h-20 bg-purple-500/20 rounded-full blur-xl animate-float-slow" />
-            <div className="absolute -top-5 right-20 w-16 h-16 bg-cyan-500/20 rounded-full blur-xl animate-float" style={{animationDelay: '1s'}} />
-            <div className="absolute top-40 left-1/4 w-12 h-12 bg-pink-500/20 rounded-full blur-xl animate-pulse-slow" />
+          {/* Cinematic Hero Section - Flowing Typography */}
+          <div className="mb-32 relative">
+            {/* Floating ambient light */}
+            <div
+              className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"
+              style={{ transform: `translate(-50%, ${scrollY * 0.1}px)` }}
+            />
 
-            <div className="relative">
-              {/* Badge */}
-              <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 px-4 py-2 rounded-full border border-purple-500/30 mb-8 animate-pulse-glow">
-                <Crown className="w-4 h-4 text-yellow-400 animate-bounce" />
-                <span className="text-yellow-400 font-bold text-sm uppercase tracking-wider">For Brands</span>
+            <div className="relative text-center space-y-8">
+              {/* Subtle badge */}
+              <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full border border-purple-500/20 backdrop-blur-sm mb-6">
+                <Crown className="w-3.5 h-3.5 text-yellow-400/80" />
+                <span className="text-yellow-400/80 text-xs font-light tracking-widest uppercase">For Brands</span>
               </div>
 
-              <h1 className="text-6xl sm:text-7xl lg:text-8xl font-display font-bold mb-6 animate-pulse-glow">
-                <span className="gradient-text drop-shadow-2xl">
-                  {t('brands.title')}
+              {/* Large flowing title */}
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light tracking-tight leading-tight">
+                <span className="block text-white/95 mb-3">{t('brands.title')}</span>
+                <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent font-normal">
+                  {t('brands.subtitle')}
                 </span>
               </h1>
 
-              <p className="text-2xl sm:text-3xl text-white/90 mb-8 max-w-3xl mx-auto drop-shadow-lg">
-                {t('brands.subtitle')}
-              </p>
-
-              {/* Decorative line */}
-              <div className="flex items-center justify-center space-x-4 mb-12">
-                <div className="h-0.5 w-20 bg-gradient-to-r from-transparent via-purple-500 to-transparent" />
-                <Sparkles className="w-6 h-6 text-yellow-400 animate-spin" style={{animationDuration: '3s'}} />
-                <div className="h-0.5 w-20 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
+              {/* Minimal decorative element */}
+              <div className="flex items-center justify-center pt-4">
+                <div className="h-px w-16 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
               </div>
             </div>
           </div>
 
-          {/* TikTok Statistics Section */}
-          <div className="mb-24">
-            <h2 className="text-4xl font-display font-bold text-center mb-4">
-              <span className="gradient-text">{t('brands.stats.title')}</span>
-            </h2>
-            <div className="flex items-center justify-center space-x-3 mb-16">
-              <TrendingUp className="w-5 h-5 text-primary animate-pulse" />
-              <p className="text-lg text-text-secondary">Polish TikTok Market Insights</p>
+          {/* TikTok Statistics - Flowing Asymmetric Layout */}
+          <div ref={statsRef} className="mb-40 relative">
+            {/* Section label */}
+            <div className="flex items-center space-x-3 mb-12">
+              <TrendingUp className="w-4 h-4 text-purple-400/60" />
+              <p className="text-xs font-light tracking-widest uppercase text-white/40">
+                {t('brands.stats.title')}
+              </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Flowing statistics without boxes */}
+            <div className="space-y-20">
               {stats.map((stat, index) => (
                 <div
                   key={index}
-                  className="group relative"
-                  onMouseEnter={() => setHoveredStat(index)}
-                  onMouseLeave={() => setHoveredStat(null)}
+                  className={`
+                    flex items-center gap-12 group
+                    ${index % 2 === 1 ? 'flex-row-reverse' : ''}
+                  `}
+                  style={{
+                    opacity: 0,
+                    animation: `slideInUp 0.8s ease-out ${index * 0.2}s forwards`
+                  }}
                 >
-                  <div className={`
-                    relative bg-surface/50 backdrop-blur-sm rounded-2xl p-8 border-2 transition-all duration-500
-                    ${hoveredStat === index
-                      ? 'border-transparent shadow-2xl transform -translate-y-2 scale-105'
-                      : 'border-border/40'
-                    }
-                  `}>
-                    {/* Gradient overlay */}
+                  {/* Icon with subtle glow */}
+                  <div className="flex-shrink-0">
                     <div className={`
-                      absolute inset-0 rounded-2xl bg-gradient-to-br ${stat.gradient} opacity-0 transition-opacity duration-500
-                      ${hoveredStat === index ? 'opacity-10' : ''}
-                    `} />
-
-                    <div className="relative z-10 text-center space-y-4">
+                      relative w-16 h-16 sm:w-20 sm:h-20
+                      bg-gradient-to-br ${stat.gradient} rounded-2xl p-4
+                      opacity-80 group-hover:opacity-100
+                      transition-all duration-700
+                      group-hover:scale-110 group-hover:rotate-3
+                    `}>
+                      <stat.icon className="w-full h-full text-white" />
                       <div className={`
-                        w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br ${stat.gradient} p-4 shadow-lg
-                        transition-all duration-500
-                        ${hoveredStat === index ? 'scale-110 rotate-6 animate-neural-pulse' : ''}
-                      `}>
-                        <stat.icon className="w-full h-full text-white" />
-                      </div>
-
-                      <div className={`
-                        text-3xl font-bold bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent
-                        ${hoveredStat === index ? 'animate-excitement-bounce' : ''}
-                      `}>
-                        {stat.value}
-                      </div>
-
-                      <p className={`
-                        text-sm leading-relaxed transition-colors duration-300
-                        ${hoveredStat === index ? 'text-white' : 'text-text-secondary'}
-                      `}>
-                        {stat.label}
-                      </p>
+                        absolute inset-0 bg-gradient-to-br ${stat.gradient} rounded-2xl blur-xl opacity-0
+                        group-hover:opacity-50 transition-opacity duration-700
+                      `} />
                     </div>
+                  </div>
 
-                    {/* Bottom glow */}
+                  {/* Content with flowing typography */}
+                  <div className="flex-1 space-y-3">
                     <div className={`
-                      absolute bottom-0 left-0 right-0 h-1 rounded-b-2xl bg-gradient-to-r ${stat.gradient}
-                      transition-opacity duration-500
-                      ${hoveredStat === index ? 'opacity-100 animate-shimmer' : 'opacity-0'}
-                    `} />
+                      text-4xl sm:text-5xl font-light tracking-tight
+                      bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent
+                      group-hover:scale-105 transition-transform duration-700 origin-left
+                      ${index % 2 === 1 ? 'origin-right' : 'origin-left'}
+                    `}>
+                      {stat.value}
+                    </div>
+                    <p className="text-base sm:text-lg font-light text-white/70 leading-relaxed max-w-md group-hover:text-white/90 transition-colors duration-700">
+                      {stat.label}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
+
+            {/* Subtle divider */}
+            <div className="mt-32 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           </div>
 
-          {/* Why SeeUTrending Section - 5 Points */}
-          <div className="mb-24">
-            <h2 className="text-4xl font-display font-bold text-center mb-4">
-              <span className="gradient-text">{t('brands.whyUs.title')}</span>
-            </h2>
-            <div className="flex items-center justify-center space-x-3 mb-16">
-              <CheckCircle className="w-5 h-5 text-green-400 animate-pulse" />
-              <p className="text-lg text-text-secondary">Your competitive advantages</p>
+          {/* Why SeeUTrending - Vertical Flowing Layout */}
+          <div ref={whyRef} className="mb-40 relative">
+            {/* Section header */}
+            <div className="mb-20 text-center">
+              <div className="flex items-center justify-center space-x-3 mb-6">
+                <CheckCircle className="w-4 h-4 text-green-400/60" />
+                <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-white/95">
+                  {t('brands.whyUs.title')}
+                </h2>
+              </div>
+              <div className="h-px w-20 mx-auto bg-gradient-to-r from-transparent via-white/20 to-transparent" />
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Flowing vertical list without boxes */}
+            <div className="max-w-4xl mx-auto space-y-16">
               {whyPoints.map((point, index) => (
                 <div
                   key={index}
-                  className={`group relative ${index === 4 ? 'md:col-span-2 lg:col-span-1 lg:col-start-2' : ''}`}
-                  onMouseEnter={() => setHoveredWhy(index)}
-                  onMouseLeave={() => setHoveredWhy(null)}
-                >
-                  <div className={`
-                    relative h-full p-8 bg-surface/50 backdrop-blur-sm rounded-3xl border-2 transition-all duration-500
-                    ${hoveredWhy === index
-                      ? 'border-transparent shadow-2xl transform -translate-y-3 scale-105'
-                      : 'border-border/40'
-                    }
-                  `}>
-                    {/* Gradient overlay */}
-                    <div className={`
-                      absolute inset-0 rounded-3xl bg-gradient-to-br ${point.gradient} opacity-0 transition-opacity duration-500
-                      ${hoveredWhy === index ? 'opacity-10 animate-anticipation-glow' : ''}
-                    `} />
-
-                    <div className="relative z-10 space-y-6">
-                      {/* Icon */}
-                      <div className="relative">
-                        <div className={`
-                          w-20 h-20 rounded-2xl bg-gradient-to-br ${point.gradient} p-5 shadow-xl
-                          transition-all duration-500
-                          ${hoveredWhy === index ? 'scale-125 rotate-6 animate-gamification-level-up' : ''}
-                        `}>
-                          <point.icon className="w-full h-full text-white" />
-                        </div>
-
-                        {/* Emoji decoration */}
-                        <div className={`
-                          absolute -top-2 -right-2 text-3xl transition-all duration-500
-                          ${hoveredWhy === index ? 'scale-125 rotate-12 animate-bounce' : 'scale-0'}
-                        `}>
-                          {point.emoji}
-                        </div>
-
-                        {/* Orbiting particles */}
-                        {hoveredWhy === index && (
-                          <>
-                            <div className="absolute inset-0 animate-orbit-slow">
-                              <div className="absolute top-0 left-1/2 w-2 h-2 bg-yellow-400 rounded-full -translate-x-1/2 -translate-y-4" />
-                            </div>
-                            <div className="absolute inset-0 animate-orbit-reverse">
-                              <div className="absolute bottom-0 left-1/2 w-1.5 h-1.5 bg-pink-400 rounded-full -translate-x-1/2 translate-y-4" />
-                            </div>
-                          </>
-                        )}
-                      </div>
-
-                      {/* Content */}
-                      <div>
-                        <h3 className={`
-                          text-2xl font-bold mb-3 transition-colors duration-300
-                          ${hoveredWhy === index ? 'text-white' : 'text-text-primary'}
-                        `}>
-                          {point.title}
-                        </h3>
-                        <p className={`
-                          text-base leading-relaxed transition-colors duration-300
-                          ${hoveredWhy === index ? 'text-white/90' : 'text-text-secondary'}
-                        `}>
-                          {point.description}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Bottom glow */}
-                    <div className={`
-                      absolute bottom-0 left-0 right-0 h-1 rounded-b-3xl bg-gradient-to-r ${point.gradient}
-                      transition-opacity duration-500
-                      ${hoveredWhy === index ? 'opacity-100 animate-viral-shimmer' : 'opacity-0'}
-                    `} />
-                  </div>
-
-                  {/* Floating star badge */}
-                  {hoveredWhy === index && (
-                    <div className="absolute -top-4 -right-4 animate-achievement-unlock">
-                      <div className={`w-10 h-10 rounded-full bg-gradient-to-r ${point.gradient} flex items-center justify-center shadow-xl`}>
-                        <Star className="w-5 h-5 text-white" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 4 Key Values Section */}
-          <div className="mb-24">
-            <div className="relative bg-gradient-to-br from-purple-900/30 via-slate-900/50 to-cyan-900/30 backdrop-blur-md rounded-3xl p-12 border border-purple-500/20 overflow-hidden">
-              {/* Background decorations */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse-slow" style={{animationDelay: '1s'}} />
-
-              <div className="relative z-10">
-                <div className="text-center mb-12">
-                  <div className="inline-flex items-center space-x-2 mb-4">
-                    <Trophy className="w-6 h-6 text-yellow-400 animate-bounce" />
-                    <h2 className="text-4xl font-display font-bold gradient-text">
-                      {t('brands.values.title')}
-                    </h2>
-                    <Trophy className="w-6 h-6 text-yellow-400 animate-bounce" style={{animationDelay: '0.2s'}} />
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {values.map((value, index) => (
-                    <div
-                      key={index}
-                      className="group relative"
-                      onMouseEnter={() => setHoveredValue(index)}
-                      onMouseLeave={() => setHoveredValue(null)}
-                    >
-                      <div className={`
-                        relative bg-slate-950/50 backdrop-blur-sm rounded-2xl p-8 border-2 transition-all duration-500
-                        ${hoveredValue === index
-                          ? 'border-transparent shadow-2xl -translate-y-2 scale-105'
-                          : 'border-border/40'
-                        }
-                      `}>
-                        {/* Hover gradient */}
-                        <div className={`
-                          absolute inset-0 rounded-2xl bg-gradient-to-br ${value.gradient} opacity-0 transition-opacity duration-500
-                          ${hoveredValue === index ? 'opacity-10 animate-social-proof-pulse' : ''}
-                        `} />
-
-                        <div className="relative z-10 text-center space-y-4">
-                          <div className={`
-                            w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br ${value.gradient} p-4 shadow-lg
-                            transition-all duration-500
-                            ${hoveredValue === index ? 'scale-110 rotate-6 animate-reward-celebrate' : ''}
-                          `}>
-                            <value.icon className="w-full h-full text-white" />
-                          </div>
-
-                          <div className={`
-                            text-2xl font-bold transition-colors duration-300
-                            ${hoveredValue === index ? 'text-white animate-neural-pulse' : 'text-text-primary'}
-                          `}>
-                            {value.title}
-                          </div>
-
-                          <p className={`
-                            text-sm leading-relaxed transition-colors duration-300
-                            ${hoveredValue === index ? 'text-white/90' : 'text-text-secondary'}
-                          `}>
-                            {value.description}
-                          </p>
-                        </div>
-
-                        {/* Orbiting decoration on hover */}
-                        {hoveredValue === index && (
-                          <div className="absolute inset-0 animate-spin" style={{animationDuration: '4s'}}>
-                            <div className="absolute top-0 left-1/2 w-2 h-2 bg-yellow-400 rounded-full -translate-x-1/2 -translate-y-2" />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA Section */}
-          <div className="text-center relative">
-            {/* Background particles */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute rounded-full animate-float-slow"
+                  className="group flex items-start gap-8 hover:translate-x-2 transition-transform duration-700"
                   style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                    width: `${20 + Math.random() * 40}px`,
-                    height: `${20 + Math.random() * 40}px`,
-                    background: i % 2 === 0
-                      ? 'radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%)'
-                      : 'radial-gradient(circle, rgba(6, 182, 212, 0.2) 0%, transparent 70%)',
-                    animationDelay: `${i * 0.5}s`,
-                    animationDuration: `${6 + Math.random() * 4}s`
+                    opacity: 0,
+                    animation: `slideInUp 0.8s ease-out ${index * 0.15 + 0.5}s forwards`
                   }}
-                />
-              ))}
-            </div>
+                >
+                  {/* Icon - minimal design */}
+                  <div className="flex-shrink-0 pt-1">
+                    <div className={`
+                      relative w-14 h-14 rounded-xl
+                      bg-gradient-to-br ${point.gradient} p-3.5
+                      opacity-70 group-hover:opacity-100
+                      transition-all duration-700
+                      group-hover:scale-110 group-hover:rotate-6
+                    `}>
+                      <point.icon className="w-full h-full text-white" />
+                    </div>
+                  </div>
 
-            <div className="relative">
-              <div className="flex items-center justify-center space-x-3 mb-6">
-                <Mail className="w-8 h-8 text-primary animate-pulse" />
-                <h2 className="text-5xl font-display font-bold gradient-text">
-                  {t('brands.cta.title')}
-                </h2>
-                <Mail className="w-8 h-8 text-accent animate-pulse" style={{animationDelay: '0.3s'}} />
-              </div>
+                  {/* Content */}
+                  <div className="flex-1 pt-1 space-y-2">
+                    <h3 className="text-2xl font-light text-white/95 group-hover:text-white transition-colors duration-700">
+                      {point.title}
+                    </h3>
+                    <p className="text-base font-light text-white/60 leading-relaxed group-hover:text-white/80 transition-colors duration-700">
+                      {point.description}
+                    </p>
+                  </div>
 
-              <p className="text-2xl text-white/80 mb-12 max-w-2xl mx-auto">
-                {t('brands.cta.description')}
-              </p>
-
-              {/* Contact Card */}
-              <div className="max-w-md mx-auto">
-                <div className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-500 animate-pulse-glow" />
-
-                  <div className="relative bg-slate-950 rounded-3xl p-10 border-2 border-purple-500/30">
-                    <div className="space-y-8">
-                      <div className="flex items-center justify-center">
-                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 p-5 shadow-xl animate-bounce group-hover:animate-reward-celebrate">
-                          <Mail className="w-full h-full text-white" />
-                        </div>
-                      </div>
-
-                      <a
-                        href="mailto:brands@seeutrending.com"
-                        className="group/button relative block overflow-hidden"
-                      >
-                        <div className="relative bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 px-8 py-5 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl">
-                          <div className="flex items-center justify-center space-x-3">
-                            <Sparkles className="w-6 h-6 text-white group-hover/button:animate-spin" />
-                            <span className="text-xl font-bold text-white">
-                              {t('brands.cta.email')}
-                            </span>
-                            <Sparkles className="w-6 h-6 text-white group-hover/button:animate-spin" style={{animationDelay: '0.2s'}} />
-                          </div>
-
-                          {/* Shimmer effect */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover/button:translate-x-full transition-transform duration-1000" />
-                        </div>
-                      </a>
+                  {/* Subtle number indicator */}
+                  <div className="flex-shrink-0 pt-1">
+                    <div className="text-6xl font-light text-white/5 group-hover:text-white/10 transition-colors duration-700">
+                      {(index + 1).toString().padStart(2, '0')}
                     </div>
                   </div>
                 </div>
+              ))}
+            </div>
+
+            {/* Subtle divider */}
+            <div className="mt-32 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          </div>
+
+          {/* Key Values - Horizontal Flowing Showcase */}
+          <div ref={valuesRef} className="mb-40 relative">
+            {/* Section header */}
+            <div className="mb-20 text-center">
+              <div className="flex items-center justify-center space-x-3 mb-6">
+                <Trophy className="w-4 h-4 text-yellow-400/60" />
+                <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-white/95">
+                  {t('brands.values.title')}
+                </h2>
+              </div>
+              <div className="h-px w-20 mx-auto bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            </div>
+
+            {/* Flowing horizontal cards - minimal design */}
+            <div className="grid md:grid-cols-2 gap-x-12 gap-y-16 max-w-5xl mx-auto">
+              {values.map((value, index) => (
+                <div
+                  key={index}
+                  className="group space-y-4"
+                  style={{
+                    opacity: 0,
+                    animation: `slideInUp 0.8s ease-out ${index * 0.15 + 1}s forwards`
+                  }}
+                >
+                  {/* Icon and title row */}
+                  <div className="flex items-center gap-4">
+                    <div className={`
+                      w-12 h-12 rounded-xl bg-gradient-to-br ${value.gradient} p-3
+                      opacity-70 group-hover:opacity-100
+                      transition-all duration-700
+                      group-hover:scale-110 group-hover:rotate-6
+                    `}>
+                      <value.icon className="w-full h-full text-white" />
+                    </div>
+                    <h3 className="text-xl font-light text-white/95 group-hover:text-white transition-colors duration-700">
+                      {value.title}
+                    </h3>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-sm font-light text-white/60 leading-relaxed pl-16 group-hover:text-white/80 transition-colors duration-700">
+                    {value.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Subtle divider */}
+            <div className="mt-32 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          </div>
+
+          {/* CTA Section - Elegant and Minimal */}
+          <div className="text-center relative py-20">
+            {/* Subtle ambient light */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-3xl" />
+
+            <div className="relative space-y-12">
+              {/* Section header */}
+              <div className="space-y-6">
+                <div className="flex items-center justify-center space-x-3">
+                  <Mail className="w-5 h-5 text-purple-400/60" />
+                  <h2 className="text-4xl sm:text-5xl font-light tracking-tight text-white/95">
+                    {t('brands.cta.title')}
+                  </h2>
+                </div>
+                <p className="text-lg font-light text-white/60 max-w-2xl mx-auto leading-relaxed">
+                  {t('brands.cta.description')}
+                </p>
+              </div>
+
+              {/* Clean email link */}
+              <div className="pt-8">
+                <a
+                  href="mailto:brands@seeutrending.com"
+                  className="group inline-flex items-center gap-4 px-12 py-5 rounded-full
+                    bg-gradient-to-r from-purple-600/90 to-pink-600/90
+                    hover:from-purple-600 hover:to-pink-600
+                    border border-white/10
+                    transition-all duration-700
+                    hover:scale-105 hover:border-white/20
+                    backdrop-blur-sm"
+                >
+                  <Mail className="w-5 h-5 text-white group-hover:rotate-12 transition-transform duration-700" />
+                  <span className="text-lg font-light text-white tracking-wide">
+                    {t('brands.cta.email')}
+                  </span>
+                  <Sparkles className="w-5 h-5 text-white/80 group-hover:text-white group-hover:rotate-180 transition-all duration-700" />
+                </a>
+              </div>
+
+              {/* Minimal decorative element */}
+              <div className="pt-12">
+                <div className="h-px w-32 mx-auto bg-gradient-to-r from-transparent via-white/10 to-transparent" />
               </div>
             </div>
           </div>
