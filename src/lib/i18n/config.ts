@@ -167,48 +167,72 @@ const resources = {
         title: 'Dla Marek',
         subtitle: 'Twórzcie konkursy, które sprawiają, że wasza marka staje się ogólnokrajowym trendem',
         why_choose: 'Dlaczego SeeUTrending?',
-        description: 'Stwórz dopasowany konkurs do swojej marki. Nasza platforma to pierwsze na świecie miejsce które daje możliwość na gamifikacje procesu tworzenia kontentu. Dotrzyj do młodego pokolenia z nami.',
-        features: {
-          performance: {
-            title: 'Analityka w Czasie Rzeczywistym',
-            description: 'Śledź zaangażowanie, zasięg i koszty na bieżąco dzięki zaawansowanemu panelowi analitycznemu z pełną przejrzystością wyników.'
+        stats: {
+          title: 'Dotrzyjcie do Młodego Pokolenia',
+          stat1: {
+            value: '15 milionów',
+            label: 'Mieszkańców Polski używa TikToka'
           },
-          engagement: {
-            title: 'Prawdziwe Zaangażowanie Gen Z',
-            description: 'Współpracuj ze zweryfikowanymi twórcami, którzy autentycznie reprezentują Twoją markę i tworzą treści o potencjale wirusowym.'
+          stat2: {
+            value: '16-24 lata',
+            label: 'Najliczniejsza grupa użytkowników (IAB Polska)'
           },
-          gamification: {
-            title: 'Motywująca Rywalizacja',
-            description: 'System rankingów i odznaczeń motywuje twórców do wyższej jakości materiałów i zwiększa ich zaangażowanie w konkurs.'
+          stat3: {
+            value: 'To oni',
+            label: 'Są fundamentem naszej platformy'
           },
-          analytics: {
-            title: 'Kompleksowa Analityka',
-            description: 'Szczegółowe raporty efektywności treści, wyników twórców i wzorców zachowań odbiorców dla pełnego obrazu kampanii.'
-          },
-          safety: {
-            title: 'Ochrona Wizerunku Marki',
-            description: 'Profesjonalna moderacja treści i przestrzeganie wytycznych marki zapewniają pełne bezpieczeństwo Twojej reputacji.'
-          },
-          tailored: {
-            title: 'Konkursy Szyte na Miarę',
-            description: 'Indywidualne strategie konkursowe dopasowane do charakteru Twojej marki i docelowej grupy odbiorców.'
+          stat4: {
+            value: 'Ruch społeczny',
+            label: 'Dzięki nagrodą i rywalizacji SeeUTrending nie jest zwykłą kampanią, ale ruchem społecznym, zamieniającym Waszą markę w część kultury'
           }
         },
-        enterprise: {
-          title: 'Rozwiązania dla Każdej Skali Biznesu',
-          description: 'Elastyczne plany cenowe dostosowane do potrzeb startupów, średnich firm i korporacji z listy Fortune 500.',
-          custom_pricing: 'Wycena Indywidualna',
-          support: 'Wsparcie 24/7',
-          uptime: 'Dostępność 99.9%'
+        whyUs: {
+          title: 'Dlaczego SeeUTrending?',
+          transparent: {
+            title: 'Przejrzyste wyniki',
+            description: 'Raporty z danymi i statystykami w czasie i po udanym konkursie'
+          },
+          community: {
+            title: 'Stajecie się częścią społeczności',
+            description: 'Młode pokolenie zamienia Wasze produkty w element ich życia, sprawiając, że ta kampania to nie jest tylko reklama'
+          },
+          tailored: {
+            title: 'Konkursy szyte na miarę',
+            description: 'Indywidualnie dopasowujemy konkursy do Waszej marki z elastycznością i otwartością'
+          },
+          safety: {
+            title: 'Ochrona wizerunku',
+            description: 'Profesjonalna moderacja i wytyczne zapewniają ochronę Waszej reputacji'
+          },
+          pricing: {
+            title: 'Najlepsza cena',
+            description: 'Wykorzystujemy ogromną grupę użytkowników pełną kreatywności tworząc ofertę nie porównywalną do innych'
+          }
+        },
+        values: {
+          title: 'Oferujemy jedyną taką kampanię',
+          customization: {
+            title: 'Dopasowanie',
+            description: 'Konkursy idealnie dopasowane do Waszej marki i celów'
+          },
+          transparency: {
+            title: 'Przejrzystość',
+            description: 'Pełna transparentność wyników i analityki w czasie rzeczywistym'
+          },
+          accessibility: {
+            title: 'Dostępność',
+            description: 'Platforma dostępna dla marek każdej wielkości'
+          },
+          bestPrice: {
+            title: 'Najlepsza Cena',
+            description: 'Niezrównana wartość dzięki zaangażowanej społeczności twórców'
+          }
         },
         cta: {
-          title: 'Rozpocznij Swoją Pierwszą Kampanię',
-          description: 'Dołącz do grona marek, które już odkryły potencjał SeeUTrending w budowaniu autentycznych relacji z pokoleniem Z.',
-          contact_title: 'Skontaktuj się z Nami',
-          contact_description: 'Gotowy na kampanię dopasowaną do Twojej marki? Napisz do naszego zespołu ekspertów.',
+          title: 'Skontaktuj się z Nami',
+          description: 'Gotowy na kampanię dopasowaną do Twojej marki? Napisz do naszego zespołu ekspertów.',
           email: 'brands@seeutrending.com'
         },
-        coming_soon: '🚧 Platforma już wkrótce - Zapisz się na listę oczekujących!',
         back_home: 'Powrót do strony głównej'
       },
       // Education Hub
@@ -677,50 +701,74 @@ const resources = {
       // Brand page
       brands: {
         title: 'For Brands',
-        subtitle: 'Launch authentic UGC contests with measurable engagement',
-        why_choose: 'Why Choose SeeUTrending?',
-        description: 'Connect with Gen Z creators in real-time competitive environments. Our gamified platform drives authentic engagement, measurable results, and viral content creation at scale.',
-        features: {
-          performance: {
-            title: 'Performance Analytics',
-            description: 'Monitor engagement, reach, and CPM metrics in real-time with detailed analytics dashboard.'
+        subtitle: 'Create contests that make your brand a nationwide trend',
+        why_choose: 'Why SeeUTrending?',
+        stats: {
+          title: 'Reach the Young Generation',
+          stat1: {
+            value: '15 million',
+            label: 'Polish residents use TikTok'
           },
-          engagement: {
-            title: 'Gen Z Authentic Engagement',
-            description: 'Access verified creators who genuinely connect with your brand and create viral-worthy content.'
+          stat2: {
+            value: '16-24 years',
+            label: 'Largest user demographic (IAB Poland)'
           },
-          gamification: {
-            title: 'Competitive Gamification',
-            description: 'Leaderboards and badges drive creators to produce higher quality content and increase participation.'
+          stat3: {
+            value: 'They are',
+            label: 'The foundation of our platform'
           },
-          analytics: {
-            title: 'Performance Analytics',
-            description: 'Comprehensive insights into content performance, creator rankings, and audience engagement patterns.'
-          },
-          safety: {
-            title: 'Brand Safety First',
-            description: 'Advanced content moderation and brand guidelines enforcement to protect your reputation.'
-          },
-          tailored: {
-            title: 'Tailored Contest Design',
-            description: 'Custom contest strategies designed specifically for your brand and target audience, deployed efficiently.'
+          stat4: {
+            value: 'Social movement',
+            label: 'Through rewards and competition, SeeUTrending is not just a campaign, but a social movement that turns your brand into part of culture'
           }
         },
-        enterprise: {
-          title: 'Enterprise-Ready Solutions',
-          description: 'Flexible pricing plans designed for brands of all sizes, from startups to Fortune 500 companies.',
-          custom_pricing: 'Custom Pricing',
-          support: 'Support',
-          uptime: 'Uptime'
+        whyUs: {
+          title: 'Why SeeUTrending?',
+          transparent: {
+            title: 'Transparent results',
+            description: 'Reports with data and statistics during and after successful contests'
+          },
+          community: {
+            title: 'Become part of the community',
+            description: 'Young generation turns your products into an element of their lives, making this campaign more than just advertising'
+          },
+          tailored: {
+            title: 'Tailored contests',
+            description: 'We individually customize contests for your brand with flexibility and openness'
+          },
+          safety: {
+            title: 'Brand protection',
+            description: 'Professional moderation and guidelines ensure protection of your reputation'
+          },
+          pricing: {
+            title: 'Best price',
+            description: 'We leverage a huge group of creative users creating an offer incomparable to others'
+          }
+        },
+        values: {
+          title: 'We offer the only campaign like this',
+          customization: {
+            title: 'Customization',
+            description: 'Contests perfectly tailored to your brand and goals'
+          },
+          transparency: {
+            title: 'Transparency',
+            description: 'Full transparency of results and analytics in real-time'
+          },
+          accessibility: {
+            title: 'Accessibility',
+            description: 'Platform accessible for brands of any size'
+          },
+          bestPrice: {
+            title: 'Best Price',
+            description: 'Unmatched value thanks to an engaged creator community'
+          }
         },
         cta: {
-          title: 'Ready to Launch Your First Contest?',
-          description: 'Join leading brands who trust SeeUTrending to connect with Gen Z creators and drive authentic engagement at scale.',
-          contact_title: 'Get in Touch',
-          contact_description: 'Ready to create tailored contests for your brand? Contact our team to get started.',
+          title: 'Contact Us',
+          description: 'Ready for a campaign tailored to your brand? Contact our team of experts.',
           email: 'brands@seeutrending.com'
         },
-        coming_soon: '🚧 Platform launching soon - Be the first to know!',
         back_home: 'Back to Home'
       },
       // Education Hub
